@@ -39,3 +39,11 @@ export const { addTaskGroup } = taskGroupSlice.actions;
 
 // Export the reducer itself
 export default taskGroupSlice.reducer;
+
+// Set up selectors
+/**
+ * Selects the list of task groups
+ * @param state 
+ * @returns 
+ */
+export const selectTaskGroups = (state: TaskGroupState): TaskGroup[] => state.groups;
