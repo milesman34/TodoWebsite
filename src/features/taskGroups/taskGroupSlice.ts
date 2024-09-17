@@ -11,7 +11,7 @@ type TaskGroupState = {
 /**
  * Initial state for the slice
  */
-const initialState: TaskGroupState = {
+export const initialState: TaskGroupState = {
     groups: []
 };
 
