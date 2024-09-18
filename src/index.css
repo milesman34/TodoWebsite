@@ -9,3 +9,8 @@ body {
     --background-color: #1e2028;
     --header-color: #26293a;
 }
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}

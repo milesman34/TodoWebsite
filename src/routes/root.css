@@ -22,34 +22,3 @@
     font-weight: bold;
     font-family: "Inter";
 }
-
-#left-sidebar {
-    width: 25vw;
-    height: calc(100% - 80px);
-    display: flex;
-    flex-direction: column;
-    background-color: #33354a;
-}
-
-.tasks-button {
-    margin-left: 40px;
-    margin-right: 40px;
-    margin-top: 20px;
-    height: 40px;
-    background-color: #3f4666;
-    color: white;
-    font-size: 18px;
-    border: none;
-    font-family: "Inter";
-    border-radius: 15px;
-    user-select: none;
-}
-
-.tasks-button:hover {
-    background-color: #414c87;
-    cursor: pointer;
-}
-
-.tasks-button:active {
-    background-color: #4654a7;
-}

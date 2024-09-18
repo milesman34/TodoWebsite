@@ -1,0 +1,80 @@
+#task-group-sidebar {
+    width: 25vw;
+    height: calc(100% - 80px);
+    display: flex;
+    flex-direction: column;
+    background-color: #33354a;
+}
+
+.tasks-button {
+    margin-top: 20px;
+    height: 40px;
+    background-color: #3f4666;
+    color: white;
+    font-size: 18px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 15px;
+    user-select: none;
+}
+
+.tasks-button:hover {
+    background-color: #414c87;
+    cursor: pointer;
+}
+
+.tasks-button:active {
+    background-color: #4654a7;
+}
+
+#tasks-buttons-container {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 20px;
+
+    border-bottom: 2px solid black;
+}
+
+#task-groups-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 40px;
+    color: white;
+    font-size: 24px;
+    font-family: "Inter";
+}
+
+#task-groups-container {
+    background-color: #3f4666;
+    height: 100%;
+
+    padding-left: 40px;
+    padding-right: 40px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#add-task-group-button {
+    height: 40px;
+    margin-top: 10px;
+
+    background-color: #626a8c;
+
+    color: white;
+    font-size: 18px;
+    border: none;
+    font-family: "Inter";
+
+    border-radius: 15px;
+    user-select: none;
+}
+
+#add-task-group-button:hover {
+    background-color: #626d9e;
+    cursor: pointer;
+}
+
+#add-task-group-button:active {
+    background-color: #707db7;
+}

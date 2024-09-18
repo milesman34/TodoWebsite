@@ -12,7 +12,19 @@ type TaskGroupState = {
  * Initial state for the slice
  */
 export const initialState: TaskGroupState = {
-    groups: []
+    groups: [
+        {
+            name: "First group",
+            description: "idk",
+            id: "1"
+        },
+
+        {
+            name: "Second group",
+            description: "who knows?",
+            id: "2"
+        }
+    ]
 };
 
 // TaskGroup slice handles groups of tasks
