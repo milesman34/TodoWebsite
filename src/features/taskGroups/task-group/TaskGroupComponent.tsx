@@ -19,7 +19,8 @@ export const TaskGroupComponent = ({ taskGroup }: { taskGroup: TaskGroup }) => {
 
     // Runs when this task group is clicked
     const onTaskGroupClicked = () => {
-        dispatch(setActiveTaskGroup(taskGroup.id));
+        // If this task group is already active, then deselect it
+        dispatch(setActiveTaskGroup(isActive ? "" : taskGroup.id));
     };
 
     return (
