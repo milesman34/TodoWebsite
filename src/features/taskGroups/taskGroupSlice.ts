@@ -6,25 +6,13 @@ import { TaskGroup } from "./TaskGroup";
  */
 type TaskGroupState = {
     groups: TaskGroup[];
-}
+};
 
 /**
  * Initial state for the slice
  */
 export const initialState: TaskGroupState = {
-    groups: [
-        {
-            name: "First group",
-            description: "idk",
-            id: "1"
-        },
-
-        {
-            name: "Second group",
-            description: "who knows?",
-            id: "2"
-        }
-    ]
+    groups: []
 };
 
 // TaskGroup slice handles groups of tasks
@@ -36,9 +24,9 @@ const taskGroupSlice = createSlice({
     reducers: {
         /**
          * Adds a task group to the list of task groups
-         * @param state 
-         * @param action 
-         * @returns 
+         * @param state
+         * @param action
+         * @returns
          */
         addTaskGroup(state: TaskGroupState, action: PayloadAction<TaskGroup>) {
             state.groups.push(action.payload);
@@ -55,7 +43,7 @@ export default taskGroupSlice.reducer;
 // Set up selectors
 /**
  * Selects the list of task groups
- * @param state 
- * @returns 
+ * @param state
+ * @returns
  */
 export const selectTaskGroups = (state: TaskGroupState): TaskGroup[] => state.groups;

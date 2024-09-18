@@ -1,13 +1,32 @@
-import { useSelector } from "react-redux";
-import { selectTaskGroups } from "../taskGroupSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTaskGroup, selectTaskGroups } from "../taskGroupSlice";
 
 import "./TaskGroupSidebar.css";
+import { nanoid } from "nanoid";
 
 /**
  * This component contains the app sidebar, which contains the task groups
  */
 export const TaskGroupSidebar = () => {
     const taskGroups = useSelector(selectTaskGroups);
+
+    const dispatch = useDispatch();
+
+    // Runs when the add task group button is clicked
+    const onAddTaskGroupClicked = () => {
+        const taskGroupName = prompt("Enter name")?.trim();
+
+        // Add a new task with this name
+        if (!(taskGroupName === "" || taskGroupName === undefined)) {
+            dispatch(
+                addTaskGroup({
+                    name: taskGroupName,
+                    description: "",
+                    id: nanoid()
+                })
+            );
+        }
+    };
 
     return (
         <div id="task-group-sidebar">
@@ -24,7 +43,7 @@ export const TaskGroupSidebar = () => {
             <div id="task-groups-text">Task Groups</div>
 
             <div id="task-groups-container">
-                <button id="add-task-group-button">
+                <button id="add-task-group-button" onClick={onAddTaskGroupClicked}>
                     Add
                 </button>
 
