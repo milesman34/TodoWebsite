@@ -6,13 +6,17 @@ import { TaskGroup } from "./TaskGroup";
  */
 type TaskGroupState = {
     groups: TaskGroup[];
+
+    // Active task group is an ID
+    activeTaskGroup: string;
 };
 
 /**
  * Initial state for the slice
  */
 export const initialState: TaskGroupState = {
-    groups: []
+    groups: [],
+    activeTaskGroup: ""
 };
 
 // TaskGroup slice handles groups of tasks
@@ -30,12 +34,24 @@ const taskGroupSlice = createSlice({
          */
         addTaskGroup(state: TaskGroupState, action: PayloadAction<TaskGroup>) {
             state.groups.push(action.payload);
+
+            // Set the active task group
+            state.activeTaskGroup = action.payload.id;
+        },
+
+        /**
+         * Sets the current task group ID
+         * @param state 
+         * @param action 
+         */
+        setActiveTaskGroup(state: TaskGroupState, action: PayloadAction<string>) {
+            state.activeTaskGroup = action.payload;
         }
     }
 });
 
 // Export the actions
-export const { addTaskGroup } = taskGroupSlice.actions;
+export const { addTaskGroup, setActiveTaskGroup } = taskGroupSlice.actions;
 
 // Export the reducer itself
 export default taskGroupSlice.reducer;
@@ -47,3 +63,10 @@ export default taskGroupSlice.reducer;
  * @returns
  */
 export const selectTaskGroups = (state: TaskGroupState): TaskGroup[] => state.groups;
+
+/**
+ * Selects the active task group (ID)
+ * @param state 
+ * @returns 
+ */
+export const selectActiveTaskGroup = (state: TaskGroupState): string => state.activeTaskGroup;

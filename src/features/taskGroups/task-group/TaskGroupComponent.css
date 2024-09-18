@@ -1,0 +1,35 @@
+.task-group-component {
+    width: 100%;
+    height: 60px;
+    background-color: #45528a;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    color: white;
+    font-size: 18px;
+    font-family: "Inter";
+}
+
+.task-group-component:hover {
+    background-color: #475699;
+    cursor: pointer;
+}
+
+.task-group-component:active {
+    background-color: #4c5fb5;
+}
+
+.task-group-component-active {
+    background-color: #384a9b;
+}
+
+.task-group-component-active:hover {
+    background-color: #4055b1;
+}

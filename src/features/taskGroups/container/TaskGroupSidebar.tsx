@@ -3,6 +3,7 @@ import { addTaskGroup, selectTaskGroups } from "../taskGroupSlice";
 
 import "./TaskGroupSidebar.css";
 import { nanoid } from "nanoid";
+import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
 
 /**
  * This component contains the app sidebar, which contains the task groups
@@ -48,7 +49,7 @@ export const TaskGroupSidebar = () => {
                 </button>
 
                 {taskGroups.map((taskGroup) => (
-                    <div key={taskGroup.id}>{taskGroup.name}</div>
+                    <TaskGroupComponent key={taskGroup.id} taskGroup={taskGroup} />
                 ))}
             </div>
         </div>
