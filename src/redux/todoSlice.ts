@@ -26,6 +26,9 @@ type TodoState = {
 
     // List of tasks
     tasks: Task[];
+
+    // Active task is an ID
+    activeTask: string;
 };
 
 /**
@@ -35,7 +38,8 @@ export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
-    tasks: []
+    tasks: [],
+    activeTask: ""
 };
 
 // Todo slice handles tasks and task groups
@@ -80,12 +84,49 @@ const todoSlice = createSlice({
          */
         setGroups(state: TodoState, action: PayloadAction<TaskGroup[]>) {
             state.groups = action.payload;
+        },
+
+        /**
+         * Switches to displaying all tasks
+         * @param state
+         */
+        switchToAllTasks(state: TodoState) {
+            state.taskListType = TaskListType.All;
+            state.activeTaskGroup = "";
+        },
+
+        /**
+         * Switches to displaying ungrouped tasks
+         * @param state
+         */
+        switchToUngroupedTasks(state: TodoState) {
+            state.taskListType = TaskListType.Ungrouped;
+            state.activeTaskGroup = "";
+        },
+
+        /**
+         * Adds a task to the list of tasks
+         * @param state
+         * @param action
+         * @returns
+         */
+        addTask(state: TodoState, action: PayloadAction<Task>) {
+            state.tasks.push(action.payload);
+
+            state.activeTask = action.payload.id;
         }
     }
 });
 
 // Export the actions
-export const { addTaskGroup, setActiveTaskGroup, setGroups } = todoSlice.actions;
+export const {
+    addTask,
+    addTaskGroup,
+    setActiveTaskGroup,
+    setGroups,
+    switchToAllTasks,
+    switchToUngroupedTasks
+} = todoSlice.actions;
 
 // Export the reducer itself
 export default todoSlice.reducer;

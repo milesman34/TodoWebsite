@@ -1,8 +1,12 @@
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
+import { Task } from "../features/tasks/Task";
 import reducer, {
+    addTask,
     addTaskGroup,
     initialState,
     setActiveTaskGroup,
+    switchToAllTasks,
+    switchToUngroupedTasks,
     TaskListType
 } from "./todoSlice";
 
@@ -82,6 +86,78 @@ describe("todoSlice", () => {
             state = reducer(state, setActiveTaskGroup(""));
 
             expect(state.taskListType).toEqual(TaskListType.All);
+        });
+    });
+
+    describe("switchToAllTasks", () => {
+        test("switchToAllTasks sets the task list type", () => {
+            let state = {
+                ...initialState,
+                taskListType: TaskListType.TaskGroup
+            };
+
+            state = reducer(state, switchToAllTasks());
+
+            expect(state.taskListType).toEqual(TaskListType.All);
+        });
+
+        test("switchToAllTasks clears the current active task group", () => {
+            let state = {
+                ...initialState,
+                activeTaskGroup: "Task group",
+                taskListType: TaskListType.TaskGroup
+            };
+
+            state = reducer(state, switchToAllTasks());
+
+            expect(state.activeTaskGroup).toBe("");
+        });
+    });
+
+    describe("switchToUngroupedTasks", () => {
+        test("switchToUngroupedTasks sets the task list type", () => {
+            let state = {
+                ...initialState,
+                taskListType: TaskListType.TaskGroup
+            };
+
+            state = reducer(state, switchToUngroupedTasks());
+
+            expect(state.taskListType).toEqual(TaskListType.Ungrouped);
+        });
+
+        test("switchToUngroupedTasks clears the current active task group", () => {
+            let state = {
+                ...initialState,
+                activeTaskGroup: "Task group",
+                taskListType: TaskListType.TaskGroup
+            };
+
+            state = reducer(state, switchToUngroupedTasks());
+
+            expect(state.activeTaskGroup).toBe("");
+        });
+    });
+
+    describe("addTask", () => {
+        test("addTask adds a task", () => {
+            let state = initialState;
+
+            const task = Task("My task", "", "id1", "id1", 0, []);
+
+            state = reducer(state, addTask(task));
+
+            expect(state.tasks).toEqual([task]);
+        });
+
+        test("addTask updates active task", () => {
+            let state = initialState;
+
+            const task = Task("My task", "", "id1", "id1", 0, []);
+
+            state = reducer(state, addTask(task));
+
+            expect(state.activeTask).toBe("id1");
         });
     });
 });
