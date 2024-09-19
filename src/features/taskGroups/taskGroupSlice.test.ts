@@ -11,6 +11,7 @@ describe("taskGroupSlice", () => {
             const newState = reducer(state, addTaskGroup(taskGroup));
 
             expect(newState.groups).toEqual([taskGroup]);
+            expect(newState.activeTaskGroup).toBe("0");
         });
         
         test("addTaskGroup adds multiple task groups", () => {
@@ -23,6 +24,7 @@ describe("taskGroupSlice", () => {
             const newState2 = reducer(newState1, addTaskGroup(taskGroup2));
 
             expect(newState2.groups).toEqual([taskGroup1, taskGroup2]);
+            expect(newState2.activeTaskGroup).toBe("1");
         });
     });
 });
