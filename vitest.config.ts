@@ -7,6 +7,7 @@ export default defineConfig({
             reporter: ["text", "json", "html"]
         },
 
-        environment: "jsdom"
+        environment: "jsdom",
+        setupFiles: ["src/utils/setupTests.ts"]
     }
 });
