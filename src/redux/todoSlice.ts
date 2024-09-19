@@ -2,13 +2,26 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 
 /**
+ * Represents what type of task list is being viewed
+ */
+export enum TaskListType {
+    All,
+    Ungrouped,
+    TaskGroup
+}
+
+/**
  * Type representing the state of the Todo slice
  */
 type TodoState = {
+    // List of task groups
     groups: TaskGroup[];
 
     // Active task group is an ID
     activeTaskGroup: string;
+
+    // Type of task collection being viewed
+    taskListType: TaskListType;
 };
 
 /**
@@ -16,7 +29,8 @@ type TodoState = {
  */
 export const initialState: TodoState = {
     groups: [],
-    activeTaskGroup: ""
+    activeTaskGroup: "",
+    taskListType: TaskListType.All
 };
 
 // Todo slice handles tasks and task groups
@@ -37,6 +51,9 @@ const todoSlice = createSlice({
 
             // Set the active task group
             state.activeTaskGroup = action.payload.id;
+
+            // Update the task list type
+            state.taskListType = TaskListType.TaskGroup;
         },
 
         /**
@@ -46,6 +63,9 @@ const todoSlice = createSlice({
          */
         setActiveTaskGroup(state: TodoState, action: PayloadAction<string>) {
             state.activeTaskGroup = action.payload;
+
+            state.taskListType =
+                action.payload === "" ? TaskListType.All : TaskListType.TaskGroup;
         },
 
         /**
@@ -78,5 +98,4 @@ export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
  * @param state
  * @returns
  */
-export const selectActiveTaskGroup = (state: TodoState): string =>
-    state.activeTaskGroup;
+export const selectActiveTaskGroup = (state: TodoState): string => state.activeTaskGroup;
