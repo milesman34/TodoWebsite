@@ -1,5 +1,5 @@
 import "./root.css";
-import { TaskGroupSidebar } from "../features/taskGroups/container/TaskGroupSidebar";
+import { TaskGroupSidebar } from "../features/taskGroups/sidebar/TaskGroupSidebar";
 
 export const Root = () => {
     return (
