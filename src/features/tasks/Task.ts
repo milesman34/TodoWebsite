@@ -5,6 +5,8 @@ export type Task = {
     name: string;
     description: string;
 
+    id: string;
+
     // ID of the parent task group (empty means no parent)
     taskGroupID: string;
 
@@ -13,8 +15,6 @@ export type Task = {
 
     // List of tags for tasks
     tags: string[];
-
-    id: string;
 };
 
 /**

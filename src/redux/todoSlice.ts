@@ -145,3 +145,26 @@ export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
  * @returns
  */
 export const selectActiveTaskGroup = (state: TodoState): string => state.activeTaskGroup;
+
+/**
+ * Selects the list of all tasks
+ * @param state
+ * @returns
+ */
+export const selectAllTasks = (state: TodoState): Task[] => state.tasks;
+
+/**
+ * Selects the list of all ungrouped tasks
+ * @param state
+ * @returns
+ */
+export const selectUngroupedTasks = (state: TodoState): Task[] =>
+    state.tasks.filter((task) => task.taskGroupID === "");
+
+/**
+ * Returns all of the tasks in the active task group
+ * @param state
+ * @returns
+ */
+export const selectTasksInActiveGroup = (state: TodoState): Task[] =>
+    state.tasks.filter((task) => task.taskGroupID === state.activeTaskGroup);
