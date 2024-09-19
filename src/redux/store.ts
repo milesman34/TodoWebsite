@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import taskGroupSlice from "../features/taskGroups/taskGroupSlice";
+import todoSlice from "./todoSlice";
 
 /**
  * Function that creates a new instance of the store
  * This is required for testing, as otherwise the same instance of the store is used across tests, which is bad
  */
 export const createStore = () => configureStore({
-    reducer: taskGroupSlice
+    reducer: todoSlice
 });
 
 // Redux store for this app

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TaskGroup } from "./TaskGroup";
+import { TaskGroup } from "../features/taskGroups/TaskGroup";
 
 /**
- * Type representing the state of the TaskGroups slice
+ * Type representing the state of the Todo slice
  */
-type TaskGroupState = {
+type TodoState = {
     groups: TaskGroup[];
 
     // Active task group is an ID
@@ -14,13 +14,13 @@ type TaskGroupState = {
 /**
  * Initial state for the slice
  */
-export const initialState: TaskGroupState = {
+export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: ""
 };
 
-// TaskGroup slice handles groups of tasks
-const taskGroupSlice = createSlice({
+// Todo slice handles tasks and task groups
+const todoSlice = createSlice({
     name: "taskGroups",
 
     initialState,
@@ -32,7 +32,7 @@ const taskGroupSlice = createSlice({
          * @param action
          * @returns
          */
-        addTaskGroup(state: TaskGroupState, action: PayloadAction<TaskGroup>) {
+        addTaskGroup(state: TodoState, action: PayloadAction<TaskGroup>) {
             state.groups.push(action.payload);
 
             // Set the active task group
@@ -44,7 +44,7 @@ const taskGroupSlice = createSlice({
          * @param state
          * @param action
          */
-        setActiveTaskGroup(state: TaskGroupState, action: PayloadAction<string>) {
+        setActiveTaskGroup(state: TodoState, action: PayloadAction<string>) {
             state.activeTaskGroup = action.payload;
         },
 
@@ -53,17 +53,17 @@ const taskGroupSlice = createSlice({
          * @param state
          * @param action
          */
-        setGroups(state: TaskGroupState, action: PayloadAction<TaskGroup[]>) {
+        setGroups(state: TodoState, action: PayloadAction<TaskGroup[]>) {
             state.groups = action.payload;
         }
     }
 });
 
 // Export the actions
-export const { addTaskGroup, setActiveTaskGroup, setGroups } = taskGroupSlice.actions;
+export const { addTaskGroup, setActiveTaskGroup, setGroups } = todoSlice.actions;
 
 // Export the reducer itself
-export default taskGroupSlice.reducer;
+export default todoSlice.reducer;
 
 // Set up selectors
 /**
@@ -71,12 +71,12 @@ export default taskGroupSlice.reducer;
  * @param state
  * @returns
  */
-export const selectTaskGroups = (state: TaskGroupState): TaskGroup[] => state.groups;
+export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
 
 /**
  * Selects the active task group (ID)
  * @param state
  * @returns
  */
-export const selectActiveTaskGroup = (state: TaskGroupState): string =>
+export const selectActiveTaskGroup = (state: TodoState): string =>
     state.activeTaskGroup;

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addTaskGroup, selectTaskGroups } from "../taskGroupSlice";
+import { addTaskGroup, selectTaskGroups } from "../../../redux/todoSlice";
 
 import "./TaskGroupSidebar.css";
 import { nanoid } from "nanoid";

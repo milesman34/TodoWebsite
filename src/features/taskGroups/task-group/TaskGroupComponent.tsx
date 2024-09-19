@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TaskGroup } from "../TaskGroup";
 
 import "./TaskGroupComponent.css";
-import { selectActiveTaskGroup, setActiveTaskGroup } from "../taskGroupSlice";
+import { selectActiveTaskGroup, setActiveTaskGroup } from "../../../redux/todoSlice";
 import classNames from "classnames";
 
 /**

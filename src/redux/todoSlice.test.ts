@@ -1,9 +1,9 @@
-import { TaskGroup } from "./TaskGroup";
-import reducer, { addTaskGroup, initialState } from "./taskGroupSlice";
+import { TaskGroup } from "../features/taskGroups/TaskGroup";
+import reducer, { addTaskGroup, initialState } from "./todoSlice";
 
 import { describe, expect, test } from "vitest";
 
-describe("taskGroupSlice", () => {
+describe("todoSlice", () => {
     describe("addTaskGroup", () => {
         test("addTaskGroup adds a task group", () => {
             const state = initialState;
