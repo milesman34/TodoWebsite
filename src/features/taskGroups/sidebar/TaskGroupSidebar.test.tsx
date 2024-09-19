@@ -103,4 +103,62 @@ describe("TaskGroupSidebar", () => {
             expect(store.getState().groups).toEqual([]);
         });
     });
+
+    describe("Adding a new Task Group should select it as the active group", () => {
+        test("Adding a Task Group should give it the active class", async () => {
+            // Mock return values from nanoid + prompt
+            (nanoid as Mock).mockImplementation(() => "id1");
+
+            vi.stubGlobal("prompt", () => "First Task Group");
+
+            // Render the TaskGroupSidebar
+            render(
+                <Provider store={createStore()}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("add-task-group-button"));
+
+            // Make sure it has the correct class
+            expect(
+                screen
+                    .getByTestId("task-group-component-id1")
+                    ?.classList.contains("task-group-component-active")
+            ).toBe(true);
+        });
+
+        test("Adding multiple Task Groups should only leave the last Task Group with the active class", async () => {
+            // Render the TaskGroupSidebar
+            render(
+                <Provider store={createStore()}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            for (const pair of [
+                { id: "id1", name: "First Task Group" },
+                { id: "id2", name: "Second Task Group" }
+            ]) {
+                (nanoid as Mock).mockImplementation(() => pair.id);
+
+                vi.stubGlobal("prompt", () => pair.name);
+
+                await userEvent.click(screen.getByTestId("add-task-group-button"));
+            }
+
+            // Check that only the second task group has this class
+            expect(
+                screen
+                    .getByTestId("task-group-component-id1")
+                    ?.classList.contains("task-group-component-active")
+            ).toBe(false);
+
+            expect(
+                screen
+                    .getByTestId("task-group-component-id2")
+                    ?.classList.contains("task-group-component-active")
+            ).toBe(true);
+        });
+    });
 });
