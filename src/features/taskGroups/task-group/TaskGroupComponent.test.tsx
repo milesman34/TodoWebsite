@@ -1,17 +1,13 @@
 import { Provider } from "react-redux";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../../../app/store";
 import { TaskGroupComponent } from "./TaskGroupComponent";
 import { TaskGroup } from "../TaskGroup";
-import { cleanup, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { setActiveTaskGroup, setGroups } from "../taskGroupSlice";
 
 describe("TaskGroupComponent", () => {
-    afterEach(() => {
-        cleanup();
-    });
-
     describe("Component should display if it is active", () => {
         test("Active component has the active class", () => {
             const taskGroup = TaskGroup("My Group", "", "id1");
