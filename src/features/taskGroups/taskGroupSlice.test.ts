@@ -1,6 +1,8 @@
 import { TaskGroup } from "./TaskGroup";
 import reducer, { addTaskGroup, initialState } from "./taskGroupSlice";
 
+import { describe, expect, test } from "vitest";
+
 describe("taskGroupSlice", () => {
     describe("addTaskGroup", () => {
         test("addTaskGroup adds a task group", () => {
@@ -13,7 +15,7 @@ describe("taskGroupSlice", () => {
             expect(newState.groups).toEqual([taskGroup]);
             expect(newState.activeTaskGroup).toBe("0");
         });
-        
+
         test("addTaskGroup adds multiple task groups", () => {
             const state = initialState;
 
