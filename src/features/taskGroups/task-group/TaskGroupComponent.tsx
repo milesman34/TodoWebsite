@@ -25,6 +25,7 @@ export const TaskGroupComponent = ({ taskGroup }: { taskGroup: TaskGroup }) => {
 
     return (
         <div
+            data-testid={`task-group-component-${taskGroup.id}`}
             className={classNames(
                 "task-group-component",
                 isActive ? "task-group-component-active" : ""

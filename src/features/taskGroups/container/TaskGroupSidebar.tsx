@@ -44,7 +44,7 @@ export const TaskGroupSidebar = () => {
             <div id="task-groups-text">Task Groups</div>
 
             <div id="task-groups-container">
-                <button id="add-task-group-button" onClick={onAddTaskGroupClicked}>
+                <button id="add-task-group-button" data-testid="add-task-group-button" onClick={onAddTaskGroupClicked}>
                     Add
                 </button>
 
