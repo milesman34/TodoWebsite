@@ -41,17 +41,26 @@ const taskGroupSlice = createSlice({
 
         /**
          * Sets the current task group ID
-         * @param state 
-         * @param action 
+         * @param state
+         * @param action
          */
         setActiveTaskGroup(state: TaskGroupState, action: PayloadAction<string>) {
             state.activeTaskGroup = action.payload;
+        },
+
+        /**
+         * Sets the list of groups
+         * @param state
+         * @param action
+         */
+        setGroups(state: TaskGroupState, action: PayloadAction<TaskGroup[]>) {
+            state.groups = action.payload;
         }
     }
 });
 
 // Export the actions
-export const { addTaskGroup, setActiveTaskGroup } = taskGroupSlice.actions;
+export const { addTaskGroup, setActiveTaskGroup, setGroups } = taskGroupSlice.actions;
 
 // Export the reducer itself
 export default taskGroupSlice.reducer;
@@ -66,7 +75,8 @@ export const selectTaskGroups = (state: TaskGroupState): TaskGroup[] => state.gr
 
 /**
  * Selects the active task group (ID)
- * @param state 
- * @returns 
+ * @param state
+ * @returns
  */
-export const selectActiveTaskGroup = (state: TaskGroupState): string => state.activeTaskGroup;
+export const selectActiveTaskGroup = (state: TaskGroupState): string =>
+    state.activeTaskGroup;
