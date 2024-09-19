@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
+import { Task } from "../features/tasks/Task";
 
 /**
  * Represents what type of task list is being viewed
@@ -22,6 +23,9 @@ type TodoState = {
 
     // Type of task collection being viewed
     taskListType: TaskListType;
+
+    // List of tasks
+    tasks: Task[];
 };
 
 /**
@@ -30,7 +34,8 @@ type TodoState = {
 export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: "",
-    taskListType: TaskListType.All
+    taskListType: TaskListType.All,
+    tasks: []
 };
 
 // Todo slice handles tasks and task groups
