@@ -14,3 +14,32 @@
     font-size: 24px;
     color: white;
 }
+
+#add-task-button {
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 200px;
+    height: 40px;
+    background-color: #3f4666;
+    color: white;
+    font-size: 18px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 15px;
+    user-select: none;
+}
+
+#add-task-button:hover {
+    background-color: #414c87;
+    cursor: pointer;
+}
+
+#add-task-button:active {
+    background-color: #4654a7;
+}
+
+#task-components-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
