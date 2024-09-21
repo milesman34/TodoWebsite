@@ -6,6 +6,7 @@ import { describe, expect, Mock, test, vi } from "vitest";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { createStore } from "../../../redux/store";
+import { switchToAllTasks, switchToUngroupedTasks } from "../../../redux/todoSlice";
 
 vi.mock("nanoid", () => ({
     nanoid: vi.fn()
@@ -155,6 +156,82 @@ describe("TaskGroupSidebar", () => {
                     .getByTestId("task-group-component-id2")
                     ?.classList.contains("task-group-component-active")
             ).toBe(true);
+        });
+    });
+
+    describe("All Tasks button should have the active class if that is the current task list type", () => {
+        test("All Tasks button when all tasks enabled", () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            expect(
+                screen
+                    .getByTestId("all-tasks-button")
+                    ?.classList.contains("tasks-button-active")
+            ).toBe(true);
+        });
+
+        test("All Tasks button when all tasks not enabled", () => {
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            expect(
+                screen
+                    .getByTestId("all-tasks-button")
+                    ?.classList.contains("tasks-button-active")
+            ).toBe(false);
+        });
+    });
+
+    describe("Ungrouped Tasks button should have the active class if that is the current task list type", () => {
+        test("Ungrouped Tasks button when ungrouped tasks enabled", () => {
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            expect(
+                screen
+                    .getByTestId("ungrouped-tasks-button")
+                    ?.classList.contains("tasks-button-active")
+            ).toBe(true);
+        });
+        
+        test("Ungrouped Tasks button when ungrouped tasks not enabled", () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            expect(
+                screen
+                    .getByTestId("ungrouped-tasks-button")
+                    ?.classList.contains("tasks-button-active")
+            ).toBe(false);
         });
     });
 });

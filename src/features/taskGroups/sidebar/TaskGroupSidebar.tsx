@@ -2,19 +2,23 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     addTaskGroup,
     selectTaskGroups,
+    selectTaskListType,
     switchToAllTasks,
-    switchToUngroupedTasks
+    switchToUngroupedTasks,
+    TaskListType
 } from "../../../redux/todoSlice";
 
 import "./TaskGroupSidebar.css";
 import { nanoid } from "nanoid";
 import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
+import classNames from "classnames";
 
 /**
  * This component contains the app sidebar, which contains the task groups
  */
 export const TaskGroupSidebar = () => {
     const taskGroups = useSelector(selectTaskGroups);
+    const taskListType = useSelector(selectTaskListType);
 
     const dispatch = useDispatch();
 
@@ -39,7 +43,11 @@ export const TaskGroupSidebar = () => {
             <div id="tasks-buttons-container" className="flex-column">
                 <button
                     id="all-tasks-button"
-                    className="tasks-button"
+                    data-testid="all-tasks-button"
+                    className={classNames(
+                        "tasks-button",
+                        taskListType === TaskListType.All ? "tasks-button-active" : ""
+                    )}
                     onClick={() => dispatch(switchToAllTasks())}
                 >
                     All Tasks
@@ -47,7 +55,13 @@ export const TaskGroupSidebar = () => {
 
                 <button
                     id="ungrouped-tasks-button"
-                    className="tasks-button"
+                    data-testid="ungrouped-tasks-button"
+                    className={classNames(
+                        "tasks-button",
+                        taskListType === TaskListType.Ungrouped
+                            ? "tasks-button-active"
+                            : ""
+                    )}
                     onClick={() => dispatch(switchToUngroupedTasks())}
                 >
                     Ungrouped Tasks

@@ -29,6 +29,16 @@
     background-color: #4654a7;
 }
 
+.tasks-button-active {
+    background-color: #525d9c;
+    cursor: default;
+}
+
+.tasks-button-active:hover {
+    background-color: #5d6cc1;
+    cursor: default;
+}
+
 #tasks-buttons-container {
     padding-left: 40px;
     padding-right: 40px;
