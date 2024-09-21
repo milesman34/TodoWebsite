@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TaskGroup } from "../TaskGroup";
 
 import "./TaskGroupComponent.css";
-import { selectActiveTaskGroup, setActiveTaskGroup } from "../../../redux/todoSlice";
+import { selectActiveTaskGroupID, setActiveTaskGroup } from "../../../redux/todoSlice";
 import classNames from "classnames";
 
 /**
@@ -12,8 +12,8 @@ import classNames from "classnames";
  */
 export const TaskGroupComponent = ({ taskGroup }: { taskGroup: TaskGroup }) => {
     // Figure out if this group is active
-    const activeGroup = useSelector(selectActiveTaskGroup);
-    const isActive = taskGroup.id === activeGroup;
+    const activeGroupID = useSelector(selectActiveTaskGroupID);
+    const isActive = taskGroup.id === activeGroupID;
 
     const dispatch = useDispatch();
 

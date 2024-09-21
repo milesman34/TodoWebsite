@@ -1,6 +1,6 @@
 #task-group-sidebar {
     width: 25vw;
-    height: calc(100% - 80px);
+    height: 100%;
     display: flex;
     flex-direction: column;
     background-color: #33354a;

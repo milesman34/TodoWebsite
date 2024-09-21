@@ -144,7 +144,14 @@ export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
  * @param state
  * @returns
  */
-export const selectActiveTaskGroup = (state: TodoState): string => state.activeTaskGroup;
+export const selectActiveTaskGroupID = (state: TodoState): string => state.activeTaskGroup;
+
+/**
+ * Searches for a task group matching the active task group ID, returning undefined if it does not exist
+ * @param state 
+ * @returns 
+ */
+export const selectActiveTaskGroup = (state: TodoState): TaskGroup | undefined => state.groups.find(taskGroup => taskGroup.id === state.activeTaskGroup);
 
 /**
  * Selects the list of all tasks
@@ -184,3 +191,10 @@ export const selectTasksInCurrentTaskList = (state: TodoState): Task[] => {
             return selectTasksInActiveGroup(state);
     }
 };
+
+/**
+ * Returns the current task list type
+ * @param state 
+ * @returns 
+ */
+export const selectTaskListType = (state: TodoState): TaskListType => state.taskListType;

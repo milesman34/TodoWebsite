@@ -4,6 +4,7 @@ import reducer, {
     addTask,
     addTaskGroup,
     initialState,
+    selectActiveTaskGroup,
     selectAllTasks,
     selectTasksInActiveGroup,
     selectTasksInCurrentTaskList,
@@ -283,6 +284,38 @@ describe("todoSlice", () => {
                 taskList[1],
                 taskList[2]
             ]);
+        });
+    });
+
+    describe("selectActiveTaskGroup", () => {
+        test("selectActiveTaskGroup finds a task group", () => {
+            const taskGroups = [
+                TaskGroup("My group", "", "id1"),
+                TaskGroup("Next group", "", "id2")
+            ];
+
+            const state = {
+                ...initialState,
+                groups: taskGroups,
+                activeTaskGroup: "id1"
+            };
+
+            expect(selectActiveTaskGroup(state)).toEqual(taskGroups[0]);
+        });
+
+        test("selectActiveTaskGroup does not find a task group", () => {
+            const taskGroups = [
+                TaskGroup("My group", "", "id1"),
+                TaskGroup("Next group", "", "id2")
+            ];
+
+            const state = {
+                ...initialState,
+                groups: taskGroups,
+                activeTaskGroup: "id3"
+            };
+
+            expect(selectActiveTaskGroup(state)).toBe(undefined);
         });
     });
 });
