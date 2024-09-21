@@ -1,11 +1,11 @@
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
-import { createStore } from "../../../app/store";
+import { createStore } from "../../../redux/store";
 import { TaskGroupComponent } from "./TaskGroupComponent";
 import { TaskGroup } from "../TaskGroup";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { setActiveTaskGroup, setGroups } from "../taskGroupSlice";
+import { setActiveTaskGroup, setGroups } from "../../../redux/todoSlice";
 
 describe("TaskGroupComponent", () => {
     describe("Component should display if it is active", () => {

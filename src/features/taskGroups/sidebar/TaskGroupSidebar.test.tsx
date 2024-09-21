@@ -5,7 +5,7 @@ import { TaskGroupSidebar } from "./TaskGroupSidebar";
 import { describe, expect, Mock, test, vi } from "vitest";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
-import { createStore } from "../../../app/store";
+import { createStore } from "../../../redux/store";
 
 vi.mock("nanoid", () => ({
     nanoid: vi.fn()

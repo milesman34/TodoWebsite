@@ -1,5 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addTaskGroup, selectTaskGroups } from "../taskGroupSlice";
+import {
+    addTaskGroup,
+    selectTaskGroups,
+    switchToAllTasks,
+    switchToUngroupedTasks
+} from "../../../redux/todoSlice";
 
 import "./TaskGroupSidebar.css";
 import { nanoid } from "nanoid";
@@ -32,11 +37,19 @@ export const TaskGroupSidebar = () => {
     return (
         <div id="task-group-sidebar">
             <div id="tasks-buttons-container" className="flex-column">
-                <button id="all-tasks-button" className="tasks-button">
+                <button
+                    id="all-tasks-button"
+                    className="tasks-button"
+                    onClick={() => dispatch(switchToAllTasks())}
+                >
                     All Tasks
                 </button>
 
-                <button id="ungrouped-tasks-button" className="tasks-button">
+                <button
+                    id="ungrouped-tasks-button"
+                    className="tasks-button"
+                    onClick={() => dispatch(switchToUngroupedTasks())}
+                >
                     Ungrouped Tasks
                 </button>
             </div>
@@ -44,8 +57,12 @@ export const TaskGroupSidebar = () => {
             <div id="task-groups-text">Task Groups</div>
 
             <div id="task-groups-container">
-                <button id="add-task-group-button" data-testid="add-task-group-button" onClick={onAddTaskGroupClicked}>
-                    Add
+                <button
+                    id="add-task-group-button"
+                    data-testid="add-task-group-button"
+                    onClick={onAddTaskGroupClicked}
+                >
+                    Add Task Group
                 </button>
 
                 {taskGroups.map((taskGroup) => (
