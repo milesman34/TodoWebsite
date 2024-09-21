@@ -1,0 +1,27 @@
+.task-component {
+    width: 240px;
+    background-color: #3d4155;
+    border-radius: 5px;
+}
+
+.task-component:hover {
+    background-color: #4a506f;
+    cursor: pointer;
+}
+
+.task-component-name-display {
+    padding: 5px;
+
+    font-size: 21px;
+    font-family: "Inter";
+    color: white;
+
+    text-align: center;
+}
+
+.task-component-footer {
+    height: 20px;
+    background-color: #4a506f;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}

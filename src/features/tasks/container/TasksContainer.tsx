@@ -61,7 +61,7 @@ export const TasksContainer = () => {
                 Add Task
             </button>
 
-            <div id="task-components-container">
+            <div id="task-components-container" data-testid="task-components-container">
                 {tasks.map((task) => (
                     <TaskComponent key={task.id} task={task} />
                 ))}
