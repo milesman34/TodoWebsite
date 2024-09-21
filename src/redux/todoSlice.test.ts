@@ -6,6 +6,7 @@ import reducer, {
     initialState,
     selectAllTasks,
     selectTasksInActiveGroup,
+    selectTasksInCurrentTaskList,
     selectUngroupedTasks,
     setActiveTaskGroup,
     switchToAllTasks,
@@ -219,6 +220,69 @@ describe("todoSlice", () => {
             };
 
             expect(selectTasksInActiveGroup(state)).toEqual([taskList[1], taskList[2]]);
+        });
+    });
+
+    describe("selectTasksInCurrentTaskList", () => {
+        test("selectTasksInCurrentTaskList with all tasks", () => {
+            const taskList = [
+                Task("My task", "", "id1", "", 0, []),
+                Task("My task 2", "Why", "id2", "id1", 1, []),
+                Task("My task 3", "Testing", "id3", "id1", 2, []),
+                Task("My task 4", "", "id4", "", 0, []),
+                Task("My task 5", "", "id5", "id3", -1, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks: taskList,
+                taskListType: TaskListType.All
+            };
+
+            expect(selectTasksInCurrentTaskList(state)).toEqual(taskList);
+        });
+
+        test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+            const taskList = [
+                Task("My task", "", "id1", "", 0, []),
+                Task("My task 2", "Why", "id2", "id1", 1, []),
+                Task("My task 3", "Testing", "id3", "id1", 2, []),
+                Task("My task 4", "", "id4", "", 0, []),
+                Task("My task 5", "", "id5", "id3", -1, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks: taskList,
+                taskListType: TaskListType.Ungrouped
+            };
+
+            expect(selectTasksInCurrentTaskList(state)).toEqual([
+                taskList[0],
+                taskList[3]
+            ]);
+        });
+
+        test("selectTasksInCurrentTaskList with an active task group", () => {
+            const taskList = [
+                Task("My task", "", "id1", "", 0, []),
+                Task("My task 2", "Why", "id2", "id1", 1, []),
+                Task("My task 3", "Testing", "id3", "id1", 2, []),
+                Task("My task 4", "", "id4", "", 0, []),
+                Task("My task 5", "", "id5", "id3", -1, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks: taskList,
+                taskListType: TaskListType.TaskGroup,
+                activeTaskGroup: "id1"
+            };
+
+            expect(selectTasksInCurrentTaskList(state)).toEqual([
+                taskList[1],
+                taskList[2]
+            ]);
         });
     });
 });

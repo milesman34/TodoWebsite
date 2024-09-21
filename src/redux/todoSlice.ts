@@ -168,3 +168,19 @@ export const selectUngroupedTasks = (state: TodoState): Task[] =>
  */
 export const selectTasksInActiveGroup = (state: TodoState): Task[] =>
     state.tasks.filter((task) => task.taskGroupID === state.activeTaskGroup);
+
+/**
+ * Returns all of the tasks currently visible based on the task list type
+ */
+export const selectTasksInCurrentTaskList = (state: TodoState): Task[] => {
+    switch (state.taskListType) {
+        case TaskListType.All:
+            return state.tasks;
+
+        case TaskListType.Ungrouped:
+            return selectUngroupedTasks(state);
+
+        case TaskListType.TaskGroup:
+            return selectTasksInActiveGroup(state);
+    }
+};
