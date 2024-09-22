@@ -72,3 +72,16 @@
 #group-edit-title-button:active {
     background-color: #4654a7;
 }
+
+#group-description-label {
+    color: white;
+    font-size: 14px;
+    font-family: "Inter";
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+#group-description-textarea {
+    margin-left: 20px;
+    margin-top: 5px;
+}

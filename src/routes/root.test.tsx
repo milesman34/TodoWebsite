@@ -497,4 +497,34 @@ describe("Root", () => {
             expect(children[2].textContent).toBe("Tasks 2");
         });
     });
+
+    describe("Editing the description of a task group preserves this change when the user goes to a different area", () => {
+        test("Edit the description of a task group, go to a different page, then go back", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "id1")));
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Edit the description
+            await userEvent.type(screen.getByTestId("group-description-textarea"), "My Task Group");
+
+            // Go to a different page
+            await userEvent.click(screen.getByTestId("all-tasks-button"));
+
+            // Go back to this page
+            await userEvent.click(screen.getByTestId("task-group-component-id1"));
+
+            // Check if the description is accurate
+            const textarea = screen.getByTestId("group-description-textarea");
+
+            expect(textarea.textContent).toBe("My Task Group");
+        });
+    });
 });
