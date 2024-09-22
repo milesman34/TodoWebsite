@@ -5,11 +5,14 @@ import {
     selectActiveTaskGroup,
     selectTaskListType,
     selectTasksInCurrentTaskList,
+    setActiveTaskGroupDescription,
+    setActiveTaskGroupName,
     TaskListType
 } from "../../../redux/todoSlice";
 import { Task } from "../Task";
 import { nanoid } from "nanoid";
 import { TaskComponent } from "../task/TaskComponent";
+import React from "react";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -19,6 +22,9 @@ export const TasksContainer = () => {
     const taskListType = useSelector(selectTaskListType);
     const activeTaskGroup = useSelector(selectActiveTaskGroup);
     const tasks = useSelector(selectTasksInCurrentTaskList);
+
+    // Are we in a task group?
+    const inTaskGroup = activeTaskGroup !== undefined;
 
     const dispatch = useDispatch();
 
@@ -43,15 +49,60 @@ export const TasksContainer = () => {
         }
     };
 
+    // Runs when the edit title button is clicked
+    const onEditTitleButtonClicked = () => {
+        const groupName = prompt("Enter task group name")?.trim();
+
+        if (!(groupName === "" || groupName === undefined)) {
+            dispatch(setActiveTaskGroupName(groupName));
+        }
+    };
+
+    // Runs when the group description is changed
+    const onGroupDescriptionChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        dispatch(setActiveTaskGroupDescription(event.target.value));
+    };
+
     return (
         <div id="tasks-container">
-            <div id="tasks-type-text" data-testid="tasks-type-text">
-                {taskListType === TaskListType.All
-                    ? "All Tasks"
-                    : taskListType === TaskListType.Ungrouped
-                    ? "Ungrouped Tasks"
-                    : activeTaskGroup?.name}
+            <div className="flex-row">
+                <div id="tasks-type-text" data-testid="tasks-type-text">
+                    {taskListType === TaskListType.All
+                        ? "All Tasks"
+                        : taskListType === TaskListType.Ungrouped
+                        ? "Ungrouped Tasks"
+                        : activeTaskGroup?.name}
+                </div>
+
+                {inTaskGroup && (
+                    <button
+                        id="group-edit-title-button"
+                        data-testid="group-edit-title-button"
+                        onClick={onEditTitleButtonClicked}
+                    >
+                        Edit Title
+                    </button>
+                )}
             </div>
+
+            {inTaskGroup && (
+                <div
+                    id="group-description-container"
+                    data-testid="group-description-container"
+                >
+                    <div id="group-description-label">Description:</div>
+
+                    <textarea
+                        id="group-description-textarea"
+                        data-testid="group-description-textarea"
+                        aria-label="group-description"
+                        rows={2}
+                        cols={50}
+                        onChange={onGroupDescriptionChanged}
+                        value={activeTaskGroup.description}
+                    ></textarea>
+                </div>
+            )}
 
             <button
                 id="add-task-button"

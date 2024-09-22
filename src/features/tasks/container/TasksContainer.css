@@ -13,6 +13,10 @@
     font-family: "Inter";
     font-size: 24px;
     color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #add-task-button {
@@ -46,4 +50,45 @@
     gap: 20px;
 
     align-items: flex-start;
+}
+
+#group-edit-title-button {
+    margin-left: 20px;
+    background-color: #3f4666;
+    color: white;
+    font-size: 14px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+    margin-top: 20px;
+}
+
+#group-edit-title-button:hover {
+    background-color: #414c87;
+    cursor: pointer;
+}
+
+#group-edit-title-button:active {
+    background-color: #4654a7;
+}
+
+#group-description-label {
+    color: white;
+    font-size: 14px;
+    font-family: "Inter";
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+#group-description-textarea {
+    margin-left: 20px;
+    margin-top: 5px;
+
+    border: 1px solid white;
+    background-color: #242734;
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+    border-radius: 5px;
 }

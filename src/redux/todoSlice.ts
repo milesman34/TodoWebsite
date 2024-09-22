@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
+import { filterMap } from "../utils/utils";
 
 /**
  * Represents what type of task list is being viewed
@@ -124,6 +125,28 @@ const todoSlice = createSlice({
          */
         setTasks(state: TodoState, action: PayloadAction<Task[]>) {
             state.tasks = action.payload;
+        },
+
+        /**
+         * Changes the name of the active task group
+         */
+        setActiveTaskGroupName(state: TodoState, action: PayloadAction<string>) {
+            state.groups = filterMap(
+                state.groups,
+                (group) => group.id === state.activeTaskGroup,
+                (group) => ({ ...group, name: action.payload })
+            );
+        },
+
+        /**
+         * Changes the description of the active task group
+         */
+        setActiveTaskGroupDescription(state: TodoState, action: PayloadAction<string>) {
+            state.groups = filterMap(
+                state.groups,
+                (group) => group.id === state.activeTaskGroup,
+                (group) => ({ ...group, description: action.payload })
+            );
         }
     }
 });
@@ -133,6 +156,8 @@ export const {
     addTask,
     addTaskGroup,
     setActiveTaskGroup,
+    setActiveTaskGroupDescription,
+    setActiveTaskGroupName,
     setGroups,
     setTasks,
     switchToAllTasks,
@@ -179,7 +204,6 @@ export const selectAllTasks = (state: TodoState): Task[] => state.tasks;
  * @returns
  */
 export const selectTaskListType = (state: TodoState): TaskListType => state.taskListType;
-
 
 /**
  * Returns all of the tasks currently visible based on the task list type

@@ -253,4 +253,183 @@ describe("TasksContainer", () => {
             expect(children.length).toBe(0);
         });
     });
+
+    describe("Only displays Edit Title button if in a task group", () => {
+        test("Displays Edit Title button in a task group", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-edit-title-button")).toBeTruthy();
+        });
+
+        test("Does not display Edit Title button when not in a task group", () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-edit-title-button")).toBeFalsy();
+        });
+    });
+
+    describe("Can edit the title using the Edit Title button", () => {
+        test("Edit Title button edits the title", async () => {
+            vi.stubGlobal("prompt", () => "New Tasks");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            expect(screen.getByTestId("tasks-type-text").textContent).toBe("New Tasks");
+        });
+
+        test("Edit Title button does not edit the title if empty", async () => {
+            vi.stubGlobal("prompt", () => "");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+        });
+
+        test("Edit Title button does not edit the title when quit out", async () => {
+            vi.stubGlobal("prompt", () => undefined);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+        });
+    });
+
+    describe("Group description displays based on if it is in a task or not", () => {
+        test("Displays group description in a task group", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-description-container")).toBeTruthy();
+        });
+
+        test("Does not display group description when not in a task group", () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-description-container")).toBeFalsy();
+        });
+    });
+
+    describe("Group description displays the current description", () => {
+        test("Displays the current description", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "Description",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            // Check if the description matches
+            expect(screen.getByTestId("group-description-textarea").textContent).toBe(
+                "Description"
+            );
+        });
+    });
 });

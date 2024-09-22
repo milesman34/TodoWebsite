@@ -467,4 +467,64 @@ describe("Root", () => {
             expect(children.length).toBe(0);
         });
     });
+
+    describe("Editing the title of a task group must update the name of the task group button on the left", () => {
+        test("Edit name of task group to update the task group button's name", async () => {
+            vi.stubGlobal("prompt", () => "My Tasks");
+
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("New Tasks", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup("Tasks 2", "", "groupid2")));
+
+            store.dispatch(setActiveTaskGroup("groupid1"));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the edit title button
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            // Check the names of the task group buttons
+            const children = screen.getByTestId("task-groups-container")?.children;
+
+            expect(children).not.toBeUndefined();
+
+            expect(children[1].textContent).toBe("My Tasks");
+            expect(children[2].textContent).toBe("Tasks 2");
+        });
+    });
+
+    describe("Editing the description of a task group preserves this change when the user goes to a different area", () => {
+        test("Edit the description of a task group, go to a different page, then go back", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "id1")));
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Edit the description
+            await userEvent.type(screen.getByTestId("group-description-textarea"), "My Task Group");
+
+            // Go to a different page
+            await userEvent.click(screen.getByTestId("all-tasks-button"));
+
+            // Go back to this page
+            await userEvent.click(screen.getByTestId("task-group-component-id1"));
+
+            // Check if the description is accurate
+            const textarea = screen.getByTestId("group-description-textarea");
+
+            expect(textarea.textContent).toBe("My Task Group");
+        });
+    });
 });
