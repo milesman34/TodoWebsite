@@ -308,7 +308,7 @@ describe("Root", () => {
             );
         });
 
-        test("Create a new task in Ungrouped Tasks Tasks creates a new task not found in a task group", async () => {
+        test("Create a new task in Ungrouped Tasks creates a new task not found in a task group", async () => {
             // Set up the mock results
             (nanoid as Mock).mockImplementation(() => "id1");
             vi.stubGlobal("prompt", () => "My Task");
@@ -328,6 +328,136 @@ describe("Root", () => {
             await userEvent.click(screen.getByTestId("add-task-button"));
 
             await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+
+            // Make sure the new task does not appear in the task group
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(0);
+        });
+    });
+
+    describe("Creating a new task while in a specific task group creates a new task in that task group", () => {
+        test("Create a new task in a task group creates the new task", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            // Make sure the new task was created
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
+
+            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
+                "task-component-id1"
+            );
+
+            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
+                "My Task"
+            );
+        });
+
+        test("Create a new task in a task group creates a new task visible via all tasks", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            await userEvent.click(screen.getByTestId("all-tasks-button"));
+
+            // Make sure the new task was created
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
+
+            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
+                "task-component-id1"
+            );
+
+            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
+                "My Task"
+            );
+        });
+
+        test("Create a new task in a task group creates a new task not found in ungrouped tasks", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+
+            // Make sure the new task does not appear in the task group
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(0);
+        });
+
+        test("Create a new task in a task group creates a new task not found in a different task group", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My Group 2", "", "groupid2")));
+            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            await userEvent.click(screen.getByTestId("task-group-component-groupid2"));
 
             // Make sure the new task does not appear in the task group
             // Get the children of the main container
