@@ -70,7 +70,7 @@ export const TaskGroupSidebar = () => {
 
             <div id="task-groups-text">Task Groups</div>
 
-            <div id="task-groups-container">
+            <div id="task-groups-container" data-testid="task-groups-container">
                 <button
                     id="add-task-group-button"
                     data-testid="add-task-group-button"

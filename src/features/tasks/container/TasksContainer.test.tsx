@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, Mock, test, vi } from "vitest";
 import { createStore } from "../../../redux/store";
 import { render, screen } from "@testing-library/react";
 import { TasksContainer } from "./TasksContainer";
@@ -11,6 +11,12 @@ import {
     switchToUngroupedTasks
 } from "../../../redux/todoSlice";
 import { Task } from "../Task";
+import userEvent from "@testing-library/user-event";
+import { nanoid } from "nanoid";
+
+vi.mock("nanoid", () => ({
+    nanoid: vi.fn()
+}));
 
 describe("TasksContainer", () => {
     describe("TasksContainer displays the correct label for the list of tasks", () => {
@@ -163,6 +169,88 @@ describe("TasksContainer", () => {
             expect(children[1].attributes.getNamedItem("data-testid")?.value).toBe(
                 "task-component-id4"
             );
+        });
+    });
+
+    describe("Ability to add new Tasks", () => {
+        test("Add Task button creates a new task", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "First Task");
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
+
+            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
+                "task-component-id1"
+            );
+
+            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
+                "First Task"
+            );
+        });
+
+        test("Add Task button does not create a new task if the prompt is empty", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "");
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(0);
+        });
+
+        test("Add Task button does not create a new task if the prompt is undefined", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => undefined);
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(0);
         });
     });
 });
