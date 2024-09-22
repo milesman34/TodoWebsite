@@ -136,6 +136,17 @@ const todoSlice = createSlice({
                 (group) => group.id === state.activeTaskGroup,
                 (group) => ({ ...group, name: action.payload })
             );
+        },
+
+        /**
+         * Changes the description of the active task group
+         */
+        setActiveTaskGroupDescription(state: TodoState, action: PayloadAction<string>) {
+            state.groups = filterMap(
+                state.groups,
+                (group) => group.id === state.activeTaskGroup,
+                (group) => ({ ...group, description: action.payload })
+            );
         }
     }
 });
@@ -145,6 +156,7 @@ export const {
     addTask,
     addTaskGroup,
     setActiveTaskGroup,
+    setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setGroups,
     setTasks,
