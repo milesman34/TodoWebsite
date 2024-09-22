@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
+import { filterMap } from "../utils/utils";
 
 /**
  * Represents what type of task list is being viewed
@@ -130,13 +131,10 @@ const todoSlice = createSlice({
          * Changes the name of the active task group
          */
         setActiveTaskGroupName(state: TodoState, action: PayloadAction<string>) {
-            state.groups = state.groups.map((group) =>
-                group.id === state.activeTaskGroup
-                    ? {
-                          ...group,
-                          name: action.payload
-                      }
-                    : group
+            state.groups = filterMap(
+                state.groups,
+                (group) => group.id === state.activeTaskGroup,
+                (group) => ({ ...group, name: action.payload })
             );
         }
     }
