@@ -253,4 +253,40 @@ describe("TasksContainer", () => {
             expect(children.length).toBe(0);
         });
     });
+
+    describe("Only displays Edit Title button if in a task group", () => {
+        test("Displays Edit Title button in a task group", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-edit-title-button")).toBeTruthy();
+        });
+
+        test("Does not display Edit Title button when not in a task group", () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-edit-title-button")).toBeFalsy();
+        });
+    });
 });

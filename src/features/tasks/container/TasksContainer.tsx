@@ -57,7 +57,7 @@ export const TasksContainer = () => {
                         : activeTaskGroup?.name}
                 </div>
 
-                {inTaskGroup && <div>Test</div>}
+                {inTaskGroup && <button id="group-edit-title-button" data-testid="group-edit-title-button">Edit Title</button>}
             </div>
 
             <button
