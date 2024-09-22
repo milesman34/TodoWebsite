@@ -6,7 +6,8 @@ import {
     setActiveTaskGroup,
     setGroups,
     setTasks,
-    switchToAllTasks
+    switchToAllTasks,
+    switchToUngroupedTasks
 } from "../redux/todoSlice";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
@@ -215,6 +216,107 @@ describe("Root", () => {
 
             store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
             store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+
+            // Make sure the new task does not appear in the task group
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(0);
+        });
+    });
+
+    describe("Creating a new task while in Ungrouped Tasks creates an ungrouped task", () => {
+        test("Create a new task in Ungrouped Tasks creates the new task", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            // Make sure the new task was created
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
+
+            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
+                "task-component-id1"
+            );
+
+            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
+                "My Task"
+            );
+        });
+
+        test("Create a new task in Ungrouped Tasks creates a new task visible via all tasks", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the add task button
+            await userEvent.click(screen.getByTestId("add-task-button"));
+
+            await userEvent.click(screen.getByTestId("all-tasks-button"));
+
+            // Make sure the new task was created
+            // Get the children of the main container
+            const children = screen.getByTestId("task-components-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
+
+            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
+                "task-component-id1"
+            );
+
+            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
+                "My Task"
+            );
+        });
+
+        test("Create a new task in Ungrouped Tasks Tasks creates a new task not found in a task group", async () => {
+            // Set up the mock results
+            (nanoid as Mock).mockImplementation(() => "id1");
+            vi.stubGlobal("prompt", () => "My Task");
+
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(switchToUngroupedTasks());
 
             render(
                 <Provider store={store}>
