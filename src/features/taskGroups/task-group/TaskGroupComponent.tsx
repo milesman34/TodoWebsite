@@ -7,6 +7,8 @@ import classNames from "classnames";
 
 /**
  * This component displays a task group and can be clicked on to activate it
+ * 
+ * Use task-group-component-{id} to reference the main div
  * @param taskGroup
  * @returns
  */
