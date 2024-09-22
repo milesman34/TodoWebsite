@@ -20,6 +20,9 @@ export const TasksContainer = () => {
     const activeTaskGroup = useSelector(selectActiveTaskGroup);
     const tasks = useSelector(selectTasksInCurrentTaskList);
 
+    // Are we in a task group?
+    const inTaskGroup = activeTaskGroup !== undefined;
+
     const dispatch = useDispatch();
 
     // Runs when the add task button is clicked
@@ -45,12 +48,16 @@ export const TasksContainer = () => {
 
     return (
         <div id="tasks-container">
-            <div id="tasks-type-text" data-testid="tasks-type-text">
-                {taskListType === TaskListType.All
-                    ? "All Tasks"
-                    : taskListType === TaskListType.Ungrouped
-                    ? "Ungrouped Tasks"
-                    : activeTaskGroup?.name}
+            <div className="flex-row">
+                <div id="tasks-type-text" data-testid="tasks-type-text">
+                    {taskListType === TaskListType.All
+                        ? "All Tasks"
+                        : taskListType === TaskListType.Ungrouped
+                        ? "Ungrouped Tasks"
+                        : activeTaskGroup?.name}
+                </div>
+
+                {inTaskGroup && <div>Test</div>}
             </div>
 
             <button
