@@ -84,4 +84,11 @@
 #group-description-textarea {
     margin-left: 20px;
     margin-top: 5px;
+
+    border: 1px solid white;
+    background-color: #242734;
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+    border-radius: 5px;
 }
