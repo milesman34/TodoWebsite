@@ -289,4 +289,84 @@ describe("TasksContainer", () => {
             expect(screen.queryByTestId("group-edit-title-button")).toBeFalsy();
         });
     });
+
+    describe("Can edit the title using the Edit Title button", () => {
+        test("Edit Title button edits the title", async () => {
+            vi.stubGlobal("prompt", () => "New Tasks");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            expect(screen.getByTestId("tasks-type-text").textContent).toBe("New Tasks");
+        });
+
+        test("Edit Title button does not edit the title if empty", async () => {
+            vi.stubGlobal("prompt", () => "");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+        });
+
+        test("Edit Title button does not edit the title when quit out", async () => {
+            vi.stubGlobal("prompt", () => undefined);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+
+            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+        });
+    });
 });

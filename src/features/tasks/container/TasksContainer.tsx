@@ -5,6 +5,7 @@ import {
     selectActiveTaskGroup,
     selectTaskListType,
     selectTasksInCurrentTaskList,
+    setActiveTaskGroupName,
     TaskListType
 } from "../../../redux/todoSlice";
 import { Task } from "../Task";
@@ -46,6 +47,15 @@ export const TasksContainer = () => {
         }
     };
 
+    // Runs when the edit title button is clicked
+    const onEditTitleButtonClicked = () => {
+        const groupName = prompt("Enter task group name")?.trim();
+
+        if (!(groupName === "" || groupName === undefined)) {
+            dispatch(setActiveTaskGroupName(groupName));
+        }
+    };
+
     return (
         <div id="tasks-container">
             <div className="flex-row">
@@ -57,7 +67,15 @@ export const TasksContainer = () => {
                         : activeTaskGroup?.name}
                 </div>
 
-                {inTaskGroup && <button id="group-edit-title-button" data-testid="group-edit-title-button">Edit Title</button>}
+                {inTaskGroup && (
+                    <button
+                        id="group-edit-title-button"
+                        data-testid="group-edit-title-button"
+                        onClick={onEditTitleButtonClicked}
+                    >
+                        Edit Title
+                    </button>
+                )}
             </div>
 
             <button
