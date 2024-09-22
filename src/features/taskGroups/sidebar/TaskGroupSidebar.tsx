@@ -24,7 +24,7 @@ export const TaskGroupSidebar = () => {
 
     // Runs when the add task group button is clicked
     const onAddTaskGroupClicked = () => {
-        const taskGroupName = prompt("Enter name")?.trim();
+        const taskGroupName = prompt("Enter task group name")?.trim();
 
         // Add a new task with this name
         if (!(taskGroupName === "" || taskGroupName === undefined)) {
@@ -70,7 +70,7 @@ export const TaskGroupSidebar = () => {
 
             <div id="task-groups-text">Task Groups</div>
 
-            <div id="task-groups-container">
+            <div id="task-groups-container" data-testid="task-groups-container">
                 <button
                     id="add-task-group-button"
                     data-testid="add-task-group-button"

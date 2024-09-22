@@ -78,8 +78,11 @@ describe("TaskGroupSidebar", () => {
 
             await userEvent.click(screen.getByTestId("add-task-group-button"));
 
-            // There isn't a great way to test for the absence of an element, so instead check the store directly
-            expect(store.getState().groups).toEqual([]);
+            // Get the children of the main container
+            const children = screen.getByTestId("task-groups-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
         });
 
         test("Add Task Group button does not add a new task if the prompt was exited", async () => {
@@ -96,8 +99,11 @@ describe("TaskGroupSidebar", () => {
 
             await userEvent.click(screen.getByTestId("add-task-group-button"));
 
-            // There isn't a great way to test for the absence of an element, so instead check the store directly
-            expect(store.getState().groups).toEqual([]);
+            // Get the children of the main container
+            const children = screen.getByTestId("task-groups-container")?.children;
+
+            expect(children).not.toBeUndefined();
+            expect(children.length).toBe(1);
         });
     });
 
@@ -215,7 +221,7 @@ describe("TaskGroupSidebar", () => {
                     ?.classList.contains("tasks-button-active")
             ).toBe(true);
         });
-        
+
         test("Ungrouped Tasks button when ungrouped tasks not enabled", () => {
             const store = createStore();
 

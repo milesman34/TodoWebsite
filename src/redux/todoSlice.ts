@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
 
@@ -114,6 +114,16 @@ const todoSlice = createSlice({
             state.tasks.push(action.payload);
 
             state.activeTask = action.payload.id;
+        },
+
+        /**
+         * Sets the list of tasks (mainly designed for testing)
+         * @param state
+         * @param action
+         * @returns
+         */
+        setTasks(state: TodoState, action: PayloadAction<Task[]>) {
+            state.tasks = action.payload;
         }
     }
 });
@@ -124,6 +134,7 @@ export const {
     addTaskGroup,
     setActiveTaskGroup,
     setGroups,
+    setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
 } = todoSlice.actions;
@@ -144,14 +155,16 @@ export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
  * @param state
  * @returns
  */
-export const selectActiveTaskGroupID = (state: TodoState): string => state.activeTaskGroup;
+export const selectActiveTaskGroupID = (state: TodoState): string =>
+    state.activeTaskGroup;
 
 /**
  * Searches for a task group matching the active task group ID, returning undefined if it does not exist
- * @param state 
- * @returns 
+ * @param state
+ * @returns
  */
-export const selectActiveTaskGroup = (state: TodoState): TaskGroup | undefined => state.groups.find(taskGroup => taskGroup.id === state.activeTaskGroup);
+export const selectActiveTaskGroup = (state: TodoState): TaskGroup | undefined =>
+    state.groups.find((taskGroup) => taskGroup.id === state.activeTaskGroup);
 
 /**
  * Selects the list of all tasks
@@ -161,40 +174,28 @@ export const selectActiveTaskGroup = (state: TodoState): TaskGroup | undefined =
 export const selectAllTasks = (state: TodoState): Task[] => state.tasks;
 
 /**
- * Selects the list of all ungrouped tasks
+ * Returns the current task list type
  * @param state
  * @returns
  */
-export const selectUngroupedTasks = (state: TodoState): Task[] =>
-    state.tasks.filter((task) => task.taskGroupID === "");
+export const selectTaskListType = (state: TodoState): TaskListType => state.taskListType;
 
-/**
- * Returns all of the tasks in the active task group
- * @param state
- * @returns
- */
-export const selectTasksInActiveGroup = (state: TodoState): Task[] =>
-    state.tasks.filter((task) => task.taskGroupID === state.activeTaskGroup);
 
 /**
  * Returns all of the tasks currently visible based on the task list type
  */
-export const selectTasksInCurrentTaskList = (state: TodoState): Task[] => {
-    switch (state.taskListType) {
-        case TaskListType.All:
-            return state.tasks;
+export const selectTasksInCurrentTaskList = createSelector(
+    [selectTaskListType, selectAllTasks, selectActiveTaskGroupID],
+    (taskListType, tasks, activeTaskGroupID) => {
+        switch (taskListType) {
+            case TaskListType.All:
+                return tasks;
 
-        case TaskListType.Ungrouped:
-            return selectUngroupedTasks(state);
+            case TaskListType.Ungrouped:
+                return tasks.filter((task) => task.taskGroupID === "");
 
-        case TaskListType.TaskGroup:
-            return selectTasksInActiveGroup(state);
+            case TaskListType.TaskGroup:
+                return tasks.filter((task) => task.taskGroupID === activeTaskGroupID);
+        }
     }
-};
-
-/**
- * Returns the current task list type
- * @param state 
- * @returns 
- */
-export const selectTaskListType = (state: TodoState): TaskListType => state.taskListType;
+);
