@@ -8,6 +8,7 @@ import reducer, {
     selectAllTasks,
     selectTasksInCurrentTaskList,
     setActiveTaskGroup,
+    setActiveTaskGroupName,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -275,6 +276,30 @@ describe("todoSlice", () => {
             };
 
             expect(selectActiveTaskGroup(state)).toBe(undefined);
+        });
+    });
+
+    describe("setActiveTaskGroupName", () => {
+        test("setActiveTaskGroupName sets the name of the active task group", () => {
+            const inputGroups = [
+                TaskGroup("Group 1", "", "id1"),
+                TaskGroup("Group 2", "", "id2")
+            ];
+
+            const outputGroups = [
+                TaskGroup("My group", "", "id1"),
+                TaskGroup("Group 2", "", "id2")
+            ];
+
+            let state = {
+                ...initialState,
+                groups: inputGroups,
+                activeTaskGroup: "id1"
+            };
+
+            state = reducer(state, setActiveTaskGroupName("My group"));
+
+            expect(state.groups).toEqual(outputGroups);
         });
     });
 });
