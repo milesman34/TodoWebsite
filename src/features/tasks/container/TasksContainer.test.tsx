@@ -369,4 +369,67 @@ describe("TasksContainer", () => {
             expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
         });
     });
+
+    describe("Group description displays based on if it is in a task or not", () => {
+        test("Displays group description in a task group", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-description-container")).toBeTruthy();
+        });
+
+        test("Does not display group description when not in a task group", () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-description-container")).toBeFalsy();
+        });
+    });
+
+    describe("Group description displays the current description", () => {
+        test("Displays the current description", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup({
+                    name: "My Tasks",
+                    description: "Description",
+                    id: "id1"
+                })
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            // Check if the description matches
+            expect(screen.getByTestId("group-description-textarea").textContent).toBe(
+                "Description"
+            );
+        });
+    });
 });

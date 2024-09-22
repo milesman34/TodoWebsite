@@ -8,6 +8,7 @@ import reducer, {
     selectAllTasks,
     selectTasksInCurrentTaskList,
     setActiveTaskGroup,
+    setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     switchToAllTasks,
     switchToUngroupedTasks,
@@ -298,6 +299,30 @@ describe("todoSlice", () => {
             };
 
             state = reducer(state, setActiveTaskGroupName("My group"));
+
+            expect(state.groups).toEqual(outputGroups);
+        });
+    });
+
+    describe("setActiveTaskGroupDescription", () => {
+        test("setActiveTaskGroupDescription sets the description of the active task group", () => {
+            const inputGroups = [
+                TaskGroup("Group 1", "", "id1"),
+                TaskGroup("Group 2", "", "id2")
+            ];
+
+            const outputGroups = [
+                TaskGroup("Group 1", "", "id1"),
+                TaskGroup("Group 2", "My description", "id2")
+            ];
+
+            let state = {
+                ...initialState,
+                groups: inputGroups,
+                activeTaskGroup: "id2"
+            };
+
+            state = reducer(state, setActiveTaskGroupDescription("My description"));
 
             expect(state.groups).toEqual(outputGroups);
         });

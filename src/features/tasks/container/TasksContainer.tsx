@@ -5,12 +5,14 @@ import {
     selectActiveTaskGroup,
     selectTaskListType,
     selectTasksInCurrentTaskList,
+    setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     TaskListType
 } from "../../../redux/todoSlice";
 import { Task } from "../Task";
 import { nanoid } from "nanoid";
 import { TaskComponent } from "../task/TaskComponent";
+import React from "react";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -56,6 +58,11 @@ export const TasksContainer = () => {
         }
     };
 
+    // Runs when the group description is changed
+    const onGroupDescriptionChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        dispatch(setActiveTaskGroupDescription(event.target.value));
+    };
+
     return (
         <div id="tasks-container">
             <div className="flex-row">
@@ -77,6 +84,25 @@ export const TasksContainer = () => {
                     </button>
                 )}
             </div>
+
+            {inTaskGroup && (
+                <div
+                    id="group-description-container"
+                    data-testid="group-description-container"
+                >
+                    <div id="group-description-label">Description:</div>
+
+                    <textarea
+                        id="group-description-textarea"
+                        data-testid="group-description-textarea"
+                        aria-label="group-description"
+                        rows={2}
+                        cols={50}
+                        onChange={onGroupDescriptionChanged}
+                        value={activeTaskGroup.description}
+                    ></textarea>
+                </div>
+            )}
 
             <button
                 id="add-task-button"
