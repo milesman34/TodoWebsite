@@ -240,3 +240,12 @@ export const selectTasksInCurrentTaskList = createSelector(
         }
     }
 );
+
+/**
+ * Returns the task with the given ID if it exists, returning undefined otherwise
+ * @param id ID to search for
+ */
+export const selectTaskWithID =
+    (id: string) =>
+    (state: TodoState): Task | undefined =>
+        state.tasks.find((task) => task.id === id);

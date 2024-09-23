@@ -36,7 +36,7 @@
     border-top: 1px solid black;
 }
 
-.edit-title-task-button {
+.edit-name-task-button {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -53,10 +53,10 @@
     margin: 10px;
 }
 
-.edit-title-task-button:hover {
+.edit-name-task-button:hover {
     background-color: #58649e;
 }
 
-.edit-title-task-button:active {
+.edit-name-task-button:active {
     background-color: #6b77b6;
 }

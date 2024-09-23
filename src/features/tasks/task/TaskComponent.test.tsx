@@ -1,10 +1,11 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { Task } from "../Task";
 import { render, screen } from "@testing-library/react";
 import { createStore } from "../../../redux/store";
 import { Provider } from "react-redux";
 import { TaskComponent } from "./TaskComponent";
 import userEvent from "@testing-library/user-event";
+import { addTask } from "../../../redux/todoSlice";
 
 describe("TaskComponent", () => {
     describe("TaskComponent displays the correct information", () => {
@@ -13,9 +14,11 @@ describe("TaskComponent", () => {
 
             const store = createStore();
 
+            store.dispatch(addTask(task));
+
             render(
                 <Provider store={store}>
-                    <TaskComponent task={task} />
+                    <TaskComponent taskID={task.id} />
                 </Provider>
             );
 
@@ -31,9 +34,11 @@ describe("TaskComponent", () => {
 
             const store = createStore();
 
+            store.dispatch(addTask(task));
+
             render(
                 <Provider store={store}>
-                    <TaskComponent task={task} />
+                    <TaskComponent taskID={task.id} />
                 </Provider>
             );
 
@@ -47,9 +52,11 @@ describe("TaskComponent", () => {
 
             const store = createStore();
 
+            store.dispatch(addTask(task));
+
             render(
                 <Provider store={store}>
-                    <TaskComponent task={task} />
+                    <TaskComponent taskID={task.id} />
                 </Provider>
             );
 
@@ -65,9 +72,11 @@ describe("TaskComponent", () => {
 
             const store = createStore();
 
+            store.dispatch(addTask(task));
+
             render(
                 <Provider store={store}>
-                    <TaskComponent task={task} />
+                    <TaskComponent taskID={task.id} />
                 </Provider>
             );
 
@@ -80,15 +89,75 @@ describe("TaskComponent", () => {
     });
 
     describe("Clicking the Edit Name button lets you edit the task's name", () => {
-        test("Clicking the Edit Name button lets you change the names", async () => {
+        test("Clicking the Edit Name button lets you change the name", async () => {
+            vi.stubGlobal("prompt", () => "First Task");
+
             const task = Task("My task", "", "id1", "", 0, []);
 
             const store = createStore();
 
+            store.dispatch(addTask(task));
+
             render(
                 <Provider store={store}>
-                    <TaskComponent task={task} />
+                    <TaskComponent taskID={task.id} />
                 </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "First Task"
+            );
+        });
+
+        test("Clicking the Edit Name button and cancelling out does not change the name", async () => {
+            vi.stubGlobal("prompt", () => undefined);
+
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "My task"
+            );
+        });
+
+        test("Clicking the Edit Name button and submitting an empty name does not change the name", async () => {
+            vi.stubGlobal("prompt", () => "");
+
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "My task"
             );
         });
     });

@@ -114,7 +114,7 @@ export const TasksContainer = () => {
 
             <div id="task-components-container" data-testid="task-components-container">
                 {tasks.map((task) => (
-                    <TaskComponent key={task.id} task={task} />
+                    <TaskComponent key={task.id} taskID={task.id} />
                 ))}
             </div>
         </div>

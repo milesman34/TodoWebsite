@@ -7,6 +7,7 @@ import reducer, {
     selectActiveTaskGroup,
     selectAllTasks,
     selectTasksInCurrentTaskList,
+    selectTaskWithID,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
@@ -345,6 +346,36 @@ describe("todoSlice", () => {
             );
 
             expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("selectTaskWithID", () => {
+        test("selectTaskWithID when task exists", () => {
+            const tasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks
+            };
+
+            expect(selectTaskWithID("id2")(state)).toEqual(tasks[1]);
+        });
+
+        test("selectTaskWithID when task does not exist", () => {
+            const tasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks
+            };
+
+            expect(selectTaskWithID("id3")(state)).toEqual(undefined);
         });
     });
 });
