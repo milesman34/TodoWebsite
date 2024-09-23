@@ -9,6 +9,15 @@ export const TaskComponent = ({ task }: { task: Task }) => {
     // Is this task open?
     const [isOpen, setIsOpen] = useState(false);
 
+    // Runs when the edit title button is clicked
+    const onEditTitleClicked = () => {
+        const title = prompt("Enter task title")?.trim();
+
+        if (!(title === "" || title === undefined)) {
+            // Do something
+        }
+    }
+
     return (
         <div className="task-component" data-testid={`task-component-${task.id}`}>
             <div
@@ -21,7 +30,13 @@ export const TaskComponent = ({ task }: { task: Task }) => {
 
             {isOpen ? (
                 <div className="task-body" data-testid={`task-body-${task.id}`}>
-                    Test
+                    <button
+                        className="edit-title-task-button"
+                        data-testid={`edit-title-task-button-${task.id}`}
+                        onClick={onEditTitleClicked}
+                    >
+                        Edit Title
+                    </button>
                 </div>
             ) : (
                 <div

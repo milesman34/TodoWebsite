@@ -78,4 +78,18 @@ describe("TaskComponent", () => {
             expect(screen.queryByTestId("task-body-id1")).toBeFalsy();
         });
     });
+
+    describe("Clicking the Edit Name button lets you edit the task's name", () => {
+        test("Clicking the Edit Name button lets you change the names", async () => {
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent task={task} />
+                </Provider>
+            );
+        });
+    });
 });

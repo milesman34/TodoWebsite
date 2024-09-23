@@ -492,6 +492,7 @@ describe("Root", () => {
             const children = screen.getByTestId("task-groups-container")?.children;
 
             expect(children).not.toBeUndefined();
+            expect(children.length).toBe(3);
 
             expect(children[1].textContent).toBe("My Tasks");
             expect(children[2].textContent).toBe("Tasks 2");

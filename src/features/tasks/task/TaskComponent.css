@@ -28,3 +28,35 @@
     border-bottom-right-radius: 5px;
     cursor: pointer;
 }
+
+.task-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid black;
+}
+
+.edit-title-task-button {
+    background-color: #474f79;
+    color: white;
+    font-size: 16px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 10px;
+}
+
+.edit-title-task-button:hover {
+    background-color: #58649e;
+}
+
+.edit-title-task-button:active {
+    background-color: #6b77b6;
+}
