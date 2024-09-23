@@ -4,9 +4,11 @@
     border-radius: 5px;
 }
 
-.task-component:hover {
+.task-component-name-display:hover {
     background-color: #4a506f;
     cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .task-component-name-display {
@@ -24,4 +26,5 @@
     background-color: #4a506f;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    cursor: pointer;
 }

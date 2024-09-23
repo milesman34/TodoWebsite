@@ -27,9 +27,6 @@ type TodoState = {
 
     // List of tasks
     tasks: Task[];
-
-    // Active task is an ID
-    activeTask: string;
 };
 
 /**
@@ -39,8 +36,7 @@ export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
-    tasks: [],
-    activeTask: ""
+    tasks: []
 };
 
 // Todo slice handles tasks and task groups
@@ -113,8 +109,6 @@ const todoSlice = createSlice({
          */
         addTask(state: TodoState, action: PayloadAction<Task>) {
             state.tasks.push(action.payload);
-
-            state.activeTask = action.payload.id;
         },
 
         /**

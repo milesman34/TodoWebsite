@@ -154,16 +154,6 @@ describe("todoSlice", () => {
 
             expect(state.tasks).toEqual([task]);
         });
-
-        test("addTask updates active task", () => {
-            let state = initialState;
-
-            const task = Task("My task", "", "id1", "id1", 0, []);
-
-            state = reducer(state, addTask(task));
-
-            expect(state.activeTask).toBe("id1");
-        });
     });
 
     describe("selectAllTasks", () => {
