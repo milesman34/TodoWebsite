@@ -5,6 +5,8 @@ import "./TaskComponent.css";
  * Component for displaying a Task
  */
 export const TaskComponent = ({ task }: { task: Task }) => {
+    // Is this task active?
+
     return (
         <div className="task-component" data-testid={`task-component-${task.id}`}>
             <div
