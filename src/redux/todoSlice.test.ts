@@ -7,9 +7,11 @@ import reducer, {
     selectActiveTaskGroup,
     selectAllTasks,
     selectTasksInCurrentTaskList,
+    selectTaskWithID,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
+    setTaskName,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -153,16 +155,6 @@ describe("todoSlice", () => {
             state = reducer(state, addTask(task));
 
             expect(state.tasks).toEqual([task]);
-        });
-
-        test("addTask updates active task", () => {
-            let state = initialState;
-
-            const task = Task("My task", "", "id1", "id1", 0, []);
-
-            state = reducer(state, addTask(task));
-
-            expect(state.activeTask).toBe("id1");
         });
     });
 
@@ -325,6 +317,65 @@ describe("todoSlice", () => {
             state = reducer(state, setActiveTaskGroupDescription("My description"));
 
             expect(state.groups).toEqual(outputGroups);
+        });
+    });
+
+    describe("setTaskName", () => {
+        test("setTaskName sets the name of the given task", () => {
+            const inputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const outputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("My Task", "", "id2", "", 0, [])
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskName({
+                    taskID: "id2",
+                    name: "My Task"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("selectTaskWithID", () => {
+        test("selectTaskWithID when task exists", () => {
+            const tasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks
+            };
+
+            expect(selectTaskWithID("id2")(state)).toEqual(tasks[1]);
+        });
+
+        test("selectTaskWithID when task does not exist", () => {
+            const tasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const state = {
+                ...initialState,
+                tasks
+            };
+
+            expect(selectTaskWithID("id3")(state)).toEqual(undefined);
         });
     });
 });

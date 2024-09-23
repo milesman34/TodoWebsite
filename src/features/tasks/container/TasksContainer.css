@@ -52,7 +52,7 @@
     align-items: flex-start;
 }
 
-#group-edit-title-button {
+#group-edit-name-button {
     margin-left: 20px;
     background-color: #3f4666;
     color: white;
@@ -64,12 +64,12 @@
     margin-top: 20px;
 }
 
-#group-edit-title-button:hover {
+#group-edit-name-button:hover {
     background-color: #414c87;
     cursor: pointer;
 }
 
-#group-edit-title-button:active {
+#group-edit-name-button:active {
     background-color: #4654a7;
 }
 

@@ -1,0 +1,164 @@
+import { describe, expect, test, vi } from "vitest";
+import { Task } from "../Task";
+import { render, screen } from "@testing-library/react";
+import { createStore } from "../../../redux/store";
+import { Provider } from "react-redux";
+import { TaskComponent } from "./TaskComponent";
+import userEvent from "@testing-library/user-event";
+import { addTask } from "../../../redux/todoSlice";
+
+describe("TaskComponent", () => {
+    describe("TaskComponent displays the correct information", () => {
+        test("TaskComponent displays the title", () => {
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "My task"
+            );
+        });
+    });
+
+    describe("Clicking on a closed TaskComponent opens it", () => {
+        test("Clicking on the name display of a closed TaskComponent opens it", async () => {
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();
+        });
+
+        test("Clicking on the footer of a closed TaskComponent opens it", async () => {
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-footer-id1"));
+
+            expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();
+        });
+    });
+
+    describe("Clicking on the top of an open TaskComponent closes it", () => {
+        test("Clicking on the top of an open TaskComponent closes it", async () => {
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            expect(screen.queryByTestId("task-body-id1")).toBeFalsy();
+        });
+    });
+
+    describe("Clicking the Edit Name button lets you edit the task's name", () => {
+        test("Clicking the Edit Name button lets you change the name", async () => {
+            vi.stubGlobal("prompt", () => "First Task");
+
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "First Task"
+            );
+        });
+
+        test("Clicking the Edit Name button and cancelling out does not change the name", async () => {
+            vi.stubGlobal("prompt", () => undefined);
+
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "My task"
+            );
+        });
+
+        test("Clicking the Edit Name button and submitting an empty name does not change the name", async () => {
+            vi.stubGlobal("prompt", () => "");
+
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            store.dispatch(addTask(task));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID={task.id} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+
+            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
+                "My task"
+            );
+        });
+    });
+});

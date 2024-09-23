@@ -27,9 +27,6 @@ type TodoState = {
 
     // List of tasks
     tasks: Task[];
-
-    // Active task is an ID
-    activeTask: string;
 };
 
 /**
@@ -39,8 +36,7 @@ export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
-    tasks: [],
-    activeTask: ""
+    tasks: []
 };
 
 // Todo slice handles tasks and task groups
@@ -113,8 +109,6 @@ const todoSlice = createSlice({
          */
         addTask(state: TodoState, action: PayloadAction<Task>) {
             state.tasks.push(action.payload);
-
-            state.activeTask = action.payload.id;
         },
 
         /**
@@ -147,6 +141,28 @@ const todoSlice = createSlice({
                 (group) => group.id === state.activeTaskGroup,
                 (group) => ({ ...group, description: action.payload })
             );
+        },
+
+        /**
+         * Sets the name of a task
+         * @param state
+         * @param action payload containing the ID of the task and the new name
+         */
+        setTaskName(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                name: string;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    name: action.payload.name
+                })
+            );
         }
     }
 });
@@ -159,6 +175,7 @@ export const {
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setGroups,
+    setTaskName,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -223,3 +240,12 @@ export const selectTasksInCurrentTaskList = createSelector(
         }
     }
 );
+
+/**
+ * Returns the task with the given ID if it exists, returning undefined otherwise
+ * @param id ID to search for
+ */
+export const selectTaskWithID =
+    (id: string) =>
+    (state: TodoState): Task | undefined =>
+        state.tasks.find((task) => task.id === id);

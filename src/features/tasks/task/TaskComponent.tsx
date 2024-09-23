@@ -1,20 +1,67 @@
-import { Task } from "../Task";
+import { useState } from "react";
 import "./TaskComponent.css";
+import { useDispatch, useSelector } from "react-redux";
+import { selectTaskWithID, setTaskName } from "../../../redux/todoSlice";
 
 /**
  * Component for displaying a Task
+ * This uses taskID instead of task as the parameter since otherwise it won't be updated as easily if you are testing it
+ * It requires store support so that the component can actually be updated when it updates the store
  */
-export const TaskComponent = ({ task }: { task: Task }) => {
+export const TaskComponent = ({ taskID }: { taskID: string }) => {
+    // Is this task open?
+    const [isOpen, setIsOpen] = useState(false);
+
+    const dispatch = useDispatch();
+
+    const thisTask = useSelector(selectTaskWithID(taskID));
+
+    // Don't render the component if the task could not be found
+    if (thisTask === undefined) {
+        return null;
+    }
+
+    // Runs when the edit name button is clicked
+    const onEditNameClicked = () => {
+        const taskName = prompt("Enter task name")?.trim();
+
+        if (!(taskName === "" || taskName === undefined)) {
+            dispatch(
+                setTaskName({
+                    taskID: thisTask.id,
+                    name: taskName
+                })
+            );
+        }
+    };
+
     return (
-        <div className="task-component" data-testid={`task-component-${task.id}`}>
+        <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
             <div
                 className="task-component-name-display"
-                data-testid={`task-component-name-text-${task.id}`}
+                data-testid={`task-component-name-text-${thisTask.id}`}
+                onClick={() => setIsOpen(!isOpen)}
             >
-                {task.name}
+                {thisTask.name}
             </div>
 
-            <div className="task-component-footer" />
+            {isOpen ? (
+                <div className="task-body" data-testid={`task-body-${thisTask.id}`}>
+                    <button
+                        className="edit-name-task-button"
+                        data-testid={`edit-name-task-button-${thisTask.id}`}
+                        onClick={onEditNameClicked}
+                    >
+                        Edit Name
+                    </button>
+                </div>
+            ) : (
+                <div
+                    className="task-component-footer"
+                    data-testid={`task-component-footer-${thisTask.id}`}
+                    onClick={() => setIsOpen(true)}
+                />
+            )}
         </div>
     );
 };

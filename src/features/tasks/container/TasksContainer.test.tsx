@@ -254,8 +254,8 @@ describe("TasksContainer", () => {
         });
     });
 
-    describe("Only displays Edit Title button if in a task group", () => {
-        test("Displays Edit Title button in a task group", () => {
+    describe("Only displays Edit Name button if in a task group", () => {
+        test("Displays Edit Name button in a task group", () => {
             const store = createStore();
 
             store.dispatch(
@@ -274,10 +274,10 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            expect(screen.queryByTestId("group-edit-title-button")).toBeTruthy();
+            expect(screen.queryByTestId("group-edit-name-button")).toBeTruthy();
         });
 
-        test("Does not display Edit Title button when not in a task group", () => {
+        test("Does not display Edit Name button when not in a task group", () => {
             const store = createStore();
 
             render(
@@ -286,12 +286,12 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            expect(screen.queryByTestId("group-edit-title-button")).toBeFalsy();
+            expect(screen.queryByTestId("group-edit-name-button")).toBeFalsy();
         });
     });
 
-    describe("Can edit the title using the Edit Title button", () => {
-        test("Edit Title button edits the title", async () => {
+    describe("Can edit the group name using the Edit Name button", () => {
+        test("Edit Name button edits the group name", async () => {
             vi.stubGlobal("prompt", () => "New Tasks");
 
             const store = createStore();
@@ -312,12 +312,12 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+            await userEvent.click(screen.getByTestId("group-edit-name-button"));
 
             expect(screen.getByTestId("tasks-type-text").textContent).toBe("New Tasks");
         });
 
-        test("Edit Title button does not edit the title if empty", async () => {
+        test("Edit Name button does not edit the group name if empty", async () => {
             vi.stubGlobal("prompt", () => "");
 
             const store = createStore();
@@ -338,12 +338,12 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+            await userEvent.click(screen.getByTestId("group-edit-name-button"));
 
             expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
         });
 
-        test("Edit Title button does not edit the title when quit out", async () => {
+        test("Edit Name button does not edit the group name when quit out", async () => {
             vi.stubGlobal("prompt", () => undefined);
 
             const store = createStore();
@@ -364,7 +364,7 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+            await userEvent.click(screen.getByTestId("group-edit-name-button"));
 
             expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
         });
