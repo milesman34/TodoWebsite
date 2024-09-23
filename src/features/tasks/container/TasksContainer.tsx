@@ -49,8 +49,8 @@ export const TasksContainer = () => {
         }
     };
 
-    // Runs when the edit title button is clicked
-    const onEditTitleButtonClicked = () => {
+    // Runs when the edit name button is clicked
+    const onEditNameButtonClicked = () => {
         const groupName = prompt("Enter task group name")?.trim();
 
         if (!(groupName === "" || groupName === undefined)) {
@@ -76,11 +76,11 @@ export const TasksContainer = () => {
 
                 {inTaskGroup && (
                     <button
-                        id="group-edit-title-button"
-                        data-testid="group-edit-title-button"
-                        onClick={onEditTitleButtonClicked}
+                        id="group-edit-name-button"
+                        data-testid="group-edit-name-button"
+                        onClick={onEditNameButtonClicked}
                     >
-                        Edit Title
+                        Edit Name
                     </button>
                 )}
             </div>
@@ -96,7 +96,7 @@ export const TasksContainer = () => {
                         id="group-description-textarea"
                         data-testid="group-description-textarea"
                         aria-label="group-description"
-                        rows={2}
+                        rows={3}
                         cols={50}
                         onChange={onGroupDescriptionChanged}
                         value={activeTaskGroup.description}

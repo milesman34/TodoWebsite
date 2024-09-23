@@ -468,7 +468,7 @@ describe("Root", () => {
         });
     });
 
-    describe("Editing the title of a task group must update the name of the task group button on the left", () => {
+    describe("Editing the name of a task group must update the name of the task group button on the left", () => {
         test("Edit name of task group to update the task group button's name", async () => {
             vi.stubGlobal("prompt", () => "My Tasks");
 
@@ -486,7 +486,7 @@ describe("Root", () => {
             );
 
             // Click the edit title button
-            await userEvent.click(screen.getByTestId("group-edit-title-button"));
+            await userEvent.click(screen.getByTestId("group-edit-name-button"));
 
             // Check the names of the task group buttons
             const children = screen.getByTestId("task-groups-container")?.children;
