@@ -58,4 +58,24 @@ describe("TaskComponent", () => {
             expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();
         });
     });
+
+    describe("Clicking on the top of an open TaskComponent closes it", () => {
+        test("Clicking on the top of an open TaskComponent closes it", async () => {
+            const task = Task("My task", "", "id1", "", 0, []);
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent task={task} />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            expect(screen.queryByTestId("task-body-id1")).toBeFalsy();
+        });
+    });
 });

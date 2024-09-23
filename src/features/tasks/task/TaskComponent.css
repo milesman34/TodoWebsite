@@ -7,6 +7,8 @@
 .task-component-name-display:hover {
     background-color: #4a506f;
     cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .task-component-name-display {
