@@ -161,4 +161,26 @@ describe("TaskComponent", () => {
             );
         });
     });
+
+    describe("Task description displays the current description", () => {
+        test("Displays the current description", async () => {
+            const store = createStore();
+
+            store.dispatch(addTask(Task("My task", "My description", "id1", "", 0, [])));
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Open the task
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            // Check if the description matches
+            expect(screen.getByTestId("task-description-textarea-id1").textContent).toBe(
+                "My description"
+            );
+        });
+    });
 });

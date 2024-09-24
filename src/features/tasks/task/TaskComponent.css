@@ -60,3 +60,23 @@
 .edit-name-task-button:active {
     background-color: #6b77b6;
 }
+
+.task-description-label {
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+}
+
+.task-description-textarea {
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    border: 1px solid white;
+    background-color: #303650;
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+    border-radius: 5px;
+    resize: vertical;
+    padding: 5px;
+}

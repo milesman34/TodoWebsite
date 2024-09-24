@@ -2,6 +2,7 @@ import { describe, expect, Mock, test, vi } from "vitest";
 import { createStore } from "../redux/store";
 import { Task } from "../features/tasks/Task";
 import {
+    addTask,
     addTaskGroup,
     setActiveTaskGroup,
     setGroups,
@@ -514,7 +515,10 @@ describe("Root", () => {
             );
 
             // Edit the description
-            await userEvent.type(screen.getByTestId("group-description-textarea"), "My Task Group");
+            await userEvent.type(
+                screen.getByTestId("group-description-textarea"),
+                "My Task Group"
+            );
 
             // Go to a different page
             await userEvent.click(screen.getByTestId("all-tasks-button"));
@@ -526,6 +530,43 @@ describe("Root", () => {
             const textarea = screen.getByTestId("group-description-textarea");
 
             expect(textarea.textContent).toBe("My Task Group");
+        });
+    });
+
+    describe("Editing the description of a task preserves this change when the user goes to a different area", () => {
+        test("Edit the description of a task, go to a different page, then go back", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "groupid1")));
+            store.dispatch(addTask(Task("My task", "", "id1", "groupid1", 0, [])));
+
+            store.dispatch(setActiveTaskGroup("groupid1"));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Click the task
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            // Edit the description
+            await userEvent.type(
+                screen.getByTestId("task-description-textarea-id1"),
+                "My Description"
+            );
+
+            // Go to a different page
+            await userEvent.click(screen.getByTestId("all-tasks-button"));
+
+            // Go back to this page
+            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+
+            // Check if the description is accurate
+            const textarea = screen.getByTestId("task-description-textarea-id1");
+
+            expect(textarea.textContent).toBe("My Description");
         });
     });
 });
