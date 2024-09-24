@@ -569,4 +569,38 @@ describe("Root", () => {
             expect(textarea.textContent).toBe("My Description");
         });
     });
+
+    describe("An open task should stay open if the page is changed", () => {
+        test("Open task, go to different task group page, go back", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup("My tasks 2", "", "groupid2")));
+
+            store.dispatch(setActiveTaskGroup("groupid1"));
+            store.dispatch(addTask(Task("My task", "", "id1", "groupid1", 0, [])));
+            store.dispatch(addTask(Task("My task", "", "id2", "groupid1", 0, [])));
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            // Open the task
+            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+
+            // Go to a different page
+            await userEvent.click(screen.getByTestId("task-group-component-groupid2"));
+
+            // Go back to this page
+            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+
+            // Check if the task is still open
+            expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();
+
+            // Make sure the other task is still closed
+            expect(screen.queryByTestId("task-body-id2")).toBeFalsy();
+        });
+    });
 });

@@ -13,6 +13,7 @@ import reducer, {
     setActiveTaskGroupName,
     setTaskDescription,
     setTaskName,
+    setTaskOpen,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -402,6 +403,62 @@ describe("todoSlice", () => {
                 setTaskDescription({
                     taskID: "id2",
                     description: "My description"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("setTaskOpen", () => {
+        test("setTaskOpen sets a task to be open", () => {
+            const inputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const outputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [], true)
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskOpen({
+                    taskID: "id2",
+                    open: true
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("setTaskOpen sets a task to be closed", () => {
+            const inputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [], true)
+            ];
+
+            const outputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [], false)
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskOpen({
+                    taskID: "id2",
+                    open: false
                 })
             );
 
