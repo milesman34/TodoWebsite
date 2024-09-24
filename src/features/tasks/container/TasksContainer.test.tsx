@@ -78,10 +78,10 @@ describe("TasksContainer", () => {
             const store = createStore();
 
             const tasks = [
-                Task("Task 1", "", "id1", "groupid1", 0, []),
-                Task("Task 2", "", "id2", "groupid1", 0, []),
-                Task("Task 3", "", "id3", "", 0, []),
-                Task("Task 4", "", "id4", "groupid2", 0, [])
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupid1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "groupid1" }),
+                Task({ name: "Task 3", id: "id3", taskGroupID: "" }),
+                Task({ name: "Task 4", id: "id4", taskGroupID: "groupid2" })
             ];
 
             store.dispatch(setTasks(tasks));
@@ -111,10 +111,10 @@ describe("TasksContainer", () => {
             const store = createStore();
 
             const tasks = [
-                Task("Task 1", "", "id1", "groupid1", 0, []),
-                Task("Task 2", "", "id2", "groupid1", 0, []),
-                Task("Task 3", "", "id3", "", 0, []),
-                Task("Task 4", "", "id4", "groupid2", 0, [])
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupid1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "groupid1" }),
+                Task({ name: "Task 3", id: "id3", taskGroupID: "" }),
+                Task({ name: "Task 4", id: "id4", taskGroupID: "groupid2" })
             ];
 
             store.dispatch(setTasks(tasks));
@@ -141,10 +141,10 @@ describe("TasksContainer", () => {
             const store = createStore();
 
             const tasks = [
-                Task("Task 1", "", "id1", "groupid1", 0, []),
-                Task("Task 2", "", "id2", "groupid2", 0, []),
-                Task("Task 3", "", "id3", "", 0, []),
-                Task("Task 4", "", "id4", "groupid1", 0, [])
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupid1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "groupid2" }),
+                Task({ name: "Task 3", id: "id3", taskGroupID: "" }),
+                Task({ name: "Task 4", id: "id4", taskGroupID: "groupid1" })
             ];
 
             store.dispatch(setTasks(tasks));

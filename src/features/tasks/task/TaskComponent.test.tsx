@@ -10,7 +10,7 @@ import { addTask } from "../../../redux/todoSlice";
 describe("TaskComponent", () => {
     describe("TaskComponent displays the correct information", () => {
         test("TaskComponent displays the title", () => {
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -30,7 +30,7 @@ describe("TaskComponent", () => {
 
     describe("Clicking on a closed TaskComponent opens it", () => {
         test("Clicking on the name display of a closed TaskComponent opens it", async () => {
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -48,7 +48,7 @@ describe("TaskComponent", () => {
         });
 
         test("Clicking on the footer of a closed TaskComponent opens it", async () => {
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -68,7 +68,7 @@ describe("TaskComponent", () => {
 
     describe("Clicking on the top of an open TaskComponent closes it", () => {
         test("Clicking on the top of an open TaskComponent closes it", async () => {
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -92,7 +92,7 @@ describe("TaskComponent", () => {
         test("Clicking the Edit Name button lets you change the name", async () => {
             vi.stubGlobal("prompt", () => "First Task");
 
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -116,7 +116,7 @@ describe("TaskComponent", () => {
         test("Clicking the Edit Name button and cancelling out does not change the name", async () => {
             vi.stubGlobal("prompt", () => undefined);
 
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -140,7 +140,7 @@ describe("TaskComponent", () => {
         test("Clicking the Edit Name button and submitting an empty name does not change the name", async () => {
             vi.stubGlobal("prompt", () => "");
 
-            const task = Task("My task", "", "id1", "", 0, []);
+            const task = Task({ name: "My task", id: "id1" });
 
             const store = createStore();
 
@@ -166,7 +166,15 @@ describe("TaskComponent", () => {
         test("Displays the current description", async () => {
             const store = createStore();
 
-            store.dispatch(addTask(Task("My task", "My description", "id1", "", 0, [])));
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        description: "My description",
+                        id: "id1"
+                    })
+                )
+            );
 
             render(
                 <Provider store={store}>

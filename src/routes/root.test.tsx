@@ -27,10 +27,10 @@ describe("Root", () => {
             const store = createStore();
 
             const tasks = [
-                Task("Task 1", "", "id1", "groupid1", 0, []),
-                Task("Task 2", "", "id2", "groupid2", 0, []),
-                Task("Task 3", "", "id3", "", 0, []),
-                Task("Task 4", "", "id4", "groupid1", 0, [])
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupid1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "groupid2" }),
+                Task({ name: "Task 3", id: "id3", taskGroupID: "" }),
+                Task({ name: "Task 4", id: "id4", taskGroupID: "groupid1" })
             ];
 
             store.dispatch(setTasks(tasks));
@@ -64,10 +64,10 @@ describe("Root", () => {
             const store = createStore();
 
             const tasks = [
-                Task("Task 1", "", "id1", "groupid1", 0, []),
-                Task("Task 2", "", "id2", "groupid2", 0, []),
-                Task("Task 3", "", "id3", "", 0, []),
-                Task("Task 4", "", "id4", "groupid1", 0, [])
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupid1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "groupid2" }),
+                Task({ name: "Task 3", id: "id3", taskGroupID: "" }),
+                Task({ name: "Task 4", id: "id4", taskGroupID: "groupid1" })
             ];
 
             store.dispatch(setTasks(tasks));
@@ -97,15 +97,15 @@ describe("Root", () => {
             const store = createStore();
 
             const tasks = [
-                Task("Task 1", "", "id1", "groupid1", 0, []),
-                Task("Task 2", "", "id2", "groupid2", 0, []),
-                Task("Task 3", "", "id3", "", 0, []),
-                Task("Task 4", "", "id4", "groupid1", 0, [])
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupid1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "groupid2" }),
+                Task({ name: "Task 3", id: "id3", taskGroupID: "" }),
+                Task({ name: "Task 4", id: "id4", taskGroupID: "groupid1" })
             ];
 
             const taskGroups = [
-                TaskGroup("Group 1", "", "groupid1"),
-                TaskGroup("Group 2", "", "groupid2")
+                TaskGroup({ name: "Group 1", id: "groupid1" }),
+                TaskGroup({ name: "Group 2", id: "groupid2" })
             ];
 
             store.dispatch(setTasks(tasks));
@@ -215,7 +215,7 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My Group", id: "groupid1" })));
             store.dispatch(switchToAllTasks());
 
             render(
@@ -316,7 +316,7 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My Group", id: "groupid1" })));
             store.dispatch(switchToUngroupedTasks());
 
             render(
@@ -347,7 +347,7 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My Group", id: "groupid1" })));
 
             render(
                 <Provider store={store}>
@@ -381,7 +381,7 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My Group", id: "groupid1" })));
 
             render(
                 <Provider store={store}>
@@ -417,7 +417,7 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My Group", id: "groupid1" })));
             store.dispatch(switchToUngroupedTasks());
 
             render(
@@ -446,8 +446,11 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My Group 2", "", "groupid2")));
-            store.dispatch(addTaskGroup(TaskGroup("My Group", "", "groupid1")));
+            store.dispatch(
+                addTaskGroup(TaskGroup({ name: "My Group 2", id: "groupid2" }))
+            );
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My Group", id: "groupid1" })));
 
             render(
                 <Provider store={store}>
@@ -475,8 +478,11 @@ describe("Root", () => {
 
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("New Tasks", "", "groupid1")));
-            store.dispatch(addTaskGroup(TaskGroup("Tasks 2", "", "groupid2")));
+            store.dispatch(
+                addTaskGroup(TaskGroup({ name: "New Tasks", id: "groupid1" }))
+            );
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Tasks 2", id: "groupid2" })));
 
             store.dispatch(setActiveTaskGroup("groupid1"));
 
@@ -504,7 +510,7 @@ describe("Root", () => {
         test("Edit the description of a task group, go to a different page, then go back", async () => {
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "id1")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My tasks", id: "id1" })));
 
             store.dispatch(setActiveTaskGroup("id1"));
 
@@ -537,8 +543,17 @@ describe("Root", () => {
         test("Edit the description of a task, go to a different page, then go back", async () => {
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "groupid1")));
-            store.dispatch(addTask(Task("My task", "", "id1", "groupid1", 0, [])));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My tasks", id: "groupid1" })));
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "groupid1"
+                    })
+                )
+            );
 
             store.dispatch(setActiveTaskGroup("groupid1"));
 
@@ -574,12 +589,33 @@ describe("Root", () => {
         test("Open task, go to different task group page, go back", async () => {
             const store = createStore();
 
-            store.dispatch(addTaskGroup(TaskGroup("My tasks", "", "groupid1")));
-            store.dispatch(addTaskGroup(TaskGroup("My tasks 2", "", "groupid2")));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "My tasks", id: "groupid1" })));
+
+            store.dispatch(
+                addTaskGroup(TaskGroup({ name: "My tasks 2", id: "groupid2" }))
+            );
 
             store.dispatch(setActiveTaskGroup("groupid1"));
-            store.dispatch(addTask(Task("My task", "", "id1", "groupid1", 0, [])));
-            store.dispatch(addTask(Task("My task", "", "id2", "groupid1", 0, [])));
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "groupid1"
+                    })
+                )
+            );
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id2",
+                        taskGroupID: "groupid1"
+                    })
+                )
+            );
 
             render(
                 <Provider store={store}>
