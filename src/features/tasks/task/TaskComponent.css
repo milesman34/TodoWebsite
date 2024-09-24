@@ -36,7 +36,7 @@
     border-top: 1px solid black;
 }
 
-.edit-name-task-button {
+.edit-name-task-button, .task-priority-button {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -53,11 +53,11 @@
     margin: 10px;
 }
 
-.edit-name-task-button:hover {
+.edit-name-task-button:hover, .task-priority-button:hover {
     background-color: #58649e;
 }
 
-.edit-name-task-button:active {
+.edit-name-task-button:active, .task-priority-button:active {
     background-color: #6b77b6;
 }
 
@@ -84,8 +84,4 @@
 
 .task-priority-container {
     width: 100%;
-}
-
-.task-priority-label {
-    margin-bottom: 5px;
 }
