@@ -130,6 +130,17 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                                 Set Priority
                             </button>
                         </div>
+
+                        <div className="task-priority-adders">
+                            {[-10, -5, -1, 1, 5, 10].map((value) => (
+                                <button
+                                    className="task-priority-add-button"
+                                    data-testid={`task-priority-add-button-${value}-${thisTask.id}`}
+                                >
+                                    {value}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             ) : (
