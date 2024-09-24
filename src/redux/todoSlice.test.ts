@@ -14,6 +14,7 @@ import reducer, {
     setTaskDescription,
     setTaskName,
     setTaskOpen,
+    setTaskPriority,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -587,6 +588,35 @@ describe("todoSlice", () => {
                 setTaskOpen({
                     taskID: "id2",
                     open: false
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("setTaskPriority", () => {
+        test("setTaskPriority sets the priority of the given task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 5 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskPriority({
+                    taskID: "id1",
+                    priority: 5
                 })
             );
 
