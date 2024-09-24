@@ -11,6 +11,7 @@ import reducer, {
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
+    setTaskDescription,
     setTaskName,
     switchToAllTasks,
     switchToUngroupedTasks,
@@ -376,6 +377,35 @@ describe("todoSlice", () => {
             };
 
             expect(selectTaskWithID("id3")(state)).toEqual(undefined);
+        });
+    });
+
+    describe("setTaskDescription", () => {
+        test("setTaskDescription sets the description of the given task", () => {
+            const inputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "", "id2", "", 0, [])
+            ];
+
+            const outputTasks = [
+                Task("Task 1", "", "id1", "", 0, []),
+                Task("Task 2", "My description", "id2", "", 0, [])
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskDescription({
+                    taskID: "id2",
+                    description: "My description"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
         });
     });
 });

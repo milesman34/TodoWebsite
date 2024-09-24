@@ -1,7 +1,11 @@
 import { useState } from "react";
 import "./TaskComponent.css";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTaskWithID, setTaskName } from "../../../redux/todoSlice";
+import {
+    selectTaskWithID,
+    setTaskDescription,
+    setTaskName
+} from "../../../redux/todoSlice";
 
 /**
  * Component for displaying a Task
@@ -35,6 +39,16 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         }
     };
 
+    // Runs when the description is changed
+    const onDescriptionChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        dispatch(
+            setTaskDescription({
+                taskID: thisTask.id,
+                description: event.target.value
+            })
+        );
+    };
+
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
             <div
@@ -54,6 +68,20 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                     >
                         Edit Name
                     </button>
+
+                    <div className="task-description-container">
+                        <div className="task-description-label">Description:</div>
+
+                        <textarea
+                            className="task-description-textarea"
+                            data-testid={`task-description-textarea-${thisTask.id}`}
+                            aria-label="task-description"
+                            rows={3}
+                            cols={30}
+                            onChange={onDescriptionChanged}
+                            value={thisTask.description}
+                        ></textarea>
+                    </div>
                 </div>
             ) : (
                 <div

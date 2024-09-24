@@ -163,6 +163,28 @@ const todoSlice = createSlice({
                     name: action.payload.name
                 })
             );
+        },
+
+        /**
+         * Sets the description of a task
+         * @param state
+         * @param action payload containing the ID of the task and the new description
+         */
+        setTaskDescription(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                description: string;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    description: action.payload.description
+                })
+            );
         }
     }
 });
@@ -175,6 +197,7 @@ export const {
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setGroups,
+    setTaskDescription,
     setTaskName,
     setTasks,
     switchToAllTasks,
