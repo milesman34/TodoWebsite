@@ -89,6 +89,10 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                             value={thisTask.description}
                         ></textarea>
                     </div>
+
+                    <div className="task-priority-container">
+                        <div className="task-priority-label">Priority:</div>
+                    </div>
                 </div>
             ) : (
                 <div
