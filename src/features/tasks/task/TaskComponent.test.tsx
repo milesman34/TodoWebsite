@@ -219,4 +219,223 @@ describe("TaskComponent", () => {
             );
         });
     });
+
+    describe("Set priority button lets the user set the priority", () => {
+        test("Set priority button when 0 is entered", async () => {
+            vi.stubGlobal("prompt", () => "0");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 1,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 0"
+            );
+        });
+
+        test("Set priority button when positive integer is entered", async () => {
+            vi.stubGlobal("prompt", () => "10");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 10"
+            );
+        });
+
+        test("Set priority button when negative integer is entered", async () => {
+            vi.stubGlobal("prompt", () => "-5");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: -5"
+            );
+        });
+
+        test("Set priority button when prompt is cancelled", async () => {
+            vi.stubGlobal("prompt", () => undefined);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 0"
+            );
+        });
+
+        test("Set priority button when prompt is empty", async () => {
+            vi.stubGlobal("prompt", () => "");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 0"
+            );
+        });
+
+        test("Set priority button when prompt is a decimal number", async () => {
+            vi.stubGlobal("prompt", () => "3.5");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 3.5"
+            );
+        });
+
+        test("Set priority button when prompt is not a number", async () => {
+            vi.stubGlobal("prompt", () => "string");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Click the set priority button
+            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+
+            // Check if the priority is updated
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 0"
+            );
+        });
+    });
 });

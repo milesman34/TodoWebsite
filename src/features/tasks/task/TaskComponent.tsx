@@ -4,7 +4,8 @@ import {
     selectTaskWithID,
     setTaskDescription,
     setTaskName,
-    setTaskOpen
+    setTaskOpen,
+    setTaskPriority
 } from "../../../redux/todoSlice";
 
 /**
@@ -56,6 +57,28 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         );
     };
 
+    // Runs when the set task priority button is clicked
+    const onSetPriorityClicked = () => {
+        const priorityString = prompt("Enter task priority")?.trim();
+
+        if (priorityString === "" || priorityString === undefined) {
+            return;
+        }
+
+        const priorityParsed = parseFloat(priorityString);
+
+        if (isNaN(priorityParsed)) {
+            return;
+        }
+
+        dispatch(
+            setTaskPriority({
+                taskID: thisTask.id,
+                priority: priorityParsed
+            })
+        );
+    };
+
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
             <div
@@ -83,7 +106,7 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                             className="task-description-textarea"
                             data-testid={`task-description-textarea-${thisTask.id}`}
                             aria-label="task-description"
-                            rows={3}
+                            rows={5}
                             cols={30}
                             onChange={onDescriptionChanged}
                             value={thisTask.description}
@@ -96,6 +119,16 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                             data-testid={`task-priority-label-${thisTask.id}`}
                         >
                             Priority: {thisTask.priority}
+                        </div>
+
+                        <div className="flex-column-center">
+                            <button
+                                className="task-priority-button"
+                                data-testid={`task-priority-set-button-${thisTask.id}`}
+                                onClick={onSetPriorityClicked}
+                            >
+                                Set Priority
+                            </button>
                         </div>
                     </div>
                 </div>

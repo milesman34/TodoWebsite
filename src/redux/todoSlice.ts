@@ -205,6 +205,26 @@ const todoSlice = createSlice({
                     isOpen: action.payload.open
                 })
             );
+        },
+
+        /**
+         * Sets the priority of a task
+         */
+        setTaskPriority(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                priority: number;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    priority: action.payload.priority
+                })
+            );
         }
     }
 });
@@ -220,6 +240,7 @@ export const {
     setTaskDescription,
     setTaskName,
     setTaskOpen,
+    setTaskPriority,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
