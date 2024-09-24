@@ -191,4 +191,32 @@ describe("TaskComponent", () => {
             );
         });
     });
+
+    describe("Task priority label displays the current priority", () => {
+        test("Task priority label displays the current priority", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            // Check if the priority label matches
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+                "Priority: 5"
+            );
+        });
+    });
 });

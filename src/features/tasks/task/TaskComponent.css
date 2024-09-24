@@ -61,10 +61,11 @@
     background-color: #6b77b6;
 }
 
-.task-description-label {
+.task-description-label, .task-priority-label {
     color: white;
     font-family: "Inter";
     font-size: 14px;
+    text-align: center;
 }
 
 .task-description-textarea {
@@ -79,4 +80,12 @@
     border-radius: 5px;
     resize: vertical;
     padding: 5px;
+}
+
+.task-priority-container {
+    width: 100%;
+}
+
+.task-priority-label {
+    margin-bottom: 5px;
 }
