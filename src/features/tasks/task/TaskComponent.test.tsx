@@ -161,7 +161,7 @@ describe("TaskComponent", () => {
             );
         });
     });
-
+    
     describe("Task description displays the current description", () => {
         test("Displays the current description", async () => {
             const store = createStore();
