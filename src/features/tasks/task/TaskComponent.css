@@ -85,3 +85,7 @@
 .task-priority-container {
     width: 100%;
 }
+
+.task-priority-label {
+    margin-bottom: 5px;
+}

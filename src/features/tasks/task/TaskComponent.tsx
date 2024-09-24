@@ -91,7 +91,12 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                     </div>
 
                     <div className="task-priority-container">
-                        <div className="task-priority-label">Priority:</div>
+                        <div
+                            className="task-priority-label"
+                            data-testid={`task-priority-label-${thisTask.id}`}
+                        >
+                            Priority: {thisTask.priority}
+                        </div>
                     </div>
                 </div>
             ) : (
