@@ -185,6 +185,26 @@ const todoSlice = createSlice({
                     description: action.payload.description
                 })
             );
+        },
+
+        /**
+         * Sets if a task is open or not
+         */
+        setTaskOpen(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                open: boolean;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    isOpen: action.payload.open
+                })
+            );
         }
     }
 });
@@ -199,6 +219,7 @@ export const {
     setGroups,
     setTaskDescription,
     setTaskName,
+    setTaskOpen,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks

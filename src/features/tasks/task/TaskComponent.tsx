@@ -1,10 +1,10 @@
-import { useState } from "react";
 import "./TaskComponent.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
     selectTaskWithID,
     setTaskDescription,
-    setTaskName
+    setTaskName,
+    setTaskOpen
 } from "../../../redux/todoSlice";
 
 /**
@@ -13,9 +13,6 @@ import {
  * It requires store support so that the component can actually be updated when it updates the store
  */
 export const TaskComponent = ({ taskID }: { taskID: string }) => {
-    // Is this task open?
-    const [isOpen, setIsOpen] = useState(false);
-
     const dispatch = useDispatch();
 
     const thisTask = useSelector(selectTaskWithID(taskID));
@@ -49,17 +46,27 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         );
     };
 
+    // Sets if the task should be open
+    const setIsOpen = (open: boolean) => {
+        dispatch(
+            setTaskOpen({
+                taskID: thisTask.id,
+                open
+            })
+        );
+    };
+
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
             <div
                 className="task-component-name-display"
                 data-testid={`task-component-name-text-${thisTask.id}`}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(!thisTask.isOpen)}
             >
                 {thisTask.name}
             </div>
 
-            {isOpen ? (
+            {thisTask.isOpen ? (
                 <div className="task-body" data-testid={`task-body-${thisTask.id}`}>
                     <button
                         className="edit-name-task-button"
