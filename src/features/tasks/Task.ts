@@ -31,15 +31,23 @@ export type Task = {
  * @param isOpen optional
  * @returns
  */
-export const Task = (
-    name: string,
-    description: string,
-    id: string,
-    taskGroupID: string,
-    priority: number,
-    tags: string[],
+export const Task = ({
+    name,
+    description = "",
+    id,
+    taskGroupID = "",
+    priority = 0,
+    tags = [],
     isOpen = false
-): Task => ({
+}: {
+    name: string;
+    description?: string;
+    id: string;
+    taskGroupID?: string;
+    priority?: number;
+    tags?: string[];
+    isOpen?: boolean;
+}): Task => ({
     name,
     description,
     id,

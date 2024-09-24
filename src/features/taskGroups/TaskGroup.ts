@@ -15,7 +15,15 @@ export type TaskGroup = {
  * @param id
  * @returns
  */
-export const TaskGroup = (name: string, description: string, id: string): TaskGroup => ({
+export const TaskGroup = ({
+    name,
+    description = "",
+    id
+}: {
+    name: string;
+    description?: string;
+    id: string;
+}): TaskGroup => ({
     name,
     description,
     id

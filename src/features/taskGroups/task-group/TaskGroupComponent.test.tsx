@@ -10,7 +10,10 @@ import { setActiveTaskGroup, setGroups, TaskListType } from "../../../redux/todo
 describe("TaskGroupComponent", () => {
     describe("Component should display if it is active", () => {
         test("Active component has the active class", () => {
-            const taskGroup = TaskGroup("My Group", "", "id1");
+            const taskGroup = TaskGroup({
+                name: "My Group",
+                id: "id1"
+            });
 
             const store = createStore();
             store.dispatch(setActiveTaskGroup("id1"));
@@ -30,7 +33,10 @@ describe("TaskGroupComponent", () => {
         });
 
         test("Inactive component does not have the active class", () => {
-            const taskGroup = TaskGroup("My Group", "", "id1");
+            const taskGroup = TaskGroup({
+                name: "My Group",
+                id: "id1"
+            });
 
             const store = createStore();
             store.dispatch(setActiveTaskGroup("id2"));
@@ -52,7 +58,7 @@ describe("TaskGroupComponent", () => {
 
     describe("User should be able to click on a non-active Task Group to set it as active", () => {
         test("Click on a non-active Task Group to set it as active", async () => {
-            const taskGroup = TaskGroup("My Group", "", "id1");
+            const taskGroup = TaskGroup({ name: "My Group", id: "id1" });
 
             // Set up the store with the task group
             const store = createStore();
@@ -78,7 +84,7 @@ describe("TaskGroupComponent", () => {
 
     describe("User must be able to click on an active Task Group to de-activate it and view All Tasks instead", () => {
         test("Click on an active Task Group to set it as in-active", async () => {
-            const taskGroup = TaskGroup("My Group", "", "id1");
+            const taskGroup = TaskGroup({ name: "My Group", id: "id1" });
 
             // Set up the store with the task group
             const store = createStore();
@@ -103,7 +109,7 @@ describe("TaskGroupComponent", () => {
         });
 
         test("Click on an active Task Group to switch to viewing All Tasks", async () => {
-            const taskGroup = TaskGroup("My Group", "", "id1");
+            const taskGroup = TaskGroup({ name: "My Group", id: "id1" });
 
             // Set up the store with the task group
             const store = createStore();
