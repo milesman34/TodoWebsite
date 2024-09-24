@@ -36,14 +36,11 @@ export const TasksContainer = () => {
             // If we are in All Tasks or Ungrouped Tasks, then this is an ungrouped task, so just have an empty active task group id
             dispatch(
                 addTask(
-                    Task(
-                        taskName,
-                        "",
-                        nanoid(),
-                        activeTaskGroup === undefined ? "" : activeTaskGroup.id,
-                        0,
-                        []
-                    )
+                    Task({
+                        name: taskName,
+                        id: nanoid(),
+                        taskGroupID: activeTaskGroup === undefined ? "" : activeTaskGroup.id
+                    })
                 )
             );
         }
