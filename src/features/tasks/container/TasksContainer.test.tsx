@@ -1,4 +1,4 @@
-import { describe, expect, Mock, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createStore } from "../../../redux/store";
 import { render, screen } from "@testing-library/react";
 import { TasksContainer } from "./TasksContainer";
@@ -11,8 +11,15 @@ import {
     switchToUngroupedTasks
 } from "../../../redux/todoSlice";
 import { Task } from "../Task";
-import userEvent from "@testing-library/user-event";
 import { nanoid } from "nanoid";
+import {
+    clickButton,
+    countElementChildren,
+    getTestID,
+    getTextContent,
+    mockNanoid,
+    mockPrompt
+} from "../../../utils/testUtils";
 
 vi.mock("nanoid", () => ({
     nanoid: vi.fn()
@@ -31,7 +38,7 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            expect(screen.getByTestId("tasks-type-text").textContent).toBe("All Tasks");
+            expect(getTextContent("tasks-type-text")).toBe("All Tasks");
         });
 
         test('TasksContainer displays the label "Ungrouped Tasks" when set to Ungrouped Tasks', () => {
@@ -45,9 +52,7 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            expect(screen.getByTestId("tasks-type-text").textContent).toBe(
-                "Ungrouped Tasks"
-            );
+            expect(getTextContent("tasks-type-text")).toBe("Ungrouped Tasks");
         });
 
         test("TasksContainer displays the name of the task group when one is active", () => {
@@ -69,7 +74,7 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+            expect(getTextContent("tasks-type-text")).toBe("My Tasks");
         });
     });
 
@@ -94,16 +99,13 @@ describe("TasksContainer", () => {
             );
 
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
+            const children = screen.getByTestId("task-components-container").children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(4);
 
             for (let i = 0; i < tasks.length; i++) {
                 // Make sure the corresponding element in the collection array matches with the one in the task array
-                expect(children[i].attributes.getNamedItem("data-testid")?.value).toBe(
-                    `task-component-${tasks[i].id}`
-                );
+                expect(getTestID(children[i])).toBe(`task-component-${tasks[i].id}`);
             }
         });
 
@@ -129,12 +131,9 @@ describe("TasksContainer", () => {
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id3"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id3");
         });
 
         test("TasksContainer displays tasks in the corresponding group when a group is active", () => {
@@ -157,26 +156,21 @@ describe("TasksContainer", () => {
             );
 
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
+            const children = screen.getByTestId("task-components-container").children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(2);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(children[1].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id4"
-            );
+            expect(getTestID(children[1])).toBe("task-component-id4");
         });
     });
 
     describe("Ability to add new Tasks", () => {
         test("Add Task button creates a new task", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "First Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("First Task");
 
             const store = createStore();
 
@@ -188,27 +182,22 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "First Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("First Task");
         });
 
         test("Add Task button does not create a new task if the prompt is empty", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("");
 
             const store = createStore();
 
@@ -220,19 +209,16 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
-
-            expect(children).not.toBeUndefined();
-            expect(children.length).toBe(0);
+            expect(countElementChildren("task-components-container")).toBe(0);
         });
 
         test("Add Task button does not create a new task if the prompt is undefined", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => undefined);
+            mockNanoid(nanoid, "id1");
+            mockPrompt(null);
 
             const store = createStore();
 
@@ -244,13 +230,10 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
-
-            expect(children).not.toBeUndefined();
-            expect(children.length).toBe(0);
+            expect(countElementChildren("task-components-container")).toBe(0);
         });
     });
 
@@ -292,7 +275,7 @@ describe("TasksContainer", () => {
 
     describe("Can edit the group name using the Edit Name button", () => {
         test("Edit Name button edits the group name", async () => {
-            vi.stubGlobal("prompt", () => "New Tasks");
+            mockPrompt("New Tasks");
 
             const store = createStore();
 
@@ -312,13 +295,13 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("group-edit-name-button"));
+            await clickButton("group-edit-name-button");
 
-            expect(screen.getByTestId("tasks-type-text").textContent).toBe("New Tasks");
+            expect(getTextContent("tasks-type-text")).toBe("New Tasks");
         });
 
         test("Edit Name button does not edit the group name if empty", async () => {
-            vi.stubGlobal("prompt", () => "");
+            mockPrompt("");
 
             const store = createStore();
 
@@ -338,13 +321,13 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("group-edit-name-button"));
+            await clickButton("group-edit-name-button");
 
-            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+            expect(getTextContent("tasks-type-text")).toBe("My Tasks");
         });
 
         test("Edit Name button does not edit the group name when quit out", async () => {
-            vi.stubGlobal("prompt", () => undefined);
+            mockPrompt(null);
 
             const store = createStore();
 
@@ -364,9 +347,9 @@ describe("TasksContainer", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("group-edit-name-button"));
+            await clickButton("group-edit-name-button");
 
-            expect(screen.getByTestId("tasks-type-text").textContent).toBe("My Tasks");
+            expect(getTextContent("tasks-type-text")).toBe("My Tasks");
         });
     });
 
@@ -427,9 +410,7 @@ describe("TasksContainer", () => {
             );
 
             // Check if the description matches
-            expect(screen.getByTestId("group-description-textarea").textContent).toBe(
-                "Description"
-            );
+            expect(getTextContent("group-description-textarea")).toBe("Description");
         });
     });
 });

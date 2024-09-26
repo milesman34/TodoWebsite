@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
 import { TaskGroupComponent } from "./TaskGroupComponent";
 import { TaskGroup } from "../TaskGroup";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render } from "@testing-library/react";
+import { clickButton, containsClass } from "../../../utils/testUtils";
 import { setActiveTaskGroup, setGroups, TaskListType } from "../../../redux/todoSlice";
 
 describe("TaskGroupComponent", () => {
@@ -26,9 +26,7 @@ describe("TaskGroupComponent", () => {
 
             // Check if it is active
             expect(
-                screen
-                    .getByTestId("task-group-component-id1")
-                    ?.classList.contains("task-group-component-active")
+                containsClass("task-group-component-id1", "task-group-component-active")
             ).toBe(true);
         });
 
@@ -49,9 +47,7 @@ describe("TaskGroupComponent", () => {
 
             // Check if it is active
             expect(
-                screen
-                    .getByTestId("task-group-component-id1")
-                    ?.classList.contains("task-group-component-active")
+                containsClass("task-group-component-id1", "task-group-component-active")
             ).toBe(false);
         });
     });
@@ -71,13 +67,11 @@ describe("TaskGroupComponent", () => {
             );
 
             // Click the component
-            await userEvent.click(screen.getByTestId("task-group-component-id1"));
+            await clickButton("task-group-component-id1");
 
             // Check if it is active
             expect(
-                screen
-                    .getByTestId("task-group-component-id1")
-                    ?.classList.contains("task-group-component-active")
+                containsClass("task-group-component-id1", "task-group-component-active")
             ).toBe(true);
         });
     });
@@ -98,13 +92,11 @@ describe("TaskGroupComponent", () => {
             );
 
             // Click the component
-            await userEvent.click(screen.getByTestId("task-group-component-id1"));
+            await clickButton("task-group-component-id1");
 
             // Check if it is active
             expect(
-                screen
-                    .getByTestId("task-group-component-id1")
-                    ?.classList.contains("task-group-component-active")
+                containsClass("task-group-component-id1", "task-group-component-active")
             ).toBe(false);
         });
 
@@ -123,9 +115,9 @@ describe("TaskGroupComponent", () => {
             );
 
             // Click the component
-            await userEvent.click(screen.getByTestId("task-group-component-id1"));
+            await clickButton("task-group-component-id1");
 
-            // Check if it is active
+            // Check if it switched to viewing all tasks
             expect(store.getState().taskListType).toEqual(TaskListType.All);
         });
     });
