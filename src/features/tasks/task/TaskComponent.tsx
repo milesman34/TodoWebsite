@@ -7,6 +7,7 @@ import {
     setTaskOpen,
     setTaskPriority
 } from "../../../redux/todoSlice";
+import { TaskPriorityAddButton } from "./priority-add/TaskPriorityAddButton";
 
 /**
  * Component for displaying a Task
@@ -129,6 +130,12 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                             >
                                 Set Priority
                             </button>
+                        </div>
+
+                        <div className="task-priority-adders">
+                            {[-10, -5, -1, 1, 5, 10].map((value) => (
+                                <TaskPriorityAddButton key={value} taskID={thisTask.id} amount={value} />
+                            ))}
                         </div>
                     </div>
                 </div>

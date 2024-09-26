@@ -1,5 +1,5 @@
 .task-component {
-    width: 300px;
+    min-width: 300px;
     background-color: #3d4155;
     border-radius: 5px;
 }
@@ -36,7 +36,8 @@
     border-top: 1px solid black;
 }
 
-.edit-name-task-button, .task-priority-button {
+.edit-name-task-button,
+.task-priority-button {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -53,15 +54,18 @@
     margin: 10px;
 }
 
-.edit-name-task-button:hover, .task-priority-button:hover {
+.edit-name-task-button:hover,
+.task-priority-button:hover {
     background-color: #58649e;
 }
 
-.edit-name-task-button:active, .task-priority-button:active {
+.edit-name-task-button:active,
+.task-priority-button:active {
     background-color: #6b77b6;
 }
 
-.task-description-label, .task-priority-label {
+.task-description-label,
+.task-priority-label {
     color: white;
     font-family: "Inter";
     font-size: 14px;
@@ -84,4 +88,13 @@
 
 .task-priority-container {
     width: 100%;
+}
+
+.task-priority-adders {
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 10px;
 }
