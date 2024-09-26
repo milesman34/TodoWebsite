@@ -1,0 +1,22 @@
+.task-priority-add-button {
+    background-color: #474f79;
+    color: white;
+    font-size: 14px;
+    border: 1px solid white;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    width: 40px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.task-priority-add-button:hover {
+    background-color: #58649e;
+}
+
+.task-priority-add-button:active {
+    background-color: #6b77b6;
+}

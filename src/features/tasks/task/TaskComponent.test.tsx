@@ -214,7 +214,7 @@ describe("TaskComponent", () => {
             );
 
             // Check if the priority label matches
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
                 "Priority: 5"
             );
         });
@@ -435,6 +435,170 @@ describe("TaskComponent", () => {
             // Check if the priority is updated
             expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
                 "Priority: 0"
+            );
+        });
+    });
+
+    describe("Buttons for adding/subtracting the priority", () => {
+        test("Ability to subtract 10", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--10"));
+
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
+                "Priority: -5"
+            );
+        });
+        
+        test("Ability to subtract 5", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--5"));
+
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
+                "Priority: 0"
+            );
+        });
+        
+        test("Ability to subtract 1", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--1"));
+
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
+                "Priority: 4"
+            );
+        });
+        
+        test("Ability to add 1", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-1"));
+
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
+                "Priority: 6"
+            );
+        });
+        
+        test("Ability to add 5", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-5"));
+
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
+                "Priority: 10"
+            );
+        });
+        
+        test("Ability to add 10", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-10"));
+
+            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
+                "Priority: 15"
             );
         });
     });

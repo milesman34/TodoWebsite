@@ -3,6 +3,7 @@ import { Task } from "../features/tasks/Task";
 import reducer, {
     addTask,
     addTaskGroup,
+    addTaskPriority,
     initialState,
     selectActiveTaskGroup,
     selectAllTasks,
@@ -615,6 +616,35 @@ describe("todoSlice", () => {
             state = reducer(
                 state,
                 setTaskPriority({
+                    taskID: "id1",
+                    priority: 5
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("addTaskPriority", () => {
+        test("addTaskPriority adds to the priority of the given task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 3 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 8 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                addTaskPriority({
                     taskID: "id1",
                     priority: 5
                 })

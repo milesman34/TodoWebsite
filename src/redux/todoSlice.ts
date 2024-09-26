@@ -225,6 +225,26 @@ const todoSlice = createSlice({
                     priority: action.payload.priority
                 })
             );
+        },
+
+        /**
+         * Adds to the priority of a task
+         */
+        addTaskPriority(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                priority: number;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    priority: task.priority + action.payload.priority
+                })
+            );
         }
     }
 });
@@ -233,6 +253,7 @@ const todoSlice = createSlice({
 export const {
     addTask,
     addTaskGroup,
+    addTaskPriority,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
