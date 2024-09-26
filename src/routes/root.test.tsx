@@ -1,4 +1,4 @@
-import { describe, expect, Mock, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createStore } from "../redux/store";
 import { Task } from "../features/tasks/Task";
 import {
@@ -16,6 +16,15 @@ import { Root } from "./root";
 import userEvent from "@testing-library/user-event";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { nanoid } from "nanoid";
+import {
+    clickButton,
+    countElementChildren,
+    enterText,
+    getTestID,
+    getTextContent,
+    mockNanoid,
+    mockPrompt
+} from "../utils/testUtils";
 
 vi.mock("nanoid", () => ({
     nanoid: vi.fn()
@@ -43,20 +52,17 @@ describe("Root", () => {
             );
 
             // Click the all tasks button
-            await userEvent.click(screen.getByTestId("all-tasks-button"));
+            await clickButton("all-tasks-button");
 
             // Make sure all the tasks display
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(4);
 
             for (let i = 0; i < tasks.length; i++) {
                 // Make sure the corresponding element in the collection array matches with the one in the task array
-                expect(children[i].attributes.getNamedItem("data-testid")?.value).toBe(
-                    `task-component-${tasks[i].id}`
-                );
+                expect(getTestID(children[i])).toBe(`task-component-${tasks[i].id}`);
             }
         });
 
@@ -79,18 +85,15 @@ describe("Root", () => {
             );
 
             // Click the ungrouped tasks button
-            await userEvent.click(screen.getByTestId("ungrouped-tasks-button"));
+            await clickButton("ungrouped-tasks-button");
 
             // Make sure all the tasks display
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id3"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id3");
         });
 
         test("Clicking on a Task Group displays all the ungrouped tasks", async () => {
@@ -118,30 +121,25 @@ describe("Root", () => {
             );
 
             // Click the task group button
-            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+            await clickButton("task-group-component-groupid1");
 
             // Make sure all the tasks display
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(2);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(children[1].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id4"
-            );
+            expect(getTestID(children[1])).toBe("task-component-id4");
         });
     });
 
     describe("Creating a new task while in All Tasks creates an ungrouped task", () => {
         test("Create a new task in All Tasks creates the new task", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -154,28 +152,23 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
             // Make sure the new task was created
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "My Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My Task");
         });
 
         test("Create a new task in All Tasks creates a new ungrouped task", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -188,30 +181,25 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("ungrouped-tasks-button"));
+            await clickButton("ungrouped-tasks-button");
 
             // Make sure the new task was created
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "My Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My Task");
         });
 
         test("Create a new task in All Tasks creates a new task not found in a task group", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -225,24 +213,21 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+            await clickButton("task-group-component-groupid1");
 
             // Make sure the new task does not appear in the task group
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
-
-            expect(children).not.toBeUndefined();
-            expect(children.length).toBe(0);
+            expect(countElementChildren("task-components-container")).toBe(0);
         });
     });
 
     describe("Creating a new task while in Ungrouped Tasks creates an ungrouped task", () => {
         test("Create a new task in Ungrouped Tasks creates the new task", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -255,28 +240,23 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
             // Make sure the new task was created
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "My Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My Task");
         });
 
         test("Create a new task in Ungrouped Tasks creates a new task visible via all tasks", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -289,30 +269,25 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("all-tasks-button"));
+            await clickButton("all-tasks-button");
 
             // Make sure the new task was created
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "My Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My Task");
         });
 
         test("Create a new task in Ungrouped Tasks creates a new task not found in a task group", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -326,24 +301,21 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+            await clickButton("task-group-component-groupid1");
 
             // Make sure the new task does not appear in the task group
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
-
-            expect(children).not.toBeUndefined();
-            expect(children.length).toBe(0);
+            expect(countElementChildren("task-components-container")).toBe(0);
         });
     });
 
     describe("Creating a new task while in a specific task group creates a new task in that task group", () => {
         test("Create a new task in a task group creates the new task", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -356,28 +328,23 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
             // Make sure the new task was created
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "My Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My Task");
         });
 
         test("Create a new task in a task group creates a new task visible via all tasks", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -390,30 +357,25 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("all-tasks-button"));
+            await clickButton("all-tasks-button");
 
             // Make sure the new task was created
             // Get the children of the main container
             const children = screen.getByTestId("task-components-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(1);
 
-            expect(children[0].attributes.getNamedItem("data-testid")?.value).toBe(
-                "task-component-id1"
-            );
+            expect(getTestID(children[0])).toBe("task-component-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1")?.textContent).toBe(
-                "My Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My Task");
         });
 
         test("Create a new task in a task group creates a new task not found in ungrouped tasks", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -427,22 +389,19 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+            await clickButton("task-group-component-groupid1");
 
             // Make sure the new task does not appear in the task group
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
-
-            expect(children).not.toBeUndefined();
-            expect(children.length).toBe(0);
+            expect(countElementChildren("task-components-container")).toBe(0);
         });
 
         test("Create a new task in a task group creates a new task not found in a different task group", async () => {
             // Set up the mock results
-            (nanoid as Mock).mockImplementation(() => "id1");
-            vi.stubGlobal("prompt", () => "My Task");
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
 
             const store = createStore();
 
@@ -459,22 +418,19 @@ describe("Root", () => {
             );
 
             // Click the add task button
-            await userEvent.click(screen.getByTestId("add-task-button"));
+            await clickButton("add-task-button");
 
-            await userEvent.click(screen.getByTestId("task-group-component-groupid2"));
+            await clickButton("task-group-component-groupid2");
 
             // Make sure the new task does not appear in the task group
             // Get the children of the main container
-            const children = screen.getByTestId("task-components-container")?.children;
-
-            expect(children).not.toBeUndefined();
-            expect(children.length).toBe(0);
+            expect(countElementChildren("task-components-container")).toBe(0);
         });
     });
 
     describe("Editing the name of a task group must update the name of the task group button on the left", () => {
         test("Edit name of task group to update the task group button's name", async () => {
-            vi.stubGlobal("prompt", () => "My Tasks");
+            mockPrompt("My Tasks");
 
             const store = createStore();
 
@@ -493,12 +449,11 @@ describe("Root", () => {
             );
 
             // Click the edit title button
-            await userEvent.click(screen.getByTestId("group-edit-name-button"));
+            await clickButton("group-edit-name-button");
 
             // Check the names of the task group buttons
             const children = screen.getByTestId("task-groups-container")?.children;
 
-            expect(children).not.toBeUndefined();
             expect(children.length).toBe(3);
 
             expect(children[1].textContent).toBe("My Tasks");
@@ -527,15 +482,13 @@ describe("Root", () => {
             );
 
             // Go to a different page
-            await userEvent.click(screen.getByTestId("all-tasks-button"));
+            await clickButton("all-tasks-button");
 
             // Go back to this page
-            await userEvent.click(screen.getByTestId("task-group-component-id1"));
+            await clickButton("task-group-component-id1");
 
             // Check if the description is accurate
-            const textarea = screen.getByTestId("group-description-textarea");
-
-            expect(textarea.textContent).toBe("My Task Group");
+            expect(getTextContent("group-description-textarea")).toBe("My Task Group");
         });
     });
 
@@ -564,24 +517,21 @@ describe("Root", () => {
             );
 
             // Click the task
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
             // Edit the description
-            await userEvent.type(
-                screen.getByTestId("task-description-textarea-id1"),
-                "My Description"
-            );
+            await enterText("task-description-textarea-id1", "My Description");
 
             // Go to a different page
-            await userEvent.click(screen.getByTestId("all-tasks-button"));
+            await clickButton("all-tasks-button");
 
             // Go back to this page
-            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+            await clickButton("task-group-component-groupid1");
 
             // Check if the description is accurate
-            const textarea = screen.getByTestId("task-description-textarea-id1");
-
-            expect(textarea.textContent).toBe("My Description");
+            expect(getTextContent("task-description-textarea-id1")).toBe(
+                "My Description"
+            );
         });
     });
 
@@ -624,13 +574,13 @@ describe("Root", () => {
             );
 
             // Open the task
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
             // Go to a different page
-            await userEvent.click(screen.getByTestId("task-group-component-groupid2"));
+            await clickButton("task-group-component-groupid2");
 
             // Go back to this page
-            await userEvent.click(screen.getByTestId("task-group-component-groupid1"));
+            await clickButton("task-group-component-groupid1");
 
             // Check if the task is still open
             expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();

@@ -4,8 +4,8 @@ import { render, screen } from "@testing-library/react";
 import { createStore } from "../../../redux/store";
 import { Provider } from "react-redux";
 import { TaskComponent } from "./TaskComponent";
-import userEvent from "@testing-library/user-event";
 import { addTask } from "../../../redux/todoSlice";
+import { clickButton, getTextContent } from "../../../utils/testUtils";
 
 describe("TaskComponent", () => {
     describe("TaskComponent displays the correct information", () => {
@@ -22,9 +22,7 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
-                "My task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My task");
         });
     });
 
@@ -42,7 +40,7 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
             expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();
         });
@@ -60,7 +58,7 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-component-footer-id1"));
+            await clickButton("task-component-footer-id1");
 
             expect(screen.queryByTestId("task-body-id1")).not.toBeFalsy();
         });
@@ -80,9 +78,9 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
             expect(screen.queryByTestId("task-body-id1")).toBeFalsy();
         });
@@ -104,13 +102,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
-            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+            await clickButton("edit-name-task-button-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
-                "First Task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("First Task");
         });
 
         test("Clicking the Edit Name button and cancelling out does not change the name", async () => {
@@ -128,13 +124,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
-            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+            await clickButton("edit-name-task-button-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
-                "My task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My task");
         });
 
         test("Clicking the Edit Name button and submitting an empty name does not change the name", async () => {
@@ -152,13 +146,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
-            await userEvent.click(screen.getByTestId("edit-name-task-button-id1"));
+            await clickButton("edit-name-task-button-id1");
 
-            expect(screen.getByTestId("task-component-name-text-id1").textContent).toBe(
-                "My task"
-            );
+            expect(getTextContent("task-component-name-text-id1")).toBe("My task");
         });
     });
 
@@ -183,10 +175,10 @@ describe("TaskComponent", () => {
             );
 
             // Open the task
-            await userEvent.click(screen.getByTestId("task-component-name-text-id1"));
+            await clickButton("task-component-name-text-id1");
 
             // Check if the description matches
-            expect(screen.getByTestId("task-description-textarea-id1").textContent).toBe(
+            expect(getTextContent("task-description-textarea-id1")).toBe(
                 "My description"
             );
         });
@@ -214,9 +206,7 @@ describe("TaskComponent", () => {
             );
 
             // Check if the priority label matches
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: 5"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 5");
         });
     });
 
@@ -244,12 +234,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: 0"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: 0");
         });
 
         test("Set priority button when positive integer is entered", async () => {
@@ -275,12 +263,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: 10"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: 10");
         });
 
         test("Set priority button when negative integer is entered", async () => {
@@ -306,12 +292,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: -5"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: -5");
         });
 
         test("Set priority button when prompt is cancelled", async () => {
@@ -337,12 +321,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: 0"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: 0");
         });
 
         test("Set priority button when prompt is empty", async () => {
@@ -368,12 +350,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: 0"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: 0");
         });
 
         test("Set priority button when prompt is a decimal number", async () => {
@@ -399,12 +379,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: 3.5"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: 3.5");
         });
 
         test("Set priority button when prompt is not a number", async () => {
@@ -430,12 +408,10 @@ describe("TaskComponent", () => {
             );
 
             // Click the set priority button
-            await userEvent.click(screen.getByTestId("task-priority-set-button-id1"));
+            await clickButton("task-priority-set-button-id1");
 
             // Check if the priority is updated
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toEqual(
-                "Priority: 0"
-            );
+            expect(getTextContent("task-priority-label-id1")).toEqual("Priority: 0");
         });
     });
 
@@ -460,13 +436,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--10"));
+            await clickButton("task-priority-add-button-id1--10");
 
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: -5"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: -5");
         });
-        
+
         test("Ability to subtract 5", async () => {
             const store = createStore();
 
@@ -487,13 +461,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--5"));
+            await clickButton("task-priority-add-button-id1--5");
 
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: 0"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 0");
         });
-        
+
         test("Ability to subtract 1", async () => {
             const store = createStore();
 
@@ -514,13 +486,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--1"));
+            await clickButton("task-priority-add-button-id1--1");
 
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: 4"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 4");
         });
-        
+
         test("Ability to add 1", async () => {
             const store = createStore();
 
@@ -541,13 +511,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-1"));
+            await clickButton("task-priority-add-button-id1-1");
 
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: 6"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 6");
         });
-        
+
         test("Ability to add 5", async () => {
             const store = createStore();
 
@@ -568,13 +536,11 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-5"));
+            await clickButton("task-priority-add-button-id1-5");
 
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: 10"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 10");
         });
-        
+
         test("Ability to add 10", async () => {
             const store = createStore();
 
@@ -595,11 +561,9 @@ describe("TaskComponent", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-10"));
+            await clickButton("task-priority-add-button-id1-10");
 
-            expect(screen.getByTestId("task-priority-label-id1").textContent).toBe(
-                "Priority: 15"
-            );
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 15");
         });
     });
 });

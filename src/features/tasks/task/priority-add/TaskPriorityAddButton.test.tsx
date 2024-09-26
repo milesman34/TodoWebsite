@@ -1,11 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../../redux/store";
 import { TaskPriorityAddButton } from "./TaskPriorityAddButton";
 import { addTask } from "../../../../redux/todoSlice";
 import { Task } from "../../Task";
-import userEvent from "@testing-library/user-event";
+import { clickButton, getTextContent } from "../../../../utils/testUtils";
 
 describe("TaskPriorityAddButton", () => {
     describe("TaskPriorityAddButton displays correct text", () => {
@@ -16,9 +16,7 @@ describe("TaskPriorityAddButton", () => {
                 </Provider>
             );
 
-            expect(screen.getByTestId("task-priority-add-button-id1-1").textContent).toBe(
-                "+1"
-            );
+            expect(getTextContent("task-priority-add-button-id1-1")).toBe("+1");
         });
 
         test("TaskPriorityAddButton with negative number", () => {
@@ -28,9 +26,7 @@ describe("TaskPriorityAddButton", () => {
                 </Provider>
             );
 
-            expect(
-                screen.getByTestId("task-priority-add-button-id1--1").textContent
-            ).toBe("-1");
+            expect(getTextContent("task-priority-add-button-id1--1")).toBe("-1");
         });
     });
 
@@ -54,11 +50,11 @@ describe("TaskPriorityAddButton", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1-1"));
+            await clickButton("task-priority-add-button-id1-1");
 
             expect(store.getState().tasks[0].priority).toBe(6);
         });
-        
+
         test("TaskPriorityAddButton with negative number", async () => {
             const store = createStore();
 
@@ -78,7 +74,7 @@ describe("TaskPriorityAddButton", () => {
                 </Provider>
             );
 
-            await userEvent.click(screen.getByTestId("task-priority-add-button-id1--1"));
+            await clickButton("task-priority-add-button-id1--1");
 
             expect(store.getState().tasks[0].priority).toBe(4);
         });
