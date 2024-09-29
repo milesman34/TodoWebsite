@@ -566,4 +566,31 @@ describe("TaskComponent", () => {
             expect(getTextContent("task-priority-label-id1")).toBe("Priority: 15");
         });
     });
+
+    describe("Reset priority button", () => {
+        test("Reset priority button resets task priority to 0", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-priority-reset-button-id1");
+
+            expect(getTextContent("task-priority-label-id1")).toBe("Priority: 0");
+        });
+    })
 });
