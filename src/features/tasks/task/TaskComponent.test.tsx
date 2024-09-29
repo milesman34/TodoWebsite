@@ -592,5 +592,30 @@ describe("TaskComponent", () => {
 
             expect(getTextContent("task-priority-label-id1")).toBe("Priority: 0");
         });
-    })
+    });
+
+    describe("Top right displays priority", () => {
+        test("Top right corner displays priority", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 5,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            expect(getTextContent("task-component-priority-top-right-id1")).toBe("5");
+        });
+    });
 });
