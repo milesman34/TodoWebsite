@@ -82,12 +82,18 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
-            <div
-                className="task-component-name-display"
-                data-testid={`task-component-name-text-${thisTask.id}`}
-                onClick={() => setIsOpen(!thisTask.isOpen)}
-            >
-                {thisTask.name}
+            <div className="task-name-container">
+                <div
+                    className="task-component-name-display"
+                    data-testid={`task-component-name-text-${thisTask.id}`}
+                    onClick={() => setIsOpen(!thisTask.isOpen)}
+                >
+                    {thisTask.name}
+                </div>
+
+                <div className="task-component-priority-top-right" data-testid={`task-component-priority-top-right-${thisTask.id}`}>
+                    {thisTask.priority}
+                </div>
             </div>
 
             {thisTask.isOpen ? (
