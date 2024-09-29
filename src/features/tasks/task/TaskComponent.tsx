@@ -134,8 +134,29 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
                         <div className="task-priority-adders">
                             {[-10, -5, -1, 1, 5, 10].map((value) => (
-                                <TaskPriorityAddButton key={value} taskID={thisTask.id} amount={value} />
+                                <TaskPriorityAddButton
+                                    key={value}
+                                    taskID={thisTask.id}
+                                    amount={value}
+                                />
                             ))}
+                        </div>
+
+                        <div className="flex-column-center">
+                            <button
+                                className="task-priority-button"
+                                data-testid={`task-priority-reset-button-${thisTask.id}`}
+                                onClick={() =>
+                                    dispatch(
+                                        setTaskPriority({
+                                            taskID: thisTask.id,
+                                            priority: 0
+                                        })
+                                    )
+                                }
+                            >
+                                Reset Priority
+                            </button>
                         </div>
                     </div>
                 </div>
