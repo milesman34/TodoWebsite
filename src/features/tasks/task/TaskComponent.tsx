@@ -1,7 +1,15 @@
-import { useState } from "react";
 import "./TaskComponent.css";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTaskWithID, setTaskName } from "../../../redux/todoSlice";
+import {
+    addTaskTag,
+    selectTaskWithID,
+    setTaskDescription,
+    setTaskName,
+    setTaskOpen,
+    setTaskPriority
+} from "../../../redux/todoSlice";
+import { TaskPriorityAddButton } from "./priority-add/TaskPriorityAddButton";
+import { TaskTagComponent } from "./tag/TaskTagComponent";
 
 /**
  * Component for displaying a Task
@@ -9,9 +17,6 @@ import { selectTaskWithID, setTaskName } from "../../../redux/todoSlice";
  * It requires store support so that the component can actually be updated when it updates the store
  */
 export const TaskComponent = ({ taskID }: { taskID: string }) => {
-    // Is this task open?
-    const [isOpen, setIsOpen] = useState(false);
-
     const dispatch = useDispatch();
 
     const thisTask = useSelector(selectTaskWithID(taskID));
@@ -35,17 +40,86 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         }
     };
 
+    // Runs when the description is changed
+    const onDescriptionChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        dispatch(
+            setTaskDescription({
+                taskID: thisTask.id,
+                description: event.target.value
+            })
+        );
+    };
+
+    // Sets if the task should be open
+    const setIsOpen = (open: boolean) => {
+        dispatch(
+            setTaskOpen({
+                taskID: thisTask.id,
+                open
+            })
+        );
+    };
+
+    // Runs when the set task priority button is clicked
+    const onSetPriorityClicked = () => {
+        const priorityString = prompt("Enter task priority")?.trim();
+
+        if (priorityString === "" || priorityString === undefined) {
+            return;
+        }
+
+        const priorityParsed = parseFloat(priorityString);
+
+        if (isNaN(priorityParsed)) {
+            return;
+        }
+
+        dispatch(
+            setTaskPriority({
+                taskID: thisTask.id,
+                priority: priorityParsed
+            })
+        );
+    };
+
+    // Runs when the add tag button is clicked
+    const onAddTagClicked = () => {
+        const tagString = prompt("Enter tag name")?.trim();
+
+        if (tagString === "" || tagString === undefined) {
+            return;
+        }
+
+        dispatch(
+            addTaskTag({
+                taskID: thisTask.id,
+                tag: tagString
+            })
+        );
+    };
+
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
             <div
-                className="task-component-name-display"
-                data-testid={`task-component-name-text-${thisTask.id}`}
-                onClick={() => setIsOpen(!isOpen)}
+                className="task-name-container"
+                onClick={() => setIsOpen(!thisTask.isOpen)}
             >
-                {thisTask.name}
+                <div
+                    className="task-component-name-display"
+                    data-testid={`task-component-name-text-${thisTask.id}`}
+                >
+                    {thisTask.name}
+                </div>
+
+                <div
+                    className="task-component-priority-top-right"
+                    data-testid={`task-component-priority-top-right-${thisTask.id}`}
+                >
+                    {thisTask.priority}
+                </div>
             </div>
 
-            {isOpen ? (
+            {thisTask.isOpen ? (
                 <div className="task-body" data-testid={`task-body-${thisTask.id}`}>
                     <button
                         className="edit-name-task-button"
@@ -54,6 +128,93 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                     >
                         Edit Name
                     </button>
+
+                    <div className="task-description-container">
+                        <div className="task-description-label">Description:</div>
+
+                        <textarea
+                            className="task-description-textarea"
+                            data-testid={`task-description-textarea-${thisTask.id}`}
+                            aria-label="task-description"
+                            rows={5}
+                            cols={30}
+                            onChange={onDescriptionChanged}
+                            value={thisTask.description}
+                        ></textarea>
+                    </div>
+
+                    <div className="task-priority-container">
+                        <div
+                            className="task-priority-label"
+                            data-testid={`task-priority-label-${thisTask.id}`}
+                        >
+                            Priority: {thisTask.priority}
+                        </div>
+
+                        <div className="flex-column-center">
+                            <button
+                                className="task-priority-button"
+                                data-testid={`task-priority-set-button-${thisTask.id}`}
+                                onClick={onSetPriorityClicked}
+                            >
+                                Set Priority
+                            </button>
+                        </div>
+
+                        <div className="task-priority-adders">
+                            {[-10, -5, -1, 1, 5, 10].map((value) => (
+                                <TaskPriorityAddButton
+                                    key={value}
+                                    taskID={thisTask.id}
+                                    amount={value}
+                                />
+                            ))}
+                        </div>
+
+                        <div className="flex-column-center">
+                            <button
+                                className="task-priority-button"
+                                data-testid={`task-priority-reset-button-${thisTask.id}`}
+                                onClick={() =>
+                                    dispatch(
+                                        setTaskPriority({
+                                            taskID: thisTask.id,
+                                            priority: 0
+                                        })
+                                    )
+                                }
+                            >
+                                Reset Priority
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="task-tags-container">
+                        <div className="task-tags-label">Tags:</div>
+
+                        <div
+                            className="task-tags-list"
+                            data-testid={`task-tags-list-${thisTask.id}`}
+                        >
+                            {thisTask.tags.map((tag) => (
+                                <TaskTagComponent
+                                    key={tag}
+                                    taskID={thisTask.id}
+                                    tag={tag}
+                                />
+                            ))}
+                        </div>
+
+                        <div className="task-add-tag-button-container">
+                            <button
+                                className="task-add-tag-button"
+                                data-testid={`task-add-tag-button-${thisTask.id}`}
+                                onClick={onAddTagClicked}
+                            >
+                                Add Tag
+                            </button>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div

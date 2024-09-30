@@ -15,6 +15,9 @@ export type Task = {
 
     // List of tags for tasks
     tags: string[];
+
+    // Is the task currently open?
+    isOpen: boolean;
 };
 
 /**
@@ -25,20 +28,31 @@ export type Task = {
  * @param taskGroupID
  * @param priority
  * @param tags
+ * @param isOpen optional
  * @returns
  */
-export const Task = (
-    name: string,
-    description: string,
-    id: string,
-    taskGroupID: string,
-    priority: number,
-    tags: string[]
-): Task => ({
+export const Task = ({
+    name,
+    description = "",
+    id,
+    taskGroupID = "",
+    priority = 0,
+    tags = [],
+    isOpen = false
+}: {
+    name: string;
+    description?: string;
+    id: string;
+    taskGroupID?: string;
+    priority?: number;
+    tags?: string[];
+    isOpen?: boolean;
+}): Task => ({
     name,
     description,
     id,
     taskGroupID,
     priority,
-    tags
+    tags,
+    isOpen
 });

@@ -4,19 +4,42 @@
     border-radius: 5px;
 }
 
-.task-component-name-display:hover {
+.task-name-container:hover {
     background-color: #4a506f;
     cursor: pointer;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
 
+.task-name-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.task-component-priority-top-right {
+    color: white;
+    font-family: "Inter";
+    font-size: 18px;
+    width: 40px;
+
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
 .task-component-name-display {
+    z-index: 10;
+
     padding: 5px;
 
     font-size: 21px;
     font-family: "Inter";
     color: white;
+
+    width: 260px;
+    
+    word-break:break-all;
 
     text-align: center;
 }
@@ -36,7 +59,9 @@
     border-top: 1px solid black;
 }
 
-.edit-name-task-button {
+.edit-name-task-button,
+.task-priority-button,
+.task-add-tag-button {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -53,10 +78,69 @@
     margin: 10px;
 }
 
-.edit-name-task-button:hover {
+.edit-name-task-button:hover,
+.task-priority-button:hover,
+.task-add-tag-button:hover {
     background-color: #58649e;
 }
 
-.edit-name-task-button:active {
+.edit-name-task-button:active,
+.task-priority-button:active,
+.task-add-tag-button:active {
     background-color: #6b77b6;
+}
+
+.task-description-label,
+.task-priority-label,
+.task-tags-label {
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+    text-align: center;
+}
+
+.task-description-textarea {
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    border: 1px solid white;
+    background-color: #303650;
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+    border-radius: 5px;
+    resize: vertical;
+    padding: 5px;
+}
+
+.task-priority-container {
+    width: 100%;
+}
+
+.task-priority-adders {
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.task-tags-container {
+    width: 100%;
+}
+
+.task-tags-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.task-add-tag-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }

@@ -3,7 +3,10 @@ import { Task } from "../features/tasks/Task";
 import reducer, {
     addTask,
     addTaskGroup,
+    addTaskPriority,
+    addTaskTag,
     initialState,
+    removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
     selectTasksInCurrentTaskList,
@@ -11,7 +14,10 @@ import reducer, {
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
+    setTaskDescription,
     setTaskName,
+    setTaskOpen,
+    setTaskPriority,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -24,7 +30,7 @@ describe("todoSlice", () => {
         test("addTaskGroup adds a task group", () => {
             const state = initialState;
 
-            const taskGroup = TaskGroup("Test", "", "0");
+            const taskGroup = TaskGroup({ name: "Test", id: "0" });
 
             const newState = reducer(state, addTaskGroup(taskGroup));
 
@@ -34,8 +40,12 @@ describe("todoSlice", () => {
         test("addTaskGroup adds multiple task groups", () => {
             const state = initialState;
 
-            const taskGroup1 = TaskGroup("Test", "", "0");
-            const taskGroup2 = TaskGroup("Test2", "Description", "1");
+            const taskGroup1 = TaskGroup({ name: "Test", id: "0" });
+            const taskGroup2 = TaskGroup({
+                name: "Test2",
+                description: "Description",
+                id: "1"
+            });
 
             const newState1 = reducer(state, addTaskGroup(taskGroup1));
             const newState2 = reducer(newState1, addTaskGroup(taskGroup2));
@@ -46,8 +56,12 @@ describe("todoSlice", () => {
         test("addTaskGroup updates active task group", () => {
             const state = initialState;
 
-            const taskGroup1 = TaskGroup("Test", "", "0");
-            const taskGroup2 = TaskGroup("Test2", "Description", "1");
+            const taskGroup1 = TaskGroup({ name: "Test", id: "0" });
+            const taskGroup2 = TaskGroup({
+                name: "Test2",
+                description: "Description",
+                id: "1"
+            });
 
             const newState1 = reducer(state, addTaskGroup(taskGroup1));
             const newState2 = reducer(newState1, addTaskGroup(taskGroup2));
@@ -59,7 +73,7 @@ describe("todoSlice", () => {
         test("addTaskGroup updates task list type", () => {
             const state = initialState;
 
-            const taskGroup = TaskGroup("Test", "", "0");
+            const taskGroup = TaskGroup({ name: "Test", id: "0" });
 
             const newState = reducer(state, addTaskGroup(taskGroup));
 
@@ -150,7 +164,11 @@ describe("todoSlice", () => {
         test("addTask adds a task", () => {
             let state = initialState;
 
-            const task = Task("My task", "", "id1", "id1", 0, []);
+            const task = Task({
+                name: "My task",
+                id: "id1",
+                taskGroupID: "id1"
+            });
 
             state = reducer(state, addTask(task));
 
@@ -161,11 +179,40 @@ describe("todoSlice", () => {
     describe("selectAllTasks", () => {
         test("selectAllTasks selects all tasks", () => {
             const taskList = [
-                Task("My task", "", "id1", "", 0, []),
-                Task("My task 2", "Why", "id2", "id1", 1, []),
-                Task("My task 3", "Testing", "id3", "id1", 2, []),
-                Task("My task 4", "", "id4", "", 0, []),
-                Task("My task 5", "", "id5", "id3", -1, [])
+                Task({
+                    name: "My task",
+                    id: "id1",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 2",
+                    description: "Why",
+                    id: "id2",
+                    taskGroupID: "id1",
+                    priority: 1
+                }),
+
+                Task({
+                    name: "My task 3",
+                    description: "Testing",
+                    id: "id3",
+                    taskGroupID: "id1",
+                    priority: 2
+                }),
+
+                Task({
+                    name: "My task 4",
+                    id: "id4",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 5",
+                    id: "id5",
+                    taskGroupID: "id3",
+                    priority: -1
+                })
             ];
 
             const state = {
@@ -180,11 +227,40 @@ describe("todoSlice", () => {
     describe("selectTasksInCurrentTaskList", () => {
         test("selectTasksInCurrentTaskList with all tasks", () => {
             const taskList = [
-                Task("My task", "", "id1", "", 0, []),
-                Task("My task 2", "Why", "id2", "id1", 1, []),
-                Task("My task 3", "Testing", "id3", "id1", 2, []),
-                Task("My task 4", "", "id4", "", 0, []),
-                Task("My task 5", "", "id5", "id3", -1, [])
+                Task({
+                    name: "My task",
+                    id: "id1",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 2",
+                    description: "Why",
+                    id: "id2",
+                    taskGroupID: "id1",
+                    priority: 1
+                }),
+
+                Task({
+                    name: "My task 3",
+                    description: "Testing",
+                    id: "id3",
+                    taskGroupID: "id1",
+                    priority: 2
+                }),
+
+                Task({
+                    name: "My task 4",
+                    id: "id4",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 5",
+                    id: "id5",
+                    taskGroupID: "id3",
+                    priority: -1
+                })
             ];
 
             const state = {
@@ -198,11 +274,40 @@ describe("todoSlice", () => {
 
         test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
             const taskList = [
-                Task("My task", "", "id1", "", 0, []),
-                Task("My task 2", "Why", "id2", "id1", 1, []),
-                Task("My task 3", "Testing", "id3", "id1", 2, []),
-                Task("My task 4", "", "id4", "", 0, []),
-                Task("My task 5", "", "id5", "id3", -1, [])
+                Task({
+                    name: "My task",
+                    id: "id1",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 2",
+                    description: "Why",
+                    id: "id2",
+                    taskGroupID: "id1",
+                    priority: 1
+                }),
+
+                Task({
+                    name: "My task 3",
+                    description: "Testing",
+                    id: "id3",
+                    taskGroupID: "id1",
+                    priority: 2
+                }),
+
+                Task({
+                    name: "My task 4",
+                    id: "id4",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 5",
+                    id: "id5",
+                    taskGroupID: "id3",
+                    priority: -1
+                })
             ];
 
             const state = {
@@ -219,11 +324,40 @@ describe("todoSlice", () => {
 
         test("selectTasksInCurrentTaskList with an active task group", () => {
             const taskList = [
-                Task("My task", "", "id1", "", 0, []),
-                Task("My task 2", "Why", "id2", "id1", 1, []),
-                Task("My task 3", "Testing", "id3", "id1", 2, []),
-                Task("My task 4", "", "id4", "", 0, []),
-                Task("My task 5", "", "id5", "id3", -1, [])
+                Task({
+                    name: "My task",
+                    id: "id1",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 2",
+                    description: "Why",
+                    id: "id2",
+                    taskGroupID: "id1",
+                    priority: 1
+                }),
+
+                Task({
+                    name: "My task 3",
+                    description: "Testing",
+                    id: "id3",
+                    taskGroupID: "id1",
+                    priority: 2
+                }),
+
+                Task({
+                    name: "My task 4",
+                    id: "id4",
+                    taskGroupID: ""
+                }),
+
+                Task({
+                    name: "My task 5",
+                    id: "id5",
+                    taskGroupID: "id3",
+                    priority: -1
+                })
             ];
 
             const state = {
@@ -243,8 +377,8 @@ describe("todoSlice", () => {
     describe("selectActiveTaskGroup", () => {
         test("selectActiveTaskGroup finds a task group", () => {
             const taskGroups = [
-                TaskGroup("My group", "", "id1"),
-                TaskGroup("Next group", "", "id2")
+                TaskGroup({ name: "My group", id: "id1" }),
+                TaskGroup({ name: "Next group", id: "id2" })
             ];
 
             const state = {
@@ -258,8 +392,8 @@ describe("todoSlice", () => {
 
         test("selectActiveTaskGroup does not find a task group", () => {
             const taskGroups = [
-                TaskGroup("My group", "", "id1"),
-                TaskGroup("Next group", "", "id2")
+                TaskGroup({ name: "My group", id: "id1" }),
+                TaskGroup({ name: "Next group", id: "id2" })
             ];
 
             const state = {
@@ -275,13 +409,13 @@ describe("todoSlice", () => {
     describe("setActiveTaskGroupName", () => {
         test("setActiveTaskGroupName sets the name of the active task group", () => {
             const inputGroups = [
-                TaskGroup("Group 1", "", "id1"),
-                TaskGroup("Group 2", "", "id2")
+                TaskGroup({ name: "Group 1", id: "id1" }),
+                TaskGroup({ name: "Group 2", id: "id2" })
             ];
 
             const outputGroups = [
-                TaskGroup("My group", "", "id1"),
-                TaskGroup("Group 2", "", "id2")
+                TaskGroup({ name: "My group", id: "id1" }),
+                TaskGroup({ name: "Group 2", id: "id2" })
             ];
 
             let state = {
@@ -299,13 +433,13 @@ describe("todoSlice", () => {
     describe("setActiveTaskGroupDescription", () => {
         test("setActiveTaskGroupDescription sets the description of the active task group", () => {
             const inputGroups = [
-                TaskGroup("Group 1", "", "id1"),
-                TaskGroup("Group 2", "", "id2")
+                TaskGroup({ name: "Group 1", id: "id1" }),
+                TaskGroup({ name: "Group 2", id: "id2" })
             ];
 
             const outputGroups = [
-                TaskGroup("Group 1", "", "id1"),
-                TaskGroup("Group 2", "My description", "id2")
+                TaskGroup({ name: "Group 1", id: "id1" }),
+                TaskGroup({ name: "Group 2", description: "My description", id: "id2" })
             ];
 
             let state = {
@@ -323,13 +457,13 @@ describe("todoSlice", () => {
     describe("setTaskName", () => {
         test("setTaskName sets the name of the given task", () => {
             const inputTasks = [
-                Task("Task 1", "", "id1", "", 0, []),
-                Task("Task 2", "", "id2", "", 0, [])
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2" })
             ];
 
             const outputTasks = [
-                Task("Task 1", "", "id1", "", 0, []),
-                Task("My Task", "", "id2", "", 0, [])
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "My Task", id: "id2" })
             ];
 
             let state = {
@@ -352,8 +486,8 @@ describe("todoSlice", () => {
     describe("selectTaskWithID", () => {
         test("selectTaskWithID when task exists", () => {
             const tasks = [
-                Task("Task 1", "", "id1", "", 0, []),
-                Task("Task 2", "", "id2", "", 0, [])
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2" })
             ];
 
             const state = {
@@ -366,8 +500,8 @@ describe("todoSlice", () => {
 
         test("selectTaskWithID when task does not exist", () => {
             const tasks = [
-                Task("Task 1", "", "id1", "", 0, []),
-                Task("Task 2", "", "id2", "", 0, [])
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2" })
             ];
 
             const state = {
@@ -376,6 +510,286 @@ describe("todoSlice", () => {
             };
 
             expect(selectTaskWithID("id3")(state)).toEqual(undefined);
+        });
+    });
+
+    describe("setTaskDescription", () => {
+        test("setTaskDescription sets the description of the given task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", description: "My description", id: "id2" })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskDescription({
+                    taskID: "id2",
+                    description: "My description"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("setTaskOpen", () => {
+        test("setTaskOpen sets a task to be open", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2", isOpen: true })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskOpen({
+                    taskID: "id2",
+                    open: true
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("setTaskOpen sets a task to be closed", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2", isOpen: true })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2", isOpen: false })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskOpen({
+                    taskID: "id2",
+                    open: false
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("setTaskPriority", () => {
+        test("setTaskPriority sets the priority of the given task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 5 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskPriority({
+                    taskID: "id1",
+                    priority: 5
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("addTaskPriority", () => {
+        test("addTaskPriority adds to the priority of the given task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 3 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 8 }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                addTaskPriority({
+                    taskID: "id1",
+                    priority: 5
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("addTaskTag", () => {
+        test("addTaskTag adds a tag to a task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: [] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                addTaskTag({
+                    taskID: "id1",
+                    tag: "Tag"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("addTaskTag does not add a tag if the task already has it", () => {
+            const inputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                addTaskTag({
+                    taskID: "id1",
+                    tag: "Tag A"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("removeTaskTag", () => {
+        test("removeTaskTag removes a tag from a task", () => {
+            const inputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag A"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                removeTaskTag({
+                    taskID: "id1",
+                    tag: "Tag B"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("removeTaskTag does not remove a tag because it is not present", () => {
+            const inputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                removeTaskTag({
+                    taskID: "id1",
+                    tag: "Tag C"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
         });
     });
 });

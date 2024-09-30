@@ -163,6 +163,124 @@ const todoSlice = createSlice({
                     name: action.payload.name
                 })
             );
+        },
+
+        /**
+         * Sets the description of a task
+         * @param state
+         * @param action payload containing the ID of the task and the new description
+         */
+        setTaskDescription(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                description: string;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    description: action.payload.description
+                })
+            );
+        },
+
+        /**
+         * Sets if a task is open or not
+         */
+        setTaskOpen(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                open: boolean;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    isOpen: action.payload.open
+                })
+            );
+        },
+
+        /**
+         * Sets the priority of a task
+         */
+        setTaskPriority(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                priority: number;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    priority: action.payload.priority
+                })
+            );
+        },
+
+        /**
+         * Adds to the priority of a task
+         */
+        addTaskPriority(
+            state: TodoState,
+            action: PayloadAction<{
+                taskID: string;
+                priority: number;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    priority: task.priority + action.payload.priority
+                })
+            );
+        },
+
+        /**
+         * Adds a tag to a task if it does not already exist
+         */
+        addTaskTag(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tag: string }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: task.tags.includes(action.payload.tag)
+                        ? task.tags
+                        : [...task.tags, action.payload.tag]
+                })
+            );
+        },
+
+        /**
+         * Removes a tag from a task
+         */
+        removeTaskTag(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tag: string }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: task.tags.filter((tag) => tag !== action.payload.tag)
+                })
+            );
         }
     }
 });
@@ -171,11 +289,17 @@ const todoSlice = createSlice({
 export const {
     addTask,
     addTaskGroup,
+    addTaskPriority,
+    addTaskTag,
+    removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setGroups,
+    setTaskDescription,
     setTaskName,
+    setTaskOpen,
+    setTaskPriority,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
