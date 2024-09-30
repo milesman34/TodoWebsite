@@ -796,4 +796,35 @@ describe("TaskComponent", () => {
             expect(children[1].textContent).toBe("Tag2");
         });
     });
+
+    describe("Ability to remove tags", () => {
+        test("Remove a tag by clicking on it", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-tag-button-id1-Tag1");
+
+            const children = screen.getByTestId("task-tags-list-id1").children;
+
+            expect(children.length).toBe(1);
+
+            expect(children[0].textContent).toBe("Tag2");
+        })
+    })
 });
