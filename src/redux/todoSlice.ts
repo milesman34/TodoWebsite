@@ -264,6 +264,23 @@ const todoSlice = createSlice({
                         : [...task.tags, action.payload.tag]
                 })
             );
+        },
+
+        /**
+         * Removes a tag from a task
+         */
+        removeTaskTag(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tag: string }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: task.tags.filter((tag) => tag !== action.payload.tag)
+                })
+            );
         }
     }
 });
@@ -274,6 +291,7 @@ export const {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,

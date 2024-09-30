@@ -6,6 +6,7 @@ import reducer, {
     addTaskPriority,
     addTaskTag,
     initialState,
+    removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
     selectTasksInCurrentTaskList,
@@ -672,22 +673,35 @@ describe("todoSlice", () => {
                 tasks: inputTasks
             };
 
-            state = reducer(state, addTaskTag({
-                taskID: "id1",
-                tag: "Tag"
-            }));
+            state = reducer(
+                state,
+                addTaskTag({
+                    taskID: "id1",
+                    tag: "Tag"
+                })
+            );
 
             expect(state.tasks).toEqual(outputTasks);
-        })
-        
+        });
+
         test("addTaskTag does not add a tag if the task already has it", () => {
             const inputTasks = [
-                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag A", "Tag B"] }),
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
                 Task({ name: "Task 2", id: "id2", priority: 0 })
             ];
 
             const outputTasks = [
-                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag A", "Tag B"] }),
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
                 Task({ name: "Task 2", id: "id2", priority: 0 })
             ];
 
@@ -696,12 +710,86 @@ describe("todoSlice", () => {
                 tasks: inputTasks
             };
 
-            state = reducer(state, addTaskTag({
-                taskID: "id1",
-                tag: "Tag A"
-            }));
+            state = reducer(
+                state,
+                addTaskTag({
+                    taskID: "id1",
+                    tag: "Tag A"
+                })
+            );
 
             expect(state.tasks).toEqual(outputTasks);
-        })
-    })
+        });
+    });
+
+    describe("removeTaskTag", () => {
+        test("removeTaskTag removes a tag from a task", () => {
+            const inputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag A"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                removeTaskTag({
+                    taskID: "id1",
+                    tag: "Tag B"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("removeTaskTag does not remove a tag because it is not present", () => {
+            const inputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({
+                    name: "Task 1",
+                    id: "id1",
+                    priority: 0,
+                    tags: ["Tag A", "Tag B"]
+                }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                removeTaskTag({
+                    taskID: "id1",
+                    tag: "Tag C"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
 });
