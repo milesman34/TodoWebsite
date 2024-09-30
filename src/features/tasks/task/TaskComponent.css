@@ -1,5 +1,5 @@
 .task-component {
-    min-width: 300px;
+    width: 300px;
     background-color: #3d4155;
     border-radius: 5px;
 }
@@ -12,30 +12,23 @@
 }
 
 .task-name-container {
-    display: grid;
-    grid-template-rows: 100%;
-    grid-template-columns: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 .task-component-priority-top-right {
-    grid-row: 1;
-    grid-column: 1;
-
     color: white;
     font-family: "Inter";
     font-size: 18px;
+    width: 40px;
 
-    padding-right: 10px;
-    
     display: flex;
-    justify-content: flex-end;
+    text-align: center;
+    justify-content: center;
     align-items: center;
 }
 
 .task-component-name-display {
-    grid-row: 1;
-    grid-column: 1;
-
     z-index: 10;
 
     padding: 5px;
@@ -43,6 +36,10 @@
     font-size: 21px;
     font-family: "Inter";
     color: white;
+
+    width: 260px;
+    
+    word-break:break-all;
 
     text-align: center;
 }
@@ -63,7 +60,8 @@
 }
 
 .edit-name-task-button,
-.task-priority-button {
+.task-priority-button,
+.task-add-tag-button {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -81,17 +79,20 @@
 }
 
 .edit-name-task-button:hover,
-.task-priority-button:hover {
+.task-priority-button:hover,
+.task-add-tag-button:hover {
     background-color: #58649e;
 }
 
 .edit-name-task-button:active,
-.task-priority-button:active {
+.task-priority-button:active,
+.task-add-tag-button:active {
     background-color: #6b77b6;
 }
 
 .task-description-label,
-.task-priority-label {
+.task-priority-label,
+.task-tags-label {
     color: white;
     font-family: "Inter";
     font-size: 14px;
@@ -122,4 +123,24 @@
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+}
+
+.task-tags-container {
+    width: 100%;
+}
+
+.task-tags-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.task-add-tag-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
