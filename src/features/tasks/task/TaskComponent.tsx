@@ -1,6 +1,7 @@
 import "./TaskComponent.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    addTaskTag,
     selectTaskWithID,
     setTaskDescription,
     setTaskName,
@@ -8,6 +9,7 @@ import {
     setTaskPriority
 } from "../../../redux/todoSlice";
 import { TaskPriorityAddButton } from "./priority-add/TaskPriorityAddButton";
+import { TaskTagComponent } from "./tag/TaskTagComponent";
 
 /**
  * Component for displaying a Task
@@ -80,18 +82,39 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         );
     };
 
+    // Runs when the add tag button is clicked
+    const onAddTagClicked = () => {
+        const tagString = prompt("Enter tag name")?.trim();
+
+        if (tagString === "" || tagString === undefined) {
+            return;
+        }
+
+        dispatch(
+            addTaskTag({
+                taskID: thisTask.id,
+                tag: tagString
+            })
+        );
+    };
+
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
-            <div className="task-name-container">
+            <div
+                className="task-name-container"
+                onClick={() => setIsOpen(!thisTask.isOpen)}
+            >
                 <div
                     className="task-component-name-display"
                     data-testid={`task-component-name-text-${thisTask.id}`}
-                    onClick={() => setIsOpen(!thisTask.isOpen)}
                 >
                     {thisTask.name}
                 </div>
 
-                <div className="task-component-priority-top-right" data-testid={`task-component-priority-top-right-${thisTask.id}`}>
+                <div
+                    className="task-component-priority-top-right"
+                    data-testid={`task-component-priority-top-right-${thisTask.id}`}
+                >
                     {thisTask.priority}
                 </div>
             </div>
@@ -162,6 +185,33 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
                                 }
                             >
                                 Reset Priority
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="task-tags-container">
+                        <div className="task-tags-label">Tags:</div>
+
+                        <div
+                            className="task-tags-list"
+                            data-testid={`task-tags-list-${thisTask.id}`}
+                        >
+                            {thisTask.tags.map((tag) => (
+                                <TaskTagComponent
+                                    key={tag}
+                                    taskID={thisTask.id}
+                                    tag={tag}
+                                />
+                            ))}
+                        </div>
+
+                        <div className="task-add-tag-button-container">
+                            <button
+                                className="task-add-tag-button"
+                                data-testid={`task-add-tag-button-${thisTask.id}`}
+                                onClick={onAddTagClicked}
+                            >
+                                Add Tag
                             </button>
                         </div>
                     </div>

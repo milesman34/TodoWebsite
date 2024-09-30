@@ -245,6 +245,25 @@ const todoSlice = createSlice({
                     priority: task.priority + action.payload.priority
                 })
             );
+        },
+
+        /**
+         * Adds a tag to a task if it does not already exist
+         */
+        addTaskTag(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tag: string }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: task.tags.includes(action.payload.tag)
+                        ? task.tags
+                        : [...task.tags, action.payload.tag]
+                })
+            );
         }
     }
 });
@@ -254,6 +273,7 @@ export const {
     addTask,
     addTaskGroup,
     addTaskPriority,
+    addTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,

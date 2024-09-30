@@ -5,7 +5,12 @@ import { createStore } from "../../../redux/store";
 import { Provider } from "react-redux";
 import { TaskComponent } from "./TaskComponent";
 import { addTask } from "../../../redux/todoSlice";
-import { clickButton, getTextContent } from "../../../utils/testUtils";
+import {
+    clickButton,
+    countElementChildren,
+    getTextContent,
+    mockPrompt
+} from "../../../utils/testUtils";
 
 describe("TaskComponent", () => {
     describe("TaskComponent displays the correct information", () => {
@@ -616,6 +621,179 @@ describe("TaskComponent", () => {
             );
 
             expect(getTextContent("task-component-priority-top-right-id1")).toBe("5");
+        });
+    });
+
+    describe("Task container displays list of tags", () => {
+        test("Task container with no tags", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: []
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(0);
+        });
+
+        test("Task container with many tags", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["A", "B", "C"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            const children = screen.getByTestId("task-tags-list-id1").children;
+
+            expect(children.length).toBe(3);
+
+            expect(children[0].textContent).toBe("A");
+            expect(children[1].textContent).toBe("B");
+            expect(children[2].textContent).toBe("C");
+        });
+    });
+
+    describe("Ability to add tags", () => {
+        test("Add tag to task", async () => {
+            mockPrompt("Tag");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: []
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-add-tag-button-id1");
+
+            const children = screen.getByTestId("task-tags-list-id1").children;
+
+            expect(children.length).toBe(1);
+
+            expect(children[0].textContent).toBe("Tag");
+        });
+
+        test("Fail to add tag to task because of an empty tag", async () => {
+            mockPrompt("");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: []
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-add-tag-button-id1");
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(0);
+        });
+
+        test("Fail to add tag to task because of an undefined tag", async () => {
+            mockPrompt(null);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: []
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-add-tag-button-id1");
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(0);
+        });
+
+        test("Fail to add tag to task because it already existed", async () => {
+            mockPrompt("Tag2");
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-add-tag-button-id1");
+
+            const children = screen.getByTestId("task-tags-list-id1").children;
+
+            expect(children.length).toBe(2);
+
+            expect(children[0].textContent).toBe("Tag1");
+            expect(children[1].textContent).toBe("Tag2");
         });
     });
 });

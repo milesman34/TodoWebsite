@@ -1,0 +1,26 @@
+.task-tag-button {
+    background-color: #4275c1;
+    color: white;
+    font-size: 14px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    min-width: 65px;
+    margin-top: 10px;
+}
+
+.task-tag-button:hover {
+    background-color: #ff0000;
+}
+
+.task-tag-button:active {
+    background-color: #ff8181;
+}

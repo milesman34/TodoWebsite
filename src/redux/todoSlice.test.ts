@@ -4,6 +4,7 @@ import reducer, {
     addTask,
     addTaskGroup,
     addTaskPriority,
+    addTaskTag,
     initialState,
     selectActiveTaskGroup,
     selectAllTasks,
@@ -653,4 +654,54 @@ describe("todoSlice", () => {
             expect(state.tasks).toEqual(outputTasks);
         });
     });
+
+    describe("addTaskTag", () => {
+        test("addTaskTag adds a tag to a task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: [] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(state, addTaskTag({
+                taskID: "id1",
+                tag: "Tag"
+            }));
+
+            expect(state.tasks).toEqual(outputTasks);
+        })
+        
+        test("addTaskTag does not add a tag if the task already has it", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag A", "Tag B"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["Tag A", "Tag B"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(state, addTaskTag({
+                taskID: "id1",
+                tag: "Tag A"
+            }));
+
+            expect(state.tasks).toEqual(outputTasks);
+        })
+    })
 });
