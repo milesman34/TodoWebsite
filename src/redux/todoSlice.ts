@@ -264,6 +264,40 @@ const todoSlice = createSlice({
                         : [...task.tags, action.payload.tag]
                 })
             );
+        },
+
+        /**
+         * Removes a tag from a task
+         */
+        removeTaskTag(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tag: string }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: task.tags.filter((tag) => tag !== action.payload.tag)
+                })
+            );
+        },
+
+        /**
+         * Sets the tags for the task
+         */
+        setTaskTags(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tags: string[] }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: action.payload.tags
+                })
+            );
         }
     }
 });
@@ -274,6 +308,7 @@ export const {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
@@ -282,6 +317,7 @@ export const {
     setTaskName,
     setTaskOpen,
     setTaskPriority,
+    setTaskTags,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks

@@ -6,7 +6,8 @@ import {
     setTaskDescription,
     setTaskName,
     setTaskOpen,
-    setTaskPriority
+    setTaskPriority,
+    setTaskTags
 } from "../../../redux/todoSlice";
 import { TaskPriorityAddButton } from "./priority-add/TaskPriorityAddButton";
 import { TaskTagComponent } from "./tag/TaskTagComponent";
@@ -98,6 +99,18 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         );
     };
 
+    // Runs when the reset tags button is clicked
+    const onResetTagsClicked = () => {
+        if (confirm("Do you really want to reset the tags?")) {
+            dispatch(
+                setTaskTags({
+                    taskID: thisTask.id,
+                    tags: []
+                })
+            );
+        }
+    };
+
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
             <div
@@ -122,7 +135,7 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
             {thisTask.isOpen ? (
                 <div className="task-body" data-testid={`task-body-${thisTask.id}`}>
                     <button
-                        className="edit-name-task-button"
+                        className="task-button"
                         data-testid={`edit-name-task-button-${thisTask.id}`}
                         onClick={onEditNameClicked}
                     >
@@ -153,7 +166,7 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
                         <div className="flex-column-center">
                             <button
-                                className="task-priority-button"
+                                className="task-button"
                                 data-testid={`task-priority-set-button-${thisTask.id}`}
                                 onClick={onSetPriorityClicked}
                             >
@@ -173,7 +186,7 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
                         <div className="flex-column-center">
                             <button
-                                className="task-priority-button"
+                                className="task-button"
                                 data-testid={`task-priority-reset-button-${thisTask.id}`}
                                 onClick={() =>
                                     dispatch(
@@ -207,11 +220,19 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
                         <div className="task-add-tag-button-container">
                             <button
-                                className="task-add-tag-button"
+                                className="task-button"
                                 data-testid={`task-add-tag-button-${thisTask.id}`}
                                 onClick={onAddTagClicked}
                             >
                                 Add Tag
+                            </button>
+
+                            <button
+                                className="task-button-nomargin"
+                                data-testid={`task-reset-tags-button-${thisTask.id}`}
+                                onClick={onResetTagsClicked}
+                            >
+                                Reset Tags
                             </button>
                         </div>
                     </div>
