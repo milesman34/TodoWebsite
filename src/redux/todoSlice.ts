@@ -281,6 +281,23 @@ const todoSlice = createSlice({
                     tags: task.tags.filter((tag) => tag !== action.payload.tag)
                 })
             );
+        },
+
+        /**
+         * Sets the tags for the task
+         */
+        setTaskTags(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tags: string[] }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: action.payload.tags
+                })
+            );
         }
     }
 });
@@ -300,6 +317,7 @@ export const {
     setTaskName,
     setTaskOpen,
     setTaskPriority,
+    setTaskTags,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks

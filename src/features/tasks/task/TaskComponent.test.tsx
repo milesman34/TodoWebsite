@@ -825,6 +825,62 @@ describe("TaskComponent", () => {
             expect(children.length).toBe(1);
 
             expect(children[0].textContent).toBe("Tag2");
-        })
-    })
+        });
+    });
+
+    describe("Ability to reset tags", () => {
+        test("Reset the tags if the user confirms", async () => {
+            vi.stubGlobal("confirm", () => true);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-reset-tags-button-id1");
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(0);
+        });
+
+        test("Don't reset the tags if the user does not confirm", async () => {
+            vi.stubGlobal("confirm", () => false);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-reset-tags-button-id1");
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(2);
+        });
+    });
 });

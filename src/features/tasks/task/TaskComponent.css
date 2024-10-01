@@ -59,9 +59,7 @@
     border-top: 1px solid black;
 }
 
-.edit-name-task-button,
-.task-priority-button,
-.task-add-tag-button {
+.task-button {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -78,15 +76,27 @@
     margin: 10px;
 }
 
-.edit-name-task-button:hover,
-.task-priority-button:hover,
-.task-add-tag-button:hover {
+.task-button-nomargin {
+    background-color: #474f79;
+    color: white;
+    font-size: 16px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.task-button:hover, .task-button-nomargin:hover {
     background-color: #58649e;
 }
 
-.edit-name-task-button:active,
-.task-priority-button:active,
-.task-add-tag-button:active {
+.task-button:active, .task-button-nomargin:active {
     background-color: #6b77b6;
 }
 
@@ -140,7 +150,8 @@
 
 .task-add-tag-button-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }

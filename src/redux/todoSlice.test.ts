@@ -18,6 +18,7 @@ import reducer, {
     setTaskName,
     setTaskOpen,
     setTaskPriority,
+    setTaskTags,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -786,6 +787,35 @@ describe("todoSlice", () => {
                 removeTaskTag({
                     taskID: "id1",
                     tag: "Tag C"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("setTaskTags", () => {
+        test("setTaskTags sets the tags for a task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: [] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", priority: 0, tags: ["My", "Task"] }),
+                Task({ name: "Task 2", id: "id2", priority: 0 })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(
+                state,
+                setTaskTags({
+                    taskID: "id1",
+                    tags: ["My", "Task"]
                 })
             );
 
