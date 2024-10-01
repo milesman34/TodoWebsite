@@ -315,6 +315,7 @@ const todoSlice = createSlice({
             );
 
             if (action.payload.preserveTasks) {
+                // Set all the tasks in the task group to be ungrouped
                 state.tasks = filterMap(
                     state.tasks,
                     (task) => task.taskGroupID === action.payload.taskGroupID,
@@ -324,10 +325,15 @@ const todoSlice = createSlice({
                     })
                 );
             } else {
+                // Delete all tasks in the task group
                 state.tasks = state.tasks.filter(
                     (task) => task.taskGroupID !== action.payload.taskGroupID
                 );
             }
+
+            // Switch to All Tasks
+            state.taskListType = TaskListType.All;
+            state.activeTaskGroup = "";
         }
     }
 });

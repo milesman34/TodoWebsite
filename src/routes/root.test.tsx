@@ -589,4 +589,137 @@ describe("Root", () => {
             expect(screen.queryByTestId("task-body-id2")).toBeFalsy();
         });
     });
+
+    describe("Delete a task group", () => {
+        test("Not confirming the deletion does not delete the task group", async () => {
+            vi.stubGlobal("confirm", () => false);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            await clickButton("group-delete-button");
+
+            // Confirm the task group still exists by checking the sidebar
+            expect(screen.queryByTestId("task-group-component-id1")).toBeTruthy();
+
+            // Confirm the task container still is on this task group
+            expect(getTextContent("tasks-type-text")).toBe("My Group");
+        });
+
+        test("Confirming the deletion deletes the task group (this one has no tasks)", async () => {
+            vi.stubGlobal("confirm", () => true);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            await clickButton("group-delete-button");
+
+            // Confirm the task group does not exist by checking the sidebar
+            expect(screen.queryByTestId("task-group-component-id1")).toBeFalsy();
+
+            // Confirm the task container is on all tasks
+            expect(getTextContent("tasks-type-text")).toBe("All Tasks");
+        });
+
+        test("Deleting with preserve tasks checked preserves the tasks", async () => {
+            vi.stubGlobal("confirm", () => true);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My Group",
+                        id: "groupid1"
+                    })
+                )
+            );
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My Task",
+                        id: "id1",
+                        taskGroupID: "groupid1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            await clickButton("group-delete-button");
+
+            // Confirm this task exists
+            expect(screen.queryByTestId("task-component-id1")).toBeTruthy();
+        });
+
+        test("Deleting with preserve tasks unchecked deletes the tasks", async () => {
+            vi.stubGlobal("confirm", () => true);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My Group",
+                        id: "groupid1"
+                    })
+                )
+            );
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My Task",
+                        id: "id1",
+                        taskGroupID: "groupid1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            await clickButton("preserve-tasks-checkbox");
+            await clickButton("group-delete-button");
+
+            // Confirm this task exists
+            expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
+        });
+    });
 });

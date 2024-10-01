@@ -914,5 +914,31 @@ describe("todoSlice", () => {
             expect(state.tasks).toEqual(outputTasks);
             expect(state.groups).toEqual([]);
         });
+
+        test("deleteTaskGroup switches to displaying All Tasks", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupID1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "groupID1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                deleteTaskGroup({
+                    taskGroupID: "groupID1",
+                    preserveTasks: false
+                })
+            );
+
+            expect(state.taskListType).toEqual(TaskListType.All);
+            expect(state.activeTaskGroup).toBe("");
+        });
     });
 });

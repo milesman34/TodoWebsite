@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./TasksContainer.css";
 import {
     addTask,
+    deleteTaskGroup,
     selectActiveTaskGroup,
     selectTaskListType,
     selectTasksInCurrentTaskList,
@@ -12,7 +13,7 @@ import {
 import { Task } from "../Task";
 import { nanoid } from "nanoid";
 import { TaskComponent } from "../task/TaskComponent";
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -28,6 +29,9 @@ export const TasksContainer = () => {
 
     const dispatch = useDispatch();
 
+    // Is it set to preserve tasks when deleted?
+    const [preserveTasks, setPreserveTasks] = useState(true);
+
     // Runs when the add task button is clicked
     const onAddTaskButtonClicked = () => {
         const taskName = prompt("Enter task name")?.trim();
@@ -39,7 +43,8 @@ export const TasksContainer = () => {
                     Task({
                         name: taskName,
                         id: nanoid(),
-                        taskGroupID: activeTaskGroup === undefined ? "" : activeTaskGroup.id
+                        taskGroupID:
+                            activeTaskGroup === undefined ? "" : activeTaskGroup.id
                     })
                 )
             );
@@ -60,6 +65,18 @@ export const TasksContainer = () => {
         dispatch(setActiveTaskGroupDescription(event.target.value));
     };
 
+    // Runs when the delete group button is clicked
+    const onDeleteGroupClicked = () => {
+        if (confirm("Do you really want to delete this task group?")) {
+            dispatch(
+                deleteTaskGroup({
+                    taskGroupID: activeTaskGroup?.id || "",
+                    preserveTasks
+                })
+            );
+        }
+    };
+
     return (
         <div id="tasks-container">
             <div className="flex-row">
@@ -72,13 +89,38 @@ export const TasksContainer = () => {
                 </div>
 
                 {inTaskGroup && (
-                    <button
-                        id="group-edit-name-button"
-                        data-testid="group-edit-name-button"
-                        onClick={onEditNameButtonClicked}
-                    >
-                        Edit Name
-                    </button>
+                    <div className="flex-row">
+                        <button
+                            id="group-edit-name-button"
+                            data-testid="group-edit-name-button"
+                            onClick={onEditNameButtonClicked}
+                        >
+                            Edit Name
+                        </button>
+
+                        <button
+                            id="group-delete-button"
+                            data-testid="group-delete-button"
+                            onClick={onDeleteGroupClicked}
+                        >
+                            Delete Group
+                        </button>
+
+                        <div id="preserve-tasks-checkbox-container">
+                            <input
+                                type="checkbox"
+                                id="preserve-tasks-checkbox"
+                                data-testid="preserve-tasks-checkbox"
+                                title="preserve-tasks"
+                                checked={preserveTasks}
+                                onChange={() => setPreserveTasks(!preserveTasks)}
+                            />
+
+                            <label htmlFor="preserve-tasks" id="preserve-tasks-label">
+                                Keep tasks when deleted?
+                            </label>
+                        </div>
+                    </div>
                 )}
             </div>
 
