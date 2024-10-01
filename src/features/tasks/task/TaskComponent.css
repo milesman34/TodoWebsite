@@ -4,9 +4,13 @@
     border-radius: 5px;
 }
 
-.task-name-container:hover {
+.task-header:hover {
     background-color: #4a506f;
     cursor: pointer;
+}
+
+.task-name-container:hover {
+    background-color: #4a506f;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
@@ -38,10 +42,21 @@
     color: white;
 
     width: 260px;
-    
-    word-break:break-all;
+
+    word-break: break-all;
 
     text-align: center;
+}
+
+.task-group-name {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: white;
+    font-family: "Inter";
+    font-size: 14px;
+    width: 260px;
+    padding-bottom: 5px;
 }
 
 .task-component-footer {
@@ -92,11 +107,13 @@
     padding-bottom: 5px;
 }
 
-.task-button:hover, .task-button-nomargin:hover {
+.task-button:hover,
+.task-button-nomargin:hover {
     background-color: #58649e;
 }
 
-.task-button:active, .task-button-nomargin:active {
+.task-button:active,
+.task-button-nomargin:active {
     background-color: #6b77b6;
 }
 
