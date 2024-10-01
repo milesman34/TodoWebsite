@@ -391,3 +391,15 @@ export const selectTaskWithID =
     (id: string) =>
     (state: TodoState): Task | undefined =>
         state.tasks.find((task) => task.id === id);
+
+/**
+ * Returns the name of the task group with the given ID if it exists, or the empty string otherwise
+ * @param id ID to search for
+ */
+export const selectTaskGroupNameByID =
+    (id: string) =>
+    (state: TodoState): string => {
+        const targetGroup = state.groups.find((taskGroup) => taskGroup.id === id);
+
+        return targetGroup === undefined ? "" : targetGroup.name;
+    };

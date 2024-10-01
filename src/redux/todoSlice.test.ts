@@ -9,6 +9,7 @@ import reducer, {
     removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
+    selectTaskGroupNameByID,
     selectTasksInCurrentTaskList,
     selectTaskWithID,
     setActiveTaskGroup,
@@ -820,6 +821,36 @@ describe("todoSlice", () => {
             );
 
             expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("selectTaskGroupNameByID", () => {
+        test("selectTaskGroupNameByID when group exists", () => {
+            const taskGroups = [
+                TaskGroup({ name: "Group 1", id: "id1" }),
+                TaskGroup({ name: "Group 2", id: "id2" })
+            ];
+
+            const state = {
+                ...initialState,
+                groups: taskGroups
+            };
+
+            expect(selectTaskGroupNameByID("id1")(state)).toBe("Group 1");
+        });
+
+        test("selectTaskGroupNameByID when group does not exist", () => {
+            const taskGroups = [
+                TaskGroup({ name: "Group 1", id: "id1" }),
+                TaskGroup({ name: "Group 2", id: "id2" })
+            ];
+
+            const state = {
+                ...initialState,
+                groups: taskGroups
+            };
+
+            expect(selectTaskGroupNameByID("id3")(state)).toBe("");
         });
     });
 });

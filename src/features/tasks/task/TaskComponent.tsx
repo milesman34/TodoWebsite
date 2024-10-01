@@ -2,12 +2,15 @@ import "./TaskComponent.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addTaskTag,
+    selectTaskGroupNameByID,
+    selectTaskListType,
     selectTaskWithID,
     setTaskDescription,
     setTaskName,
     setTaskOpen,
     setTaskPriority,
-    setTaskTags
+    setTaskTags,
+    TaskListType
 } from "../../../redux/todoSlice";
 import { TaskPriorityAddButton } from "./priority-add/TaskPriorityAddButton";
 import { TaskTagComponent } from "./tag/TaskTagComponent";
@@ -21,6 +24,14 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
     const dispatch = useDispatch();
 
     const thisTask = useSelector(selectTaskWithID(taskID));
+
+    const taskListType = useSelector(selectTaskListType);
+
+    // Name of the relevant task group
+    // Since hooks can't be handled conditionally (after the null check), just pass the empty string, we know the task should be here
+    const taskGroupName = useSelector(
+        selectTaskGroupNameByID(thisTask?.taskGroupID || "")
+    );
 
     // Don't render the component if the task could not be found
     if (thisTask === undefined) {
@@ -113,23 +124,31 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
-            <div
-                className="task-name-container"
-                onClick={() => setIsOpen(!thisTask.isOpen)}
-            >
-                <div
-                    className="task-component-name-display"
-                    data-testid={`task-component-name-text-${thisTask.id}`}
-                >
-                    {thisTask.name}
+            <div className="task-header" onClick={() => setIsOpen(!thisTask.isOpen)}>
+                <div className="task-name-container">
+                    <div
+                        className="task-component-name-display"
+                        data-testid={`task-component-name-text-${thisTask.id}`}
+                    >
+                        {thisTask.name}
+                    </div>
+
+                    <div
+                        className="task-component-priority-top-right"
+                        data-testid={`task-component-priority-top-right-${thisTask.id}`}
+                    >
+                        {thisTask.priority}
+                    </div>
                 </div>
 
-                <div
-                    className="task-component-priority-top-right"
-                    data-testid={`task-component-priority-top-right-${thisTask.id}`}
-                >
-                    {thisTask.priority}
-                </div>
+                {taskListType === TaskListType.All && (
+                    <div
+                        className="task-group-name"
+                        data-testid={`task-component-group-name-${thisTask.id}`}
+                    >
+                        {thisTask.taskGroupID === "" ? "Ungrouped" : taskGroupName}
+                    </div>
+                )}
             </div>
 
             {thisTask.isOpen ? (
