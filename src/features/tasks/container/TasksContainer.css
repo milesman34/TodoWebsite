@@ -54,7 +54,7 @@
     align-items: flex-start;
 }
 
-#group-edit-name-button {
+#group-edit-name-button, #group-delete-button {
     margin-left: 20px;
     background-color: #3f4666;
     color: white;
@@ -73,6 +73,35 @@
 
 #group-edit-name-button:active {
     background-color: #4654a7;
+}
+
+#group-delete-button:hover {
+    background-color: #ff0000;
+    cursor: pointer;
+}
+
+#group-delete-button:active {
+    background-color: #ff8181;
+}
+
+#preserve-tasks-checkbox-container {
+    margin-top: 20px;
+    margin-left: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 5px;
+}
+
+#preserve-tasks-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+#preserve-tasks-label {
+    color: white;
+    font-size: 16px;
+    font-family: "Inter";
 }
 
 #group-description-label {

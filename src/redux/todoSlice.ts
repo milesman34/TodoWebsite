@@ -298,6 +298,42 @@ const todoSlice = createSlice({
                     tags: action.payload.tags
                 })
             );
+        },
+
+        /**
+         * Deletes a task group. If the preserveTasks option is enabled then it keeps the tasks, otherwise deleting them
+         */
+        deleteTaskGroup(
+            state: TodoState,
+            action: PayloadAction<{
+                taskGroupID: string;
+                preserveTasks: boolean;
+            }>
+        ) {
+            state.groups = state.groups.filter(
+                (taskGroup) => taskGroup.id !== action.payload.taskGroupID
+            );
+
+            if (action.payload.preserveTasks) {
+                // Set all the tasks in the task group to be ungrouped
+                state.tasks = filterMap(
+                    state.tasks,
+                    (task) => task.taskGroupID === action.payload.taskGroupID,
+                    (task) => ({
+                        ...task,
+                        taskGroupID: ""
+                    })
+                );
+            } else {
+                // Delete all tasks in the task group
+                state.tasks = state.tasks.filter(
+                    (task) => task.taskGroupID !== action.payload.taskGroupID
+                );
+            }
+
+            // Switch to All Tasks
+            state.taskListType = TaskListType.All;
+            state.activeTaskGroup = "";
         }
     }
 });
@@ -308,6 +344,7 @@ export const {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    deleteTaskGroup,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,

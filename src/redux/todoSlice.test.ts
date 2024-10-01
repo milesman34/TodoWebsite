@@ -5,6 +5,7 @@ import reducer, {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    deleteTaskGroup,
     initialState,
     removeTaskTag,
     selectActiveTaskGroup,
@@ -851,6 +852,93 @@ describe("todoSlice", () => {
             };
 
             expect(selectTaskGroupNameByID("id3")(state)).toBe("");
+        });
+    });
+
+    describe("deleteTaskGroup", () => {
+        test("deleteTaskGroup deletes a task group, preserving the tasks", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupID1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "groupID1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                deleteTaskGroup({
+                    taskGroupID: "groupID1",
+                    preserveTasks: true
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+            expect(state.groups).toEqual([]);
+        });
+
+        test("deleteTaskGroup deletes a task group, deleting the tasks", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupID1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "" })
+            ];
+
+            const outputTasks = [Task({ name: "Task 2", id: "id2", taskGroupID: "" })];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "groupID1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                deleteTaskGroup({
+                    taskGroupID: "groupID1",
+                    preserveTasks: false
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+            expect(state.groups).toEqual([]);
+        });
+
+        test("deleteTaskGroup switches to displaying All Tasks", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "groupID1" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "groupID1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                deleteTaskGroup({
+                    taskGroupID: "groupID1",
+                    preserveTasks: false
+                })
+            );
+
+            expect(state.taskListType).toEqual(TaskListType.All);
+            expect(state.activeTaskGroup).toBe("");
         });
     });
 });

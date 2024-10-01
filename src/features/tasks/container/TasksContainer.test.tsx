@@ -20,6 +20,7 @@ import {
     mockNanoid,
     mockPrompt
 } from "../../../utils/testUtils";
+import { TaskGroup } from "../../taskGroups/TaskGroup";
 
 vi.mock("nanoid", () => ({
     nanoid: vi.fn()
@@ -411,6 +412,166 @@ describe("TasksContainer", () => {
 
             // Check if the description matches
             expect(getTextContent("group-description-textarea")).toBe("Description");
+        });
+    });
+
+    describe("Delete group button displays only in a Task Group", () => {
+        test("Delete group button should not appear if in All Tasks", () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-delete-button")).toBeFalsy();
+        });
+
+        test("Delete group button should not appear if in Ungrouped Tasks", () => {
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-delete-button")).toBeFalsy();
+        });
+
+        test("Delete group button should appear if in a task group", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "Task Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("group-delete-button")).toBeTruthy();
+        });
+    });
+
+    describe("Behavior of Preserve Tasks checkbox", () => {
+        test("Preserve Tasks checkbox starts as checked", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "Task Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            const checkbox = screen.getByTestId(
+                "preserve-tasks-checkbox"
+            ) as HTMLInputElement;
+
+            expect(checkbox.checked).toBe(true);
+        });
+
+        test("Click active checkbox to disable it", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "Task Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("preserve-tasks-checkbox");
+
+            const checkbox = screen.getByTestId(
+                "preserve-tasks-checkbox"
+            ) as HTMLInputElement;
+
+            expect(checkbox.checked).toBe(false);
+        });
+
+        test("Click active checkbox to disable it", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "Task Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("preserve-tasks-checkbox");
+
+            const checkbox = screen.getByTestId(
+                "preserve-tasks-checkbox"
+            ) as HTMLInputElement;
+
+            expect(checkbox.checked).toBe(false);
+        });
+
+        test("Click inactive checkbox to enable it", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "Task Group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("preserve-tasks-checkbox");
+            await clickButton("preserve-tasks-checkbox");
+
+            const checkbox = screen.getByTestId(
+                "preserve-tasks-checkbox"
+            ) as HTMLInputElement;
+
+            expect(checkbox.checked).toBe(true);
         });
     });
 });
