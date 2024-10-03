@@ -91,7 +91,8 @@
     margin: 10px;
 }
 
-.task-button-nomargin {
+.task-button-nomargin,
+.task-button-delete {
     background-color: #474f79;
     color: white;
     font-size: 16px;
@@ -107,6 +108,10 @@
     padding-bottom: 5px;
 }
 
+.task-button-delete {
+    margin-bottom: 10px;
+}
+
 .task-button:hover,
 .task-button-nomargin:hover {
     background-color: #58649e;
@@ -115,6 +120,14 @@
 .task-button:active,
 .task-button-nomargin:active {
     background-color: #6b77b6;
+}
+
+.task-button-delete:hover {
+    background-color: red;
+}
+
+.task-button-delete:active {
+    background-color: #ff8181;
 }
 
 .task-description-label,

@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { Task } from "../Task";
 import {
     addTaskTag,
+    deleteTask,
     setTaskDescription,
     setTaskName,
     setTaskPriority,
@@ -90,6 +91,13 @@ export const TaskComponentOpen = ({ task }: { task: Task }) => {
         }
     };
 
+    // Runs when the delete button is clicked
+    const onDeleteClicked = () => {
+        if (confirm("Do you really want to delete this task?")) {
+            dispatch(deleteTask(task.id));
+        }
+    };
+
     return (
         <div className="task-body" data-testid={`task-body-${task.id}`}>
             <button
@@ -98,6 +106,14 @@ export const TaskComponentOpen = ({ task }: { task: Task }) => {
                 onClick={onEditNameClicked}
             >
                 Edit Name
+            </button>
+
+            <button
+                className="task-button-delete"
+                data-testid={`delete-task-button-${task.id}`}
+                onClick={onDeleteClicked}
+            >
+                Delete
             </button>
 
             <div className="task-description-container">
