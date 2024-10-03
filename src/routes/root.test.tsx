@@ -22,6 +22,7 @@ import {
     enterText,
     getTestID,
     getTextContent,
+    mockConfirm,
     mockNanoid,
     mockPrompt
 } from "../utils/testUtils";
@@ -592,7 +593,7 @@ describe("Root", () => {
 
     describe("Delete a task group", () => {
         test("Not confirming the deletion does not delete the task group", async () => {
-            vi.stubGlobal("confirm", () => false);
+            mockConfirm(false);
 
             const store = createStore();
 
@@ -621,7 +622,7 @@ describe("Root", () => {
         });
 
         test("Confirming the deletion deletes the task group (this one has no tasks)", async () => {
-            vi.stubGlobal("confirm", () => true);
+            mockConfirm(true);
 
             const store = createStore();
 
@@ -650,7 +651,7 @@ describe("Root", () => {
         });
 
         test("Deleting with preserve tasks checked preserves the tasks", async () => {
-            vi.stubGlobal("confirm", () => true);
+            mockConfirm(true);
 
             const store = createStore();
 
@@ -686,7 +687,7 @@ describe("Root", () => {
         });
 
         test("Deleting with preserve tasks unchecked deletes the tasks", async () => {
-            vi.stubGlobal("confirm", () => true);
+            mockConfirm(true);
 
             const store = createStore();
 

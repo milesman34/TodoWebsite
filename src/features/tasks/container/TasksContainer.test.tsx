@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { TasksContainer } from "./TasksContainer";
 import { Provider } from "react-redux";
 import {
+    addTask,
     addTaskGroup,
     setActiveTaskGroup,
     setTasks,
@@ -17,6 +18,7 @@ import {
     countElementChildren,
     getTestID,
     getTextContent,
+    mockConfirm,
     mockNanoid,
     mockPrompt
 } from "../../../utils/testUtils";
@@ -572,6 +574,60 @@ describe("TasksContainer", () => {
             ) as HTMLInputElement;
 
             expect(checkbox.checked).toBe(true);
+        });
+    });
+
+    describe("Ability to delete tasks", () => {
+        test("Delete task button does not delete the task when confirm fails", async () => {
+            mockConfirm(false);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("delete-task-button-id1");
+
+            expect(screen.queryByTestId("task-component-id1")).toBeTruthy();
+        });
+        
+        test("Delete task button deletes the task when confirm succeeds", async () => {
+            mockConfirm(true);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("delete-task-button-id1");
+
+            expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
         });
     });
 });

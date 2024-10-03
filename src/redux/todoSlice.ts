@@ -334,6 +334,13 @@ const todoSlice = createSlice({
             // Switch to All Tasks
             state.taskListType = TaskListType.All;
             state.activeTaskGroup = "";
+        },
+
+        /**
+         * Deletes a task
+         */
+        deleteTask(state: TodoState, action: PayloadAction<string>) {
+            state.tasks = state.tasks.filter((task) => task.id !== action.payload);
         }
     }
 });
@@ -344,6 +351,7 @@ export const {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    deleteTask,
     deleteTaskGroup,
     removeTaskTag,
     setActiveTaskGroup,

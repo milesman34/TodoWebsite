@@ -14,6 +14,7 @@ import {
     clickButton,
     countElementChildren,
     getTextContent,
+    mockConfirm,
     mockPrompt
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
@@ -836,7 +837,7 @@ describe("TaskComponent", () => {
 
     describe("Ability to reset tags", () => {
         test("Reset the tags if the user confirms", async () => {
-            vi.stubGlobal("confirm", () => true);
+            mockConfirm(true);
 
             const store = createStore();
 
@@ -863,7 +864,7 @@ describe("TaskComponent", () => {
         });
 
         test("Don't reset the tags if the user does not confirm", async () => {
-            vi.stubGlobal("confirm", () => false);
+            mockConfirm(false);
 
             const store = createStore();
 

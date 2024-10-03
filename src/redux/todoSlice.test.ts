@@ -5,6 +5,7 @@ import reducer, {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    deleteTask,
     deleteTaskGroup,
     initialState,
     removeTaskTag,
@@ -939,6 +940,26 @@ describe("todoSlice", () => {
 
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
+        });
+    });
+
+    describe("deleteTask", () => {
+        test("deleteTask deletes a task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1" }),
+                Task({ name: "Task 2", id: "id2" })
+            ];
+
+            const outputTasks = [Task({ name: "Task 2", id: "id2" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            state = reducer(state, deleteTask("id1"));
+
+            expect(state.tasks).toEqual(outputTasks);
         });
     });
 });
