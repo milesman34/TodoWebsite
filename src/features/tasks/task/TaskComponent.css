@@ -177,6 +177,9 @@
     flex-wrap: nowrap;
     overflow-x: scroll;
     overflow-y: hidden;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .task-add-tag-button-container {
