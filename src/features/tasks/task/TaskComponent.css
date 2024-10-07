@@ -174,8 +174,9 @@
     flex-direction: row;
     align-items: center;
     column-gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .task-add-tag-button-container {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { filterMap } from "./utils";
+import { clamp, filterMap } from "./utils";
 
 describe("utils", () => {
     describe("filterMap", () => {
@@ -11,6 +11,20 @@ describe("utils", () => {
                     (e) => e * 3
                 )
             ).toEqual([1, 6, 3, 12, 5, 18, 7]);
+        });
+    });
+
+    describe("clamp", () => {
+        test("clamp in between", () => {
+            expect(clamp(5, 3, 7)).toBe(5);
+        });
+
+        test("clamp lower", () => {
+            expect(clamp(2, 3, 7)).toBe(3);
+        });
+
+        test("clamp higher", () => {
+            expect(clamp(8, 3, 7)).toBe(7);
         });
     });
 });
