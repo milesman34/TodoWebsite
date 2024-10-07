@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./TaskTagComponent.css";
 import { useDispatch } from "react-redux";
-import { removeTaskTag } from "../../../../redux/todoSlice";
+import { removeTaskTag } from "../../../../../redux/todoSlice";
 
 // Default width
 const DEFAULT_WIDTH = 65;

@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import "./TaskPriorityAddButton.css";
-import { addTaskPriority } from "../../../../redux/todoSlice";
+import { addTaskPriority } from "../../../../../redux/todoSlice";
 
 /**
  * This button adds to or removes from the priority of the parent task
