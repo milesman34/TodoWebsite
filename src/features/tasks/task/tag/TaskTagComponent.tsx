@@ -51,8 +51,6 @@ export const TaskTagComponent = ({ taskID, tag }: { taskID: string; tag: string 
 
             // This is no longer the initial render, so now the button can use the measured width/height
             setInitialRender(false);
-
-            console.log(refWidth);
         }
     }, [hovered, width]);
 
