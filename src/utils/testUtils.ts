@@ -21,6 +21,15 @@ export const mockPrompt = (returnValue: string | null) => {
 };
 
 /**
+ * Mocks the return value of confirm
+ * @param returnValue
+ * @returns
+ */
+export const mockConfirm = (returnValue: boolean) => {
+    vi.stubGlobal("confirm", () => returnValue);
+};
+
+/**
  * Clicks the button with the given test ID
  * @param testID
  * @returns

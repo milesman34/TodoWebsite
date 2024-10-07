@@ -4,13 +4,20 @@ import { render, screen } from "@testing-library/react";
 import { createStore } from "../../../redux/store";
 import { Provider } from "react-redux";
 import { TaskComponent } from "./TaskComponent";
-import { addTask } from "../../../redux/todoSlice";
+import {
+    addTask,
+    addTaskGroup,
+    switchToAllTasks,
+    switchToUngroupedTasks
+} from "../../../redux/todoSlice";
 import {
     clickButton,
     countElementChildren,
     getTextContent,
+    mockConfirm,
     mockPrompt
 } from "../../../utils/testUtils";
+import { TaskGroup } from "../../taskGroups/TaskGroup";
 
 describe("TaskComponent", () => {
     describe("TaskComponent displays the correct information", () => {
@@ -825,6 +832,182 @@ describe("TaskComponent", () => {
             expect(children.length).toBe(1);
 
             expect(children[0].textContent).toBe("Tag2");
-        })
-    })
+        });
+    });
+
+    describe("Ability to reset tags", () => {
+        test("Reset the tags if the user confirms", async () => {
+            mockConfirm(true);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-reset-tags-button-id1");
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(0);
+        });
+
+        test("Don't reset the tags if the user does not confirm", async () => {
+            mockConfirm(false);
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-reset-tags-button-id1");
+
+            expect(countElementChildren("task-tags-list-id1")).toBe(2);
+        });
+    });
+
+    describe("TaskComponent displays the task's group if the mode is All Tasks", () => {
+        test("TaskComponent does not display the task's group in Ungrouped Tasks", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("task-component-group-name-id1")).toBeFalsy();
+        });
+
+        test("TaskComponent does not display the task's group in when viewing a task group", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "Group",
+                        id: "groupid1"
+                    })
+                )
+            );
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "groupid1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("task-component-group-name-id1")).toBeFalsy();
+        });
+
+        test("TaskComponent displays the task's group when in All Tasks", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My Group",
+                        id: "groupid1"
+                    })
+                )
+            );
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "groupid1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            expect(getTextContent("task-component-group-name-id1")).toBe("My Group");
+        });
+
+        test("TaskComponent displays that an ungrouped task does not have a group when in All Tasks", () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true,
+                        tags: ["Tag1", "Tag2"]
+                    })
+                )
+            );
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            expect(getTextContent("task-component-group-name-id1")).toBe("Ungrouped");
+        });
+    });
 });

@@ -281,6 +281,66 @@ const todoSlice = createSlice({
                     tags: task.tags.filter((tag) => tag !== action.payload.tag)
                 })
             );
+        },
+
+        /**
+         * Sets the tags for the task
+         */
+        setTaskTags(
+            state: TodoState,
+            action: PayloadAction<{ taskID: string; tags: string[] }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.taskID,
+                (task) => ({
+                    ...task,
+                    tags: action.payload.tags
+                })
+            );
+        },
+
+        /**
+         * Deletes a task group. If the preserveTasks option is enabled then it keeps the tasks, otherwise deleting them
+         */
+        deleteTaskGroup(
+            state: TodoState,
+            action: PayloadAction<{
+                taskGroupID: string;
+                preserveTasks: boolean;
+            }>
+        ) {
+            state.groups = state.groups.filter(
+                (taskGroup) => taskGroup.id !== action.payload.taskGroupID
+            );
+
+            if (action.payload.preserveTasks) {
+                // Set all the tasks in the task group to be ungrouped
+                state.tasks = filterMap(
+                    state.tasks,
+                    (task) => task.taskGroupID === action.payload.taskGroupID,
+                    (task) => ({
+                        ...task,
+                        taskGroupID: ""
+                    })
+                );
+            } else {
+                // Delete all tasks in the task group
+                state.tasks = state.tasks.filter(
+                    (task) => task.taskGroupID !== action.payload.taskGroupID
+                );
+            }
+
+            // Switch to All Tasks
+            state.taskListType = TaskListType.All;
+            state.activeTaskGroup = "";
+        },
+
+        /**
+         * Deletes a task
+         */
+        deleteTask(state: TodoState, action: PayloadAction<string>) {
+            state.tasks = state.tasks.filter((task) => task.id !== action.payload);
         }
     }
 });
@@ -291,6 +351,8 @@ export const {
     addTaskGroup,
     addTaskPriority,
     addTaskTag,
+    deleteTask,
+    deleteTaskGroup,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
@@ -300,6 +362,7 @@ export const {
     setTaskName,
     setTaskOpen,
     setTaskPriority,
+    setTaskTags,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -373,3 +436,15 @@ export const selectTaskWithID =
     (id: string) =>
     (state: TodoState): Task | undefined =>
         state.tasks.find((task) => task.id === id);
+
+/**
+ * Returns the name of the task group with the given ID if it exists, or the empty string otherwise
+ * @param id ID to search for
+ */
+export const selectTaskGroupNameByID =
+    (id: string) =>
+    (state: TodoState): string => {
+        const targetGroup = state.groups.find((taskGroup) => taskGroup.id === id);
+
+        return targetGroup === undefined ? "" : targetGroup.name;
+    };
