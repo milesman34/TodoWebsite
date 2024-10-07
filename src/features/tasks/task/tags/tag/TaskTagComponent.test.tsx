@@ -1,11 +1,11 @@
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
-import { createStore } from "../../../../redux/store";
-import { addTask } from "../../../../redux/todoSlice";
-import { Task } from "../../Task";
+import { createStore } from "../../../../../redux/store";
+import { addTask } from "../../../../../redux/todoSlice";
+import { Task } from "../../../Task";
 import { render, screen } from "@testing-library/react";
 import { TaskTagComponent } from "./TaskTagComponent";
-import { getTextContent } from "../../../../utils/testUtils";
+import { getTextContent } from "../../../../../utils/testUtils";
 import userEvent from "@testing-library/user-event";
 
 describe("TaskTagComponent", () => {

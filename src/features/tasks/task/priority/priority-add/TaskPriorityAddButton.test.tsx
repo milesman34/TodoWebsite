@@ -1,11 +1,11 @@
 import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
-import { createStore } from "../../../../redux/store";
+import { createStore } from "../../../../../redux/store";
 import { TaskPriorityAddButton } from "./TaskPriorityAddButton";
-import { addTask } from "../../../../redux/todoSlice";
-import { Task } from "../../Task";
-import { clickButton, getTextContent } from "../../../../utils/testUtils";
+import { addTask } from "../../../../../redux/todoSlice";
+import { Task } from "../../../Task";
+import { clickButton, getTextContent } from "../../../../../utils/testUtils";
 
 describe("TaskPriorityAddButton", () => {
     describe("TaskPriorityAddButton displays correct text", () => {

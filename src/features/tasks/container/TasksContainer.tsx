@@ -1,19 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import "./TasksContainer.css";
 import {
-    addTask,
     deleteTaskGroup,
     selectActiveTaskGroup,
     selectTaskListType,
     selectTasksInCurrentTaskList,
-    setActiveTaskGroupDescription,
-    setActiveTaskGroupName,
     TaskListType
 } from "../../../redux/todoSlice";
-import { Task } from "../Task";
-import { nanoid } from "nanoid";
 import { TaskComponent } from "../task/TaskComponent";
-import React, { useState } from "react";
+import { useState } from "react";
+import { AddTaskButton } from "./components/AddTaskButton";
+import { EditNameButton } from "./components/EditNameButton";
+import { TaskGroupDescription } from "./components/TaskGroupDescription";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -31,39 +29,6 @@ export const TasksContainer = () => {
 
     // Is it set to preserve tasks when deleted?
     const [preserveTasks, setPreserveTasks] = useState(true);
-
-    // Runs when the add task button is clicked
-    const onAddTaskButtonClicked = () => {
-        const taskName = prompt("Enter task name")?.trim();
-
-        if (!(taskName === "" || taskName === undefined)) {
-            // If we are in All Tasks or Ungrouped Tasks, then this is an ungrouped task, so just have an empty active task group id
-            dispatch(
-                addTask(
-                    Task({
-                        name: taskName,
-                        id: nanoid(),
-                        taskGroupID:
-                            activeTaskGroup === undefined ? "" : activeTaskGroup.id
-                    })
-                )
-            );
-        }
-    };
-
-    // Runs when the edit name button is clicked
-    const onEditNameButtonClicked = () => {
-        const groupName = prompt("Enter task group name")?.trim();
-
-        if (!(groupName === "" || groupName === undefined)) {
-            dispatch(setActiveTaskGroupName(groupName));
-        }
-    };
-
-    // Runs when the group description is changed
-    const onGroupDescriptionChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        dispatch(setActiveTaskGroupDescription(event.target.value));
-    };
 
     // Runs when the delete group button is clicked
     const onDeleteGroupClicked = () => {
@@ -90,13 +55,7 @@ export const TasksContainer = () => {
 
                 {inTaskGroup && (
                     <div className="flex-row">
-                        <button
-                            id="group-edit-name-button"
-                            data-testid="group-edit-name-button"
-                            onClick={onEditNameButtonClicked}
-                        >
-                            Edit Name
-                        </button>
+                        <EditNameButton />
 
                         <button
                             id="group-delete-button"
@@ -124,32 +83,9 @@ export const TasksContainer = () => {
                 )}
             </div>
 
-            {inTaskGroup && (
-                <div
-                    id="group-description-container"
-                    data-testid="group-description-container"
-                >
-                    <div id="group-description-label">Description:</div>
+            {inTaskGroup && <TaskGroupDescription taskGroup={activeTaskGroup} />}
 
-                    <textarea
-                        id="group-description-textarea"
-                        data-testid="group-description-textarea"
-                        aria-label="group-description"
-                        rows={3}
-                        cols={50}
-                        onChange={onGroupDescriptionChanged}
-                        value={activeTaskGroup.description}
-                    ></textarea>
-                </div>
-            )}
-
-            <button
-                id="add-task-button"
-                data-testid="add-task-button"
-                onClick={onAddTaskButtonClicked}
-            >
-                Add Task
-            </button>
+            <AddTaskButton taskGroup={activeTaskGroup} />
 
             <div id="task-components-container" data-testid="task-components-container">
                 {tasks.map((task) => (
