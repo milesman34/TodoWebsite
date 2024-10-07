@@ -8,6 +8,8 @@ import reducer, {
     deleteTask,
     deleteTaskGroup,
     initialState,
+    moveTaskToGroup,
+    moveTaskToUngrouped,
     removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
@@ -958,6 +960,157 @@ describe("todoSlice", () => {
             };
 
             state = reducer(state, deleteTask("id1"));
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("moveTaskToUngrouped", () => {
+        test("moveTaskToUngrouped already ungrouped", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "gid1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(state, moveTaskToUngrouped("id1"));
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("moveTaskToUngrouped with a grouped task", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "gid1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(state, moveTaskToUngrouped("id2"));
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+    });
+
+    describe("moveTaskToGroup", () => {
+        test("moveTaskToGroup from ungrouped", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "gid2" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const taskGroups = [
+                TaskGroup({ name: "Group 1", id: "gid1" }),
+                TaskGroup({ name: "Group 2", id: "gid2" })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                moveTaskToGroup({
+                    id: "id1",
+                    groupID: "gid2"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("moveTaskToGroup from other group", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid2" })
+            ];
+
+            const taskGroups = [
+                TaskGroup({ name: "Group 1", id: "gid1" }),
+                TaskGroup({ name: "Group 2", id: "gid2" })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                moveTaskToGroup({
+                    id: "id2",
+                    groupID: "gid2"
+                })
+            );
+
+            expect(state.tasks).toEqual(outputTasks);
+        });
+
+        test("moveTaskToGroup from same group", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const outputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const taskGroups = [
+                TaskGroup({ name: "Group 1", id: "gid1" }),
+                TaskGroup({ name: "Group 2", id: "gid2" })
+            ];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups
+            };
+
+            state = reducer(
+                state,
+                moveTaskToGroup({
+                    id: "id2",
+                    groupID: "gid1"
+                })
+            );
 
             expect(state.tasks).toEqual(outputTasks);
         });
