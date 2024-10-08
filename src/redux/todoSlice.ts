@@ -341,6 +341,49 @@ const todoSlice = createSlice({
          */
         deleteTask(state: TodoState, action: PayloadAction<string>) {
             state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        },
+
+        /**
+         * Moves a task to ungrouped tasks
+         */
+        moveTaskToUngrouped(state: TodoState, action: PayloadAction<string>) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload,
+                (task) => ({
+                    ...task,
+                    taskGroupID: ""
+                })
+            );
+
+            if (state.taskListType !== TaskListType.All) {
+                state.taskListType = TaskListType.Ungrouped;
+                state.activeTaskGroup = "";
+            }
+        },
+
+        /**
+         * Moves a task to a given task group
+         */
+        moveTaskToGroup(
+            state: TodoState,
+            action: PayloadAction<{
+                id: string;
+                groupID: string;
+            }>
+        ) {
+            state.tasks = filterMap(
+                state.tasks,
+                (task) => task.id === action.payload.id,
+                (task) => ({
+                    ...task,
+                    taskGroupID: action.payload.groupID
+                })
+            );
+
+            // Change the active task group
+            state.taskListType = TaskListType.TaskGroup;
+            state.activeTaskGroup = action.payload.groupID;
         }
     }
 });
@@ -353,6 +396,8 @@ export const {
     addTaskTag,
     deleteTask,
     deleteTaskGroup,
+    moveTaskToGroup,
+    moveTaskToUngrouped,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
