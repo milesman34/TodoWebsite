@@ -69,6 +69,26 @@ interface ILocalStorageTask {
     tags: string[];
 }
 
+// Parses an individual task item
+const parseTaskItem = (id: string): Task | null => {
+    const taskStorageItem = localStorage.getItem(`tasks-${id}`);
+
+    if (taskStorageItem === null) {
+        return null;
+    }
+
+    const parsed = JSON.parse(taskStorageItem);
+
+    if (typia.is<ILocalStorageTask>(parsed)) {
+        return {
+            ...parsed,
+            isOpen: false
+        };
+    } else {
+        return null;
+    }
+};
+
 /**
  * Parses the local storage item to get the list of Tasks
  */
@@ -81,13 +101,29 @@ export const parseTasksLocalStorage = (): Task[] => {
 
     const parsed = JSON.parse(storageItem);
 
-    // The isOpen part is only in session storage
-    if (typia.is<ILocalStorageTask[]>(parsed)) {
-        return parsed.map((task) => ({
-            ...task,
-            isOpen: false
-        }));
-    } else {
-        return [];
+    const tasks = [];
+
+    if (typia.is<string[]>(parsed)) {
+        for (const taskID of parsed) {
+            const task = parseTaskItem(taskID);
+
+            if (task !== null) {
+                tasks.push(task);
+            }
+        }
     }
+
+    return tasks;
+
+    // const parsed = JSON.parse(storageItem);
+
+    // // The isOpen part is only in session storage
+    // if (typia.is<ILocalStorageTask[]>(parsed)) {
+    //     return parsed.map((task) => ({
+    //         ...task,
+    //         isOpen: false
+    //     }));
+    // } else {
+    //     return [];
+    // }
 };

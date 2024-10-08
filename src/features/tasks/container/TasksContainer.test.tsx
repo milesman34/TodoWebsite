@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
 import { render, screen } from "@testing-library/react";
 import { TasksContainer } from "./TasksContainer";
@@ -23,10 +23,6 @@ import {
     mockPrompt
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
-
-vi.mock("nanoid", () => ({
-    nanoid: vi.fn()
-}));
 
 describe("TasksContainer", () => {
     describe("TasksContainer displays the correct label for the list of tasks", () => {

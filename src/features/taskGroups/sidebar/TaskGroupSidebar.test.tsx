@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { TaskGroupSidebar } from "./TaskGroupSidebar";
 
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { createStore } from "../../../redux/store";
@@ -14,10 +14,6 @@ import {
     mockNanoid,
     mockPrompt
 } from "../../../utils/testUtils";
-
-vi.mock("nanoid", () => ({
-    nanoid: vi.fn()
-}));
 
 describe("TaskGroupSidebar", () => {
     describe("User must be able to press the Add button to create a new Task Group", () => {

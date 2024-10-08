@@ -14,6 +14,7 @@ import reducer, {
     selectActiveTaskGroup,
     selectAllTasks,
     selectTaskGroupNameByID,
+    selectTaskIDs,
     selectTasksInCurrentTaskList,
     selectTaskWithID,
     setActiveTaskGroup,
@@ -1183,6 +1184,22 @@ describe("todoSlice", () => {
             expect(state.tasks).toEqual(outputTasks);
             expect(state.activeTaskGroup).toBe("gid1");
             expect(state.taskListType).toEqual(TaskListType.TaskGroup);
+        });
+    });
+
+    describe("selectTaskIDs", () => {
+        test("selectTaskIDs", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const state = {
+                ...initialState,
+                tasks: inputTasks
+            };
+
+            expect(selectTaskIDs(state)).toEqual(["id1", "id2"]);
         });
     });
 });

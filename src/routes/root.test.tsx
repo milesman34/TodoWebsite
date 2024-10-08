@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../redux/store";
 import { Task } from "../features/tasks/Task";
 import {
@@ -26,10 +26,6 @@ import {
     mockNanoid,
     mockPrompt
 } from "../utils/testUtils";
-
-vi.mock("nanoid", () => ({
-    nanoid: vi.fn()
-}));
 
 describe("Root", () => {
     describe("Clicking the All Tasks button must display all the tasks", () => {

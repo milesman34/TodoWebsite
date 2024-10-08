@@ -493,3 +493,10 @@ export const selectTaskGroupNameByID =
 
         return targetGroup === undefined ? "" : targetGroup.name;
     };
+
+/**
+ * Selects the ids of all tasks
+ */
+export const selectTaskIDs = createSelector([selectAllTasks], (tasks) =>
+    tasks.map((task) => task.id)
+);
