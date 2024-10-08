@@ -10,6 +10,7 @@ import "./TaskGroupSidebar.css";
 import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
 import { TaskListButton } from "./components/TaskListButton";
 import { AddTaskGroupButton } from "./components/AddTaskGroupButton";
+import { useEffect } from "react";
 
 /**
  * This component contains the app sidebar, which contains the task groups
@@ -18,6 +19,11 @@ export const TaskGroupSidebar = () => {
     const taskGroups = useSelector(selectTaskGroups);
 
     const dispatch = useDispatch();
+
+    // Update local storage whenever the task groups are updated
+    useEffect(() => {
+        localStorage.setItem("taskGroups", JSON.stringify(taskGroups));
+    }, [taskGroups]);
 
     return (
         <div id="task-group-sidebar">

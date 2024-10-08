@@ -1,3 +1,5 @@
+import typia from "typia";
+
 /**
  * Represents a given task
  */
@@ -56,3 +58,36 @@ export const Task = ({
     tags,
     isOpen
 });
+
+// Type for the localStorage saved part of a task
+interface ILocalStorageTask {
+    name: string;
+    description: string;
+    id: string;
+    taskGroupID: string;
+    priority: number;
+    tags: string[];
+}
+
+/**
+ * Parses the local storage item to get the list of Tasks
+ */
+export const parseTasksLocalStorage = (): Task[] => {
+    const storageItem = localStorage.getItem("tasks");
+
+    if (storageItem === null) {
+        return [];
+    }
+
+    const parsed = JSON.parse(storageItem);
+
+    // The isOpen part is only in session storage
+    if (typia.is<ILocalStorageTask[]>(parsed)) {
+        return parsed.map((task) => ({
+            ...task,
+            isOpen: false
+        }));
+    } else {
+        return [];
+    }
+};
