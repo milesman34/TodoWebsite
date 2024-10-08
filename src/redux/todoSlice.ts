@@ -355,6 +355,11 @@ const todoSlice = createSlice({
                     taskGroupID: ""
                 })
             );
+
+            if (state.taskListType !== TaskListType.All) {
+                state.taskListType = TaskListType.Ungrouped;
+                state.activeTaskGroup = "";
+            }
         },
 
         /**
@@ -375,6 +380,10 @@ const todoSlice = createSlice({
                     taskGroupID: action.payload.groupID
                 })
             );
+
+            // Change the active task group
+            state.taskListType = TaskListType.TaskGroup;
+            state.activeTaskGroup = action.payload.groupID;
         }
     }
 });

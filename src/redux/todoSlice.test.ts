@@ -1013,6 +1013,68 @@ describe("todoSlice", () => {
 
             expect(state.tasks).toEqual(outputTasks);
         });
+
+        test("moveTaskToUngrouped does not change task list if in all tasks", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "gid1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups,
+                taskListType: TaskListType.All
+            };
+
+            state = reducer(state, moveTaskToUngrouped("id1"));
+
+            expect(state.taskListType).toEqual(TaskListType.All);
+        });
+
+        test("moveTaskToUngrouped does not change task list if in ungrouped tasks", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "gid1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups,
+                taskListType: TaskListType.Ungrouped
+            };
+
+            state = reducer(state, moveTaskToUngrouped("id1"));
+
+            expect(state.taskListType).toEqual(TaskListType.Ungrouped);
+        });
+
+        test("moveTaskToUngrouped does change task list to ungrouped if in a task group", () => {
+            const inputTasks = [
+                Task({ name: "Task 1", id: "id1", taskGroupID: "" }),
+                Task({ name: "Task 2", id: "id2", taskGroupID: "gid1" })
+            ];
+
+            const taskGroups = [TaskGroup({ name: "Group 1", id: "gid1" })];
+
+            let state = {
+                ...initialState,
+                tasks: inputTasks,
+                groups: taskGroups,
+                taskListType: TaskListType.Ungrouped,
+                activeTaskGroup: "gid1"
+            };
+
+            state = reducer(state, moveTaskToUngrouped("id1"));
+
+            expect(state.taskListType).toEqual(TaskListType.Ungrouped);
+            expect(state.activeTaskGroup).toBe("");
+        });
     });
 
     describe("moveTaskToGroup", () => {
@@ -1047,6 +1109,8 @@ describe("todoSlice", () => {
             );
 
             expect(state.tasks).toEqual(outputTasks);
+            expect(state.activeTaskGroup).toBe("gid2");
+            expect(state.taskListType).toEqual(TaskListType.TaskGroup);
         });
 
         test("moveTaskToGroup from other group", () => {
@@ -1080,6 +1144,8 @@ describe("todoSlice", () => {
             );
 
             expect(state.tasks).toEqual(outputTasks);
+            expect(state.activeTaskGroup).toBe("gid2");
+            expect(state.taskListType).toEqual(TaskListType.TaskGroup);
         });
 
         test("moveTaskToGroup from same group", () => {
@@ -1101,7 +1167,9 @@ describe("todoSlice", () => {
             let state = {
                 ...initialState,
                 tasks: inputTasks,
-                groups: taskGroups
+                groups: taskGroups,
+                taskListType: TaskListType.TaskGroup,
+                activeTaskGroup: "gid1"
             };
 
             state = reducer(
@@ -1113,6 +1181,8 @@ describe("todoSlice", () => {
             );
 
             expect(state.tasks).toEqual(outputTasks);
+            expect(state.activeTaskGroup).toBe("gid1");
+            expect(state.taskListType).toEqual(TaskListType.TaskGroup);
         });
     });
 });

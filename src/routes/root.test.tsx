@@ -10,7 +10,7 @@ import {
     switchToAllTasks,
     switchToUngroupedTasks
 } from "../redux/todoSlice";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { Root } from "./root";
 import userEvent from "@testing-library/user-event";
@@ -720,6 +720,178 @@ describe("Root", () => {
             await clickButton("group-delete-button");
 
             // Confirm this task exists
+            expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
+        });
+    });
+
+    describe("Ability to move tasks between groups", () => {
+        test("Move a task to ungrouped tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Group 1", id: "groupid1" })));
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "Task 1",
+                        id: "id1",
+                        taskGroupID: "groupid1",
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            fireEvent.change(screen.getByTestId("move-task-select-id1"), {
+                target: {
+                    value: "Ungrouped"
+                }
+            });
+
+            expect(getTextContent("tasks-type-text")).toBe("Ungrouped Tasks");
+
+            expect(screen.getByTestId("task-component-id1")).toBeTruthy();
+        });
+
+        test("Move a task to ungrouped tasks that was already in ungrouped tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Group 1", id: "groupid1" })));
+
+            store.dispatch(switchToUngroupedTasks());
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "Task 1",
+                        id: "id1",
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            fireEvent.change(screen.getByTestId("move-task-select-id1"), {
+                target: {
+                    value: "Ungrouped"
+                }
+            });
+
+            expect(getTextContent("tasks-type-text")).toBe("Ungrouped Tasks");
+
+            expect(getTextContent("tasks-type-text")).toBe("Ungrouped Tasks");
+        });
+
+        test("Move a task to ungrouped tasks while in all tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Group 1", id: "groupid1" })));
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "Task 1",
+                        id: "id1",
+                        taskGroupID: "groupid1",
+                        isOpen: true
+                    })
+                )
+            );
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            fireEvent.change(screen.getByTestId("move-task-select-id1"), {
+                target: {
+                    value: "Ungrouped"
+                }
+            });
+
+            expect(getTextContent("tasks-type-text")).toBe("All Tasks");
+            expect(getTextContent("task-component-group-name-id1")).toBe("Ungrouped");
+        });
+
+        test("Move a task from ungrouped tasks to a group", () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Group 1", id: "groupid1" })));
+
+            store.dispatch(switchToAllTasks());
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "Task 1",
+                        id: "id1",
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            fireEvent.change(screen.getByTestId("move-task-select-id1"), {
+                target: {
+                    value: "groupid1"
+                }
+            });
+
+            expect(getTextContent("tasks-type-text")).toBe("Group 1");
+            expect(screen.getByTestId("task-component-id1")).toBeTruthy();
+        });
+
+        test("Move a task from a group to another group", async () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Group 1", id: "groupid1" })));
+            store.dispatch(addTaskGroup(TaskGroup({ name: "Group 2", id: "groupid2" })));
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "Task 1",
+                        id: "id1",
+                        taskGroupID: "groupid2",
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            fireEvent.change(screen.getByTestId("move-task-select-id1"), {
+                target: {
+                    value: "groupid1"
+                }
+            });
+
+            expect(getTextContent("tasks-type-text")).toBe("Group 1");
+            expect(screen.queryByTestId("task-component-id1")).toBeTruthy();
+
+            await clickButton("task-group-component-groupid2");
             expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
         });
     });
