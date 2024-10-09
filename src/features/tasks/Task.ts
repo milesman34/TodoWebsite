@@ -1,5 +1,3 @@
-import typia from "typia";
-
 /**
  * Represents a given task
  */
@@ -59,16 +57,6 @@ export const Task = ({
     isOpen
 });
 
-// Type for the localStorage saved part of a task
-interface ILocalStorageTask {
-    name: string;
-    description: string;
-    id: string;
-    taskGroupID: string;
-    priority: number;
-    tags: string[];
-}
-
 // Parses an individual task item
 const parseTaskItem = (id: string): Task | null => {
     const taskStorageItem = localStorage.getItem(`tasks-${id}`);
@@ -77,14 +65,12 @@ const parseTaskItem = (id: string): Task | null => {
         return null;
     }
 
-    const parsed = JSON.parse(taskStorageItem);
-
-    if (typia.is<ILocalStorageTask>(parsed)) {
+    try {
         return {
-            ...parsed,
+            ...JSON.parse(taskStorageItem),
             isOpen: false
         };
-    } else {
+    } catch {
         return null;
     }
 };
@@ -99,11 +85,11 @@ export const parseTasksLocalStorage = (): Task[] => {
         return [];
     }
 
-    const parsed = JSON.parse(storageItem);
+    try {
+        const parsed: string[] = JSON.parse(storageItem);
 
-    const tasks = [];
+        const tasks = [];
 
-    if (typia.is<string[]>(parsed)) {
         for (const taskID of parsed) {
             const task = parseTaskItem(taskID);
 
@@ -111,19 +97,9 @@ export const parseTasksLocalStorage = (): Task[] => {
                 tasks.push(task);
             }
         }
+
+        return tasks;
+    } catch {
+        return [];
     }
-
-    return tasks;
-
-    // const parsed = JSON.parse(storageItem);
-
-    // // The isOpen part is only in session storage
-    // if (typia.is<ILocalStorageTask[]>(parsed)) {
-    //     return parsed.map((task) => ({
-    //         ...task,
-    //         isOpen: false
-    //     }));
-    // } else {
-    //     return [];
-    // }
 };

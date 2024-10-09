@@ -39,11 +39,12 @@ export const clickButton = async (testID: string) =>
 
 /**
  * Enters text into the text area with the given test ID
- * @param testID 
- * @param text 
- * @returns 
+ * @param testID
+ * @param text
+ * @returns
  */
-export const enterText = async (testID: string, text: string) => userEvent.type(screen.getByTestId(testID), text);
+export const enterText = async (testID: string, text: string) =>
+    userEvent.type(screen.getByTestId(testID), text);
 
 /**
  * Gets the text content of the element with the given test ID, or null if the element does not exist
@@ -79,6 +80,24 @@ export const containsClass = (testID: string, className: string): boolean => {
 /**
  * Returns the test ID from an element
  * @param element An HTML element, usually gotten from the children collection
- * @returns 
+ * @returns
  */
-export const getTestID = (element: Element): string | undefined => element.attributes.getNamedItem("data-testid")?.value;
+export const getTestID = (element: Element): string | undefined =>
+    element.attributes.getNamedItem("data-testid")?.value;
+
+/**
+ * Mocks a local storage instance, returning a mock function for tracking setItem calls
+ * @param cache map of keys to values
+ * @returns
+ */
+export const mockLocalStorage = (cache: { [key: string]: string }): Mock => {
+    const mockFn = vi.fn();
+
+    vi.stubGlobal("localStorage", {
+        getItem: (key: string): string | null => (key in cache ? cache[key] : null),
+        setItem: mockFn,
+        clear: () => {}
+    });
+
+    return mockFn;
+};

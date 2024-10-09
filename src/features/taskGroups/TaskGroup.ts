@@ -1,5 +1,3 @@
-import typia from "typia";
-
 /**
  * Represents a group of tasks
  */
@@ -41,11 +39,9 @@ export const parseTaskGroupsLocalStorage = (): TaskGroup[] => {
         return [];
     }
 
-    const parsed = JSON.parse(storageItem);
-
-    if (typia.is<TaskGroup[]>(parsed)) {
-        return parsed;
-    } else {
+    try {
+        return JSON.parse(storageItem);
+    } catch {
         return [];
     }
-}
+};

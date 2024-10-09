@@ -19,6 +19,7 @@ import {
     getTestID,
     getTextContent,
     mockConfirm,
+    mockLocalStorage,
     mockNanoid,
     mockPrompt
 } from "../../../utils/testUtils";
@@ -233,6 +234,27 @@ describe("TasksContainer", () => {
 
             // Get the children of the main container
             expect(countElementChildren("task-components-container")).toBe(0);
+        });
+
+        test("Add Task button updates task list in localStorage", async () => {
+            // Set up the mock results
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
+            const mockSetItem = mockLocalStorage({});
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("add-task-button");
+
+            expect(mockSetItem).toHaveBeenCalledWith("tasks", JSON.stringify(["id1"]));
         });
     });
 
@@ -599,7 +621,7 @@ describe("TasksContainer", () => {
 
             expect(screen.queryByTestId("task-component-id1")).toBeTruthy();
         });
-        
+
         test("Delete task button deletes the task when confirm succeeds", async () => {
             mockConfirm(true);
 

@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import { createStore } from "./redux/store";
 import { Root } from "./routes/root";
-import { parseTaskGroupsLocalStorage } from "./features/taskGroups/TaskGroup";
+import { createStore } from "./redux/store";
 import { setGroups, setTasks } from "./redux/todoSlice";
+import { parseTaskGroupsLocalStorage } from "./features/taskGroups/TaskGroup";
 import { parseTasksLocalStorage } from "./features/tasks/Task";
 
 // Set up the react router
@@ -17,10 +17,9 @@ const router = createBrowserRouter([
     }
 ]);
 
-// Set up the store
 const store = createStore();
 
-// Load important data from local storage
+// Runs when the app loads, to load from localStorage
 store.dispatch(setGroups(parseTaskGroupsLocalStorage()));
 store.dispatch(setTasks(parseTasksLocalStorage()));
 

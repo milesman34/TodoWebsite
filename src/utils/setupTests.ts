@@ -9,4 +9,6 @@ beforeAll(() => {
 
 afterEach(() => {
     cleanup();
+    localStorage.clear();
+    sessionStorage.clear();
 });
