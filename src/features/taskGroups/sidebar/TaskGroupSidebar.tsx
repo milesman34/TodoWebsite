@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
+    selectActiveTaskGroupID,
     selectTaskGroups,
+    selectTaskListType,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -17,6 +19,8 @@ import { useEffect } from "react";
  */
 export const TaskGroupSidebar = () => {
     const taskGroups = useSelector(selectTaskGroups);
+    const taskListType = useSelector(selectTaskListType);
+    const activeTaskGroup = useSelector(selectActiveTaskGroupID);
 
     const dispatch = useDispatch();
 
@@ -24,6 +28,16 @@ export const TaskGroupSidebar = () => {
     useEffect(() => {
         localStorage.setItem("taskGroups", JSON.stringify(taskGroups));
     }, [taskGroups]);
+
+    // Update local storage for the current task list type
+    useEffect(() => {
+        sessionStorage.setItem("taskListType", taskListType.toString());
+    }, [taskListType]);
+
+    // Update local storage for active task group
+    useEffect(() => {
+        sessionStorage.setItem("activeTaskGroup", activeTaskGroup);
+    }, [activeTaskGroup]);
 
     return (
         <div id="task-group-sidebar">

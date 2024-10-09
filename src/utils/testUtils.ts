@@ -101,3 +101,20 @@ export const mockLocalStorage = (cache: { [key: string]: string }): Mock => {
 
     return mockFn;
 };
+
+/**
+ * Mocks a session storage instance, returning a mock function for tracking setItem calls
+ * @param cache map of keys to values
+ * @returns
+ */
+export const mockSessionStorage = (cache: { [key: string]: string }): Mock => {
+    const mockFn = vi.fn();
+
+    vi.stubGlobal("sessionStorage", {
+        getItem: (key: string): string | null => (key in cache ? cache[key] : null),
+        setItem: mockFn,
+        clear: () => {}
+    });
+
+    return mockFn;
+};

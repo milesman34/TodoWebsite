@@ -500,3 +500,10 @@ export const selectTaskGroupNameByID =
 export const selectTaskIDs = createSelector([selectAllTasks], (tasks) =>
     tasks.map((task) => task.id)
 );
+
+/**
+ * Selects the ids of all open tasks
+ */
+export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
+    tasks.filter((task) => task.isOpen).map((task) => task.id)
+);

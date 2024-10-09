@@ -3,6 +3,7 @@ import "./TasksContainer.css";
 import {
     deleteTaskGroup,
     selectActiveTaskGroup,
+    selectOpenTaskIDs,
     selectTaskIDs,
     selectTaskListType,
     selectTasksInCurrentTaskList,
@@ -23,6 +24,7 @@ export const TasksContainer = () => {
     const activeTaskGroup = useSelector(selectActiveTaskGroup);
     const tasks = useSelector(selectTasksInCurrentTaskList);
     const taskIDs = useSelector(selectTaskIDs);
+    const openTaskIDs = useSelector(selectOpenTaskIDs);
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
@@ -48,6 +50,11 @@ export const TasksContainer = () => {
     useEffect(() => {
         localStorage.setItem("tasks", JSON.stringify(taskIDs));
     }, [taskIDs]);
+
+    // Save the list of open task IDs
+    useEffect(() => {
+        sessionStorage.setItem("openTasks", JSON.stringify(openTaskIDs));
+    }, [openTaskIDs]);
 
     return (
         <div id="tasks-container">
