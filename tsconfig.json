@@ -1,25 +1,19 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
+    "files": [],
+    "references": [
+        {
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ],
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "types": ["vitest/globals"],
+        "plugins": [],
+        "strictNullChecks": true
     }
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "types": [
-      "vitest/globals"
-    ],
-    "plugins": [
-      {
-        "transform": "typia/lib/transform"
-      }
-    ],
-    "strictNullChecks": true
-  }
 }

@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
 import { render, screen } from "@testing-library/react";
 import { TasksContainer } from "./TasksContainer";
@@ -19,14 +19,12 @@ import {
     getTestID,
     getTextContent,
     mockConfirm,
+    mockLocalStorage,
     mockNanoid,
-    mockPrompt
+    mockPrompt,
+    mockSessionStorage
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
-
-vi.mock("nanoid", () => ({
-    nanoid: vi.fn()
-}));
 
 describe("TasksContainer", () => {
     describe("TasksContainer displays the correct label for the list of tasks", () => {
@@ -237,6 +235,27 @@ describe("TasksContainer", () => {
 
             // Get the children of the main container
             expect(countElementChildren("task-components-container")).toBe(0);
+        });
+
+        test("Add Task button updates task list in localStorage", async () => {
+            // Set up the mock results
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
+            const mockSetItem = mockLocalStorage({});
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("add-task-button");
+
+            expect(mockSetItem).toHaveBeenCalledWith("tasks", JSON.stringify(["id1"]));
         });
     });
 
@@ -603,7 +622,7 @@ describe("TasksContainer", () => {
 
             expect(screen.queryByTestId("task-component-id1")).toBeTruthy();
         });
-        
+
         test("Delete task button deletes the task when confirm succeeds", async () => {
             mockConfirm(true);
 
@@ -630,4 +649,58 @@ describe("TasksContainer", () => {
             expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
         });
     });
+
+    describe("Update openTasks in sessionStorage when a task is clicked", () => {
+        test("Update openTasks when a task is opened", async () => {
+            const mockSetItem = mockSessionStorage({});
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: false
+                    })
+                )
+            );
+            
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("task-component-header-id1");
+
+            expect(mockSetItem).toHaveBeenCalledWith("openTasks", JSON.stringify(["id1"]));
+        });
+        
+        test("Update openTasks when a task is closed", async () => {
+            const mockSetItem = mockSessionStorage({});
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true
+                    })
+                )
+            );
+            
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("task-component-header-id1");
+
+            expect(mockSetItem).toHaveBeenCalledWith("openTasks", "[]");
+        });
+    })
 });

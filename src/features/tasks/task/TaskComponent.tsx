@@ -8,6 +8,8 @@ import {
     TaskListType
 } from "../../../redux/todoSlice";
 import { TaskComponentOpen } from "./TaskComponentOpen";
+import { useEffect } from "react";
+import omit from "lodash.omit";
 
 /**
  * Component for displaying a Task
@@ -27,6 +29,16 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
         selectTaskGroupNameByID(thisTask?.taskGroupID || "")
     );
 
+    // Set up the localStorage effect when the task is changed
+    useEffect(() => {
+        if (thisTask !== undefined) {
+            localStorage.setItem(
+                `tasks-${thisTask.id}`,
+                JSON.stringify(omit(thisTask, "isOpen"))
+            );
+        }
+    }, [thisTask]);
+
     // Don't render the component if the task could not be found
     if (thisTask === undefined) {
         return null;
@@ -44,7 +56,11 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
 
     return (
         <div className="task-component" data-testid={`task-component-${thisTask.id}`}>
-            <div className="task-header" onClick={() => setIsOpen(!thisTask.isOpen)}>
+            <div
+                className="task-header"
+                data-testid={`task-component-header-${thisTask.id}`}
+                onClick={() => setIsOpen(!thisTask.isOpen)}
+            >
                 <div className="task-name-container">
                     <div
                         className="task-component-name-display"

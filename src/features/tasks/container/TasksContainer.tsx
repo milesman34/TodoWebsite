@@ -3,17 +3,17 @@ import "./TasksContainer.css";
 import {
     deleteTaskGroup,
     selectActiveTaskGroup,
-    selectAllTasks,
+    selectOpenTaskIDs,
+    selectTaskIDs,
     selectTaskListType,
     selectTasksInCurrentTaskList,
     TaskListType
 } from "../../../redux/todoSlice";
 import { TaskComponent } from "../task/TaskComponent";
-import { useEffect, useState } from "react";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { EditNameButton } from "./components/EditNameButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
-import omit from "lodash.omit";
+import { useEffect, useState } from "react";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -23,7 +23,8 @@ export const TasksContainer = () => {
     const taskListType = useSelector(selectTaskListType);
     const activeTaskGroup = useSelector(selectActiveTaskGroup);
     const tasks = useSelector(selectTasksInCurrentTaskList);
-    const allTasks = useSelector(selectAllTasks);
+    const taskIDs = useSelector(selectTaskIDs);
+    const openTaskIDs = useSelector(selectOpenTaskIDs);
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
@@ -45,14 +46,15 @@ export const TasksContainer = () => {
         }
     };
 
-    // Save tasks to local storage on each change
+    // Save the list of task IDs
     useEffect(() => {
-        // We don't want to save whether the task is open in localStorage
-        localStorage.setItem(
-            "tasks",
-            JSON.stringify(allTasks.map((task) => omit(task, "isOpen")))
-        );
-    }, [allTasks]);
+        localStorage.setItem("tasks", JSON.stringify(taskIDs));
+    }, [taskIDs]);
+
+    // Save the list of open task IDs
+    useEffect(() => {
+        sessionStorage.setItem("openTasks", JSON.stringify(openTaskIDs));
+    }, [openTaskIDs]);
 
     return (
         <div id="tasks-container">

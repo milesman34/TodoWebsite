@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { TaskGroupSidebar } from "./TaskGroupSidebar";
 
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { createStore } from "../../../redux/store";
@@ -11,13 +11,11 @@ import {
     containsClass,
     countElementChildren,
     getTextContent,
+    mockLocalStorage,
     mockNanoid,
     mockPrompt
 } from "../../../utils/testUtils";
-
-vi.mock("nanoid", () => ({
-    nanoid: vi.fn()
-}));
+import { TaskGroup } from "../TaskGroup";
 
 describe("TaskGroupSidebar", () => {
     describe("User must be able to press the Add button to create a new Task Group", () => {
@@ -96,6 +94,33 @@ describe("TaskGroupSidebar", () => {
 
             // Get the children of the main container
             expect(countElementChildren("task-groups-container")).toBe(1);
+        });
+
+        test("Add Task Group button adds a new Task Group and updates localStorage", async () => {
+            // Mock return values from nanoid + prompt
+            mockNanoid(nanoid, "id1");
+            mockPrompt("First Task Group");
+            const mockSetItem = mockLocalStorage({});
+
+            // Render the TaskGroupSidebar
+            render(
+                <Provider store={createStore()}>
+                    <TaskGroupSidebar />
+                </Provider>
+            );
+
+            await clickButton("add-task-group-button");
+
+            // Make sure it called setItem properly with the new update
+            expect(mockSetItem).toHaveBeenCalledWith(
+                "taskGroups",
+                JSON.stringify([
+                    TaskGroup({
+                        id: "id1",
+                        name: "First Task Group"
+                    })
+                ])
+            );
         });
     });
 
@@ -191,7 +216,9 @@ describe("TaskGroupSidebar", () => {
                 </Provider>
             );
 
-            expect(containsClass("ungrouped-tasks-button", "tasks-button-active")).toBe(true);
+            expect(containsClass("ungrouped-tasks-button", "tasks-button-active")).toBe(
+                true
+            );
         });
 
         test("Ungrouped Tasks button when ungrouped tasks not enabled", () => {
@@ -205,7 +232,9 @@ describe("TaskGroupSidebar", () => {
                 </Provider>
             );
 
-            expect(containsClass("ungrouped-tasks-button", "tasks-button-active")).toBe(false);
+            expect(containsClass("ungrouped-tasks-button", "tasks-button-active")).toBe(
+                false
+            );
         });
     });
 });

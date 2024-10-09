@@ -15,6 +15,7 @@ import {
     countElementChildren,
     getTextContent,
     mockConfirm,
+    mockLocalStorage,
     mockPrompt
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
@@ -576,6 +577,45 @@ describe("TaskComponent", () => {
             await clickButton("task-priority-add-button-id1-10");
 
             expect(getTextContent("task-priority-label-id1")).toBe("Priority: 15");
+        });
+    });
+
+    describe("Task is saved when it is changed", () => {
+        test("Task is saved when it is changed", async () => {
+            const mockSetItem = mockLocalStorage({});
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        priority: 0,
+                        isOpen: true
+                    })
+                )
+            );
+
+            render(
+                <Provider store={store}>
+                    <TaskComponent taskID="id1" />
+                </Provider>
+            );
+
+            await clickButton("task-priority-add-button-id1-1");
+
+            expect(mockSetItem).toHaveBeenCalledWith(
+                "tasks-id1",
+                JSON.stringify({
+                    name: "My task",
+                    description: "",
+                    id: "id1",
+                    taskGroupID: "",
+                    priority: 0,
+                    tags: []
+                })
+            );
         });
     });
 
