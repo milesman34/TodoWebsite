@@ -21,7 +21,8 @@ import {
     mockConfirm,
     mockLocalStorage,
     mockNanoid,
-    mockPrompt
+    mockPrompt,
+    mockSessionStorage
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
 
@@ -648,4 +649,58 @@ describe("TasksContainer", () => {
             expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
         });
     });
+
+    describe("Update openTasks in sessionStorage when a task is clicked", () => {
+        test("Update openTasks when a task is opened", async () => {
+            const mockSetItem = mockSessionStorage({});
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: false
+                    })
+                )
+            );
+            
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("task-component-header-id1");
+
+            expect(mockSetItem).toHaveBeenCalledWith("openTasks", JSON.stringify(["id1"]));
+        });
+        
+        test("Update openTasks when a task is closed", async () => {
+            const mockSetItem = mockSessionStorage({});
+
+            const store = createStore();
+
+            store.dispatch(
+                addTask(
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        isOpen: true
+                    })
+                )
+            );
+            
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("task-component-header-id1");
+
+            expect(mockSetItem).toHaveBeenCalledWith("openTasks", "[]");
+        });
+    })
 });
