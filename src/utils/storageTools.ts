@@ -1,5 +1,6 @@
-import { parseTaskGroupsLocalStorage } from "../features/taskGroups/TaskGroup";
-import { parseTasksLocalStorage } from "../features/tasks/Task";
+import omit from "lodash.omit";
+import { parseTaskGroupsLocalStorage, TaskGroup } from "../features/taskGroups/TaskGroup";
+import { parseTasksLocalStorage, Task } from "../features/tasks/Task";
 import { createStore } from "../redux/store";
 import {
     setActiveTaskGroup,
@@ -75,4 +76,52 @@ export const setupStore = () => {
     }
 
     return store;
+};
+
+/**
+ * Saves the taskGroups to localStorage
+ * @param taskGroups
+ */
+export const saveTaskGroups = (taskGroups: TaskGroup[]) => {
+    localStorage.setItem("taskGroups", JSON.stringify(taskGroups));
+};
+
+/**
+ * Saves the taskListType to sessionStorage
+ * @param taskListType
+ */
+export const saveTaskListType = (taskListType: TaskListType) => {
+    sessionStorage.setItem("taskListType", taskListType.toString());
+};
+
+/**
+ * Saves the active task group to sessionStorage
+ * @param activeID
+ */
+export const saveActiveTaskGroup = (activeID: string) => {
+    sessionStorage.setItem("activeTaskGroup", activeID);
+};
+
+/**
+ * Saves the list of task ids into localStorage
+ * @param taskIDs
+ */
+export const saveTaskIDs = (taskIDs: string[]) => {
+    localStorage.setItem("tasks", JSON.stringify(taskIDs));
+};
+
+/**
+ * Saves the list of open task ids into sessionStorage
+ * @param taskIDs
+ */
+export const saveOpenTaskIDs = (taskIDs: string[]) => {
+    sessionStorage.setItem("openTasks", JSON.stringify(taskIDs));
+};
+
+/**
+ * Saves a task's information into localStorage
+ * @param task
+ */
+export const saveTask = (task: Task) => {
+    localStorage.setItem(`tasks-${task.id}`, JSON.stringify(omit(task, "isOpen")));
 };
