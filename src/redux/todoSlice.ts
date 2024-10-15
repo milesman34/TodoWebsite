@@ -15,7 +15,7 @@ export enum TaskListType {
 /**
  * Type representing the state of the Todo slice
  */
-type TodoState = {
+export type TodoState = {
     // List of task groups
     groups: TaskGroup[];
 
@@ -27,6 +27,9 @@ type TodoState = {
 
     // List of tasks
     tasks: Task[];
+
+    // List of notifications
+    notifications: string[];
 };
 
 /**
@@ -36,7 +39,8 @@ export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
-    tasks: []
+    tasks: [],
+    notifications: []
 };
 
 // Todo slice handles tasks and task groups
@@ -384,6 +388,13 @@ const todoSlice = createSlice({
             // Change the active task group
             state.taskListType = TaskListType.TaskGroup;
             state.activeTaskGroup = action.payload.groupID;
+        },
+
+        /**
+         * Pushes a notification onto the stack
+         */
+        pushNotification(state: TodoState, action: PayloadAction<string>) {
+            state.notifications.push(action.payload);
         }
     }
 });
@@ -398,6 +409,7 @@ export const {
     deleteTaskGroup,
     moveTaskToGroup,
     moveTaskToUngrouped,
+    pushNotification,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,

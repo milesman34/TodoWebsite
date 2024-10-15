@@ -10,6 +10,7 @@ import reducer, {
     initialState,
     moveTaskToGroup,
     moveTaskToUngrouped,
+    pushNotification,
     removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
@@ -27,7 +28,8 @@ import reducer, {
     setTaskTags,
     switchToAllTasks,
     switchToUngroupedTasks,
-    TaskListType
+    TaskListType,
+    TodoState
 } from "./todoSlice";
 
 import { describe, expect, test } from "vitest";
@@ -1200,6 +1202,24 @@ describe("todoSlice", () => {
             };
 
             expect(selectTaskIDs(state)).toEqual(["id1", "id2"]);
+        });
+    });
+
+    describe("pushNotification", () => {
+        test("pushNotification onto empty array", () => {
+            let state: TodoState = { ...initialState, notifications: [] };
+
+            state = reducer(state, pushNotification("Test"));
+
+            expect(state.notifications).toEqual(["Test"]);
+        });
+
+        test("pushNotification onto array with elements", () => {
+            let state = { ...initialState, notifications: ["Mine"] };
+
+            state = reducer(state, pushNotification("Ok"));
+
+            expect(state.notifications).toEqual(["Mine", "Ok"]);
         });
     });
 });
