@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     selectTaskGroupNameByID,
     selectTaskListType,
-    selectTaskWithID,
+    getTaskByID,
     setTaskOpen,
     TaskListType
 } from "../../../redux/todoSlice";
@@ -19,27 +19,17 @@ import { saveTask } from "../../../utils/storageTools";
 export const TaskComponent = ({ taskID }: { taskID: string }) => {
     const dispatch = useDispatch();
 
-    const thisTask = useSelector(selectTaskWithID(taskID));
+    const thisTask = useSelector(getTaskByID(taskID));
 
     const taskListType = useSelector(selectTaskListType);
 
     // Name of the relevant task group
-    // Since hooks can't be handled conditionally (after the null check), just pass the empty string, we know the task should be here
-    const taskGroupName = useSelector(
-        selectTaskGroupNameByID(thisTask?.taskGroupID || "")
-    );
+    const taskGroupName = useSelector(selectTaskGroupNameByID(thisTask.taskGroupID));
 
     // Set up the localStorage effect when the task is changed
     useEffect(() => {
-        if (thisTask !== undefined) {
-            saveTask(thisTask);
-        }
+        saveTask(thisTask);
     }, [thisTask]);
-
-    // Don't render the component if the task could not be found
-    if (thisTask === undefined) {
-        return null;
-    }
 
     // Sets if the task should be open
     const setIsOpen = (open: boolean) => {

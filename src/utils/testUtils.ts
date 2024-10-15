@@ -60,7 +60,7 @@ export const getTextContent = (testID: string): string | null =>
  * @returns
  */
 export const countElementChildren = (testID: string): number => {
-    const children = screen.getByTestId(testID)?.children;
+    const children = screen.queryByTestId(testID)?.children;
 
     return children === undefined ? -1 : children.length;
 };

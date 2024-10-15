@@ -3,6 +3,7 @@ import "./TasksContainer.css";
 import {
     deleteTaskGroup,
     selectActiveTaskGroup,
+    selectActiveTaskGroupID,
     selectOpenTaskIDs,
     selectTaskIDs,
     selectTaskListType,
@@ -23,6 +24,7 @@ import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
 export const TasksContainer = () => {
     const taskListType = useSelector(selectTaskListType);
     const activeTaskGroup = useSelector(selectActiveTaskGroup);
+    const activeTaskGroupID = useSelector(selectActiveTaskGroupID);
     const tasks = useSelector(selectTasksInCurrentTaskList);
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
@@ -40,7 +42,7 @@ export const TasksContainer = () => {
         if (confirm("Do you really want to delete this task group?")) {
             dispatch(
                 deleteTaskGroup({
-                    taskGroupID: activeTaskGroup?.id || "",
+                    taskGroupID: activeTaskGroupID,
                     preserveTasks
                 })
             );

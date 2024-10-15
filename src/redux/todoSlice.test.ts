@@ -12,12 +12,11 @@ import reducer, {
     moveTaskToUngrouped,
     pushNotification,
     removeTaskTag,
-    selectActiveTaskGroup,
     selectAllTasks,
     selectTaskGroupNameByID,
     selectTaskIDs,
     selectTasksInCurrentTaskList,
-    selectTaskWithID,
+    getTaskByID,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
@@ -29,7 +28,8 @@ import reducer, {
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType,
-    TodoState
+    TodoState,
+    selectActiveTaskGroup
 } from "./todoSlice";
 
 import { describe, expect, test } from "vitest";
@@ -492,8 +492,8 @@ describe("todoSlice", () => {
         });
     });
 
-    describe("selectTaskWithID", () => {
-        test("selectTaskWithID when task exists", () => {
+    describe("getTaskByID", () => {
+        test("getTaskByID when task exists", () => {
             const tasks = [
                 Task({ name: "Task 1", id: "id1" }),
                 Task({ name: "Task 2", id: "id2" })
@@ -504,10 +504,10 @@ describe("todoSlice", () => {
                 tasks
             };
 
-            expect(selectTaskWithID("id2")(state)).toEqual(tasks[1]);
+            expect(getTaskByID("id2")(state)).toEqual(tasks[1]);
         });
 
-        test("selectTaskWithID when task does not exist", () => {
+        test("getTaskByID when task does not exist", () => {
             const tasks = [
                 Task({ name: "Task 1", id: "id1" }),
                 Task({ name: "Task 2", id: "id2" })
@@ -518,7 +518,9 @@ describe("todoSlice", () => {
                 tasks
             };
 
-            expect(selectTaskWithID("id3")(state)).toEqual(undefined);
+            expect(() => getTaskByID("id3")(state)).toThrowError(
+                "Task with ID id3 not found!"
+            );
         });
     });
 
