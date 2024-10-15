@@ -9,7 +9,7 @@ import {
 } from "../../../redux/todoSlice";
 import { TaskComponentOpen } from "./TaskComponentOpen";
 import { useEffect } from "react";
-import omit from "lodash.omit";
+import { saveTask } from "../../../utils/storageTools";
 
 /**
  * Component for displaying a Task
@@ -32,10 +32,7 @@ export const TaskComponent = ({ taskID }: { taskID: string }) => {
     // Set up the localStorage effect when the task is changed
     useEffect(() => {
         if (thisTask !== undefined) {
-            localStorage.setItem(
-                `tasks-${thisTask.id}`,
-                JSON.stringify(omit(thisTask, "isOpen"))
-            );
+            saveTask(thisTask);
         }
     }, [thisTask]);
 

@@ -13,6 +13,7 @@ import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
 import { TaskListButton } from "./components/TaskListButton";
 import { AddTaskGroupButton } from "./components/AddTaskGroupButton";
 import { useEffect } from "react";
+import { saveActiveTaskGroup, saveTaskGroups, saveTaskListType } from "../../../utils/storageTools";
 
 /**
  * This component contains the app sidebar, which contains the task groups
@@ -26,17 +27,17 @@ export const TaskGroupSidebar = () => {
 
     // Update local storage whenever the task groups are updated
     useEffect(() => {
-        localStorage.setItem("taskGroups", JSON.stringify(taskGroups));
+        saveTaskGroups(taskGroups);
     }, [taskGroups]);
 
     // Update local storage for the current task list type
     useEffect(() => {
-        sessionStorage.setItem("taskListType", taskListType.toString());
+        saveTaskListType(taskListType);
     }, [taskListType]);
 
     // Update local storage for active task group
     useEffect(() => {
-        sessionStorage.setItem("activeTaskGroup", activeTaskGroup);
+        saveActiveTaskGroup(activeTaskGroup);
     }, [activeTaskGroup]);
 
     return (

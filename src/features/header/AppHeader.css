@@ -1,0 +1,43 @@
+#header {
+    background-color: var(--header-color);
+    width: 100%;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+}
+
+#header-text {
+    margin-left: 10px;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    font-family: "Inter";
+}
+
+.header-button {
+    background-color: #474f79;
+    color: white;
+    font-size: 20px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    padding: 10px;
+}
+
+.header-button:hover {
+    background-color: #58649e;
+}
+
+.header-button:active {
+    background-color: #6b77b6;
+}
+
+.save-button {
+    margin-right: 10px;
+}

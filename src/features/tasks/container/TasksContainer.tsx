@@ -14,6 +14,7 @@ import { AddTaskButton } from "./components/AddTaskButton";
 import { EditNameButton } from "./components/EditNameButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
 import { useEffect, useState } from "react";
+import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -48,12 +49,12 @@ export const TasksContainer = () => {
 
     // Save the list of task IDs
     useEffect(() => {
-        localStorage.setItem("tasks", JSON.stringify(taskIDs));
+        saveTaskIDs(taskIDs);
     }, [taskIDs]);
 
     // Save the list of open task IDs
     useEffect(() => {
-        sessionStorage.setItem("openTasks", JSON.stringify(openTaskIDs));
+        saveOpenTaskIDs(openTaskIDs);
     }, [openTaskIDs]);
 
     return (
