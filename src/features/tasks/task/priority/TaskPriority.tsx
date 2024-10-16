@@ -1,7 +1,7 @@
 import { Task } from "../../Task";
 import { TaskPriorityAddButton } from "./priority-add/TaskPriorityAddButton";
-import { SetPriorityButton } from "./SetPriorityButton";
 import { ResetPriorityButton } from "./ResetPriorityButton";
+import { SetPriorityButton } from "./SetPriorityButton";
 
 /**
  * This component displays the priority of the task and allows the user to edit it.

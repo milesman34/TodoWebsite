@@ -1,9 +1,9 @@
 import { render } from "@testing-library/react";
 import { TaskGroupSidebar } from "./TaskGroupSidebar";
 
-import { describe, expect, test } from "vitest";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
 import { switchToAllTasks, switchToUngroupedTasks } from "../../../redux/todoSlice";
 import {

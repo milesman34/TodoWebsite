@@ -1,15 +1,15 @@
-import "./TaskComponent.css";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    getTaskByID,
     selectTaskGroupNameByID,
     selectTaskListType,
-    getTaskByID,
     setTaskOpen,
     TaskListType
 } from "../../../redux/todoSlice";
-import { TaskComponentOpen } from "./TaskComponentOpen";
-import { useEffect } from "react";
 import { saveTask } from "../../../utils/storageTools";
+import "./TaskComponent.css";
+import { TaskComponentOpen } from "./TaskComponentOpen";
 
 /**
  * Component for displaying a Task

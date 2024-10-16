@@ -8,12 +8,12 @@ import {
     TaskListType
 } from "../../../redux/todoSlice";
 
-import "./TaskGroupSidebar.css";
-import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
-import { TaskListButton } from "./components/TaskListButton";
-import { AddTaskGroupButton } from "./components/AddTaskGroupButton";
 import { useEffect } from "react";
 import { saveActiveTaskGroup, saveTaskGroups, saveTaskListType } from "../../../utils/storageTools";
+import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
+import { AddTaskGroupButton } from "./components/AddTaskGroupButton";
+import { TaskListButton } from "./components/TaskListButton";
+import "./TaskGroupSidebar.css";
 
 /**
  * This component contains the app sidebar, which contains the task groups

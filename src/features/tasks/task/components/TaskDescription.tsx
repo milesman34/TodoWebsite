@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
-import { Task } from "../../Task";
 import { setTaskDescription } from "../../../../redux/todoSlice";
+import { Task } from "../../Task";
 
 /**
  * This component displays the description of the task and allows for editing.

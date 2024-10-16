@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { useDispatch, useSelector } from "react-redux";
 import {
     pushNotification,
@@ -17,7 +18,6 @@ import {
     saveTaskListType
 } from "../../../utils/storageTools";
 import { AppNotification } from "../../notifications/AppNotification";
-import { nanoid } from "nanoid";
 
 /**
  * This button can be clicked to save the user data

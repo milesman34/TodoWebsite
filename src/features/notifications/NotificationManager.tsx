@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import "./NotificationManager.css";
 import { selectNotifications } from "../../redux/todoSlice";
 import { NotificationComponent } from "./components/NotificationComponent";
+import "./NotificationManager.css";
 
 /**
  * This component manages the notifications to display

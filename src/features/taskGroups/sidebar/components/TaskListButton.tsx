@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import { selectTaskListType, TaskListType } from "../../../../redux/todoSlice";
 import { useSelector } from "react-redux";
+import { selectTaskListType, TaskListType } from "../../../../redux/todoSlice";
 
 import "../TaskGroupSidebar.css";
 

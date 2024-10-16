@@ -1,19 +1,19 @@
+import { render } from "@testing-library/react";
+import { nanoid } from "nanoid";
+import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
+import { createStore } from "../../../redux/store";
+import { addTask, addTaskGroup } from "../../../redux/todoSlice";
 import {
     clickButton,
     mockLocalStorage,
     mockNanoid,
     mockSessionStorage
 } from "../../../utils/testUtils";
-import { createStore } from "../../../redux/store";
-import { addTask, addTaskGroup } from "../../../redux/todoSlice";
-import { TaskGroup } from "../../taskGroups/TaskGroup";
-import { render } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { SaveButton } from "./SaveButton";
-import { Task } from "../../tasks/Task";
 import { AppNotification } from "../../notifications/AppNotification";
-import { nanoid } from "nanoid";
+import { TaskGroup } from "../../taskGroups/TaskGroup";
+import { Task } from "../../tasks/Task";
+import { SaveButton } from "./SaveButton";
 
 describe("SaveButton", () => {
     describe("SaveButton when clicked saves the needed information", () => {

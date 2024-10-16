@@ -1,11 +1,11 @@
 import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../../../../redux/store";
 import { addTask, addTaskGroup, switchToAllTasks } from "../../../../redux/todoSlice";
-import { Task } from "../../Task";
-import { Provider } from "react-redux";
-import { MoveTaskButton } from "./MoveTaskButton";
-import { describe, expect, test } from "vitest";
 import { TaskGroup } from "../../../taskGroups/TaskGroup";
+import { Task } from "../../Task";
+import { MoveTaskButton } from "./MoveTaskButton";
 
 describe("MoveTaskButton", () => {
     describe("MoveTaskButton displays the correct options", () => {

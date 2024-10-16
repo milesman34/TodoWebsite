@@ -1,6 +1,11 @@
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { nanoid } from "nanoid";
+import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
-import { createStore } from "../redux/store";
+import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
+import { createStore } from "../redux/store";
 import {
     addTask,
     addTaskGroup,
@@ -10,12 +15,6 @@ import {
     switchToAllTasks,
     switchToUngroupedTasks
 } from "../redux/todoSlice";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { Root } from "./root";
-import userEvent from "@testing-library/user-event";
-import { TaskGroup } from "../features/taskGroups/TaskGroup";
-import { nanoid } from "nanoid";
 import {
     clickButton,
     countElementChildren,
@@ -26,6 +25,7 @@ import {
     mockNanoid,
     mockPrompt
 } from "../utils/testUtils";
+import { Root } from "./root";
 
 describe("Root", () => {
     describe("Clicking the All Tasks button must display all the tasks", () => {

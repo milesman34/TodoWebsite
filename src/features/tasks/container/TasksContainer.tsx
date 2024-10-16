@@ -1,5 +1,5 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./TasksContainer.css";
 import {
     deleteTaskGroup,
     selectActiveTaskGroup,
@@ -10,12 +10,12 @@ import {
     selectTasksInCurrentTaskList,
     TaskListType
 } from "../../../redux/todoSlice";
+import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
 import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { EditNameButton } from "./components/EditNameButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
-import { useEffect, useState } from "react";
-import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
+import "./TasksContainer.css";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
