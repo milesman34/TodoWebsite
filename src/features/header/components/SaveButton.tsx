@@ -16,6 +16,8 @@ import {
     saveTaskIDs,
     saveTaskListType
 } from "../../../utils/storageTools";
+import { AppNotification } from "../../notifications/AppNotification";
+import { nanoid } from "nanoid";
 
 /**
  * This button can be clicked to save the user data
@@ -44,7 +46,14 @@ export const SaveButton = () => {
             saveTask(task);
         }
 
-        dispatch(pushNotification("Saved"));
+        dispatch(
+            pushNotification(
+                AppNotification({
+                    text: "Saved",
+                    id: nanoid()
+                })
+            )
+        );
     };
 
     return (

@@ -16,7 +16,7 @@ export const NotificationManager = () => {
                     {notifications.map(
                         // To avoid a cutoff, only display the first 10 components
                         (notif, idx) =>
-                            idx < 10 && <NotificationComponent key={idx} index={idx} text={notif} />
+                            idx < 10 && <NotificationComponent key={notif.id} notification={notif} />
                     )}
                 </div>
             )}

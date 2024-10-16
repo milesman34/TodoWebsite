@@ -1,3 +1,4 @@
+import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
 import reducer, {
@@ -7,16 +8,18 @@ import reducer, {
     addTaskTag,
     deleteTask,
     deleteTaskGroup,
+    getTaskByID,
     initialState,
     moveTaskToGroup,
     moveTaskToUngrouped,
     pushNotification,
+    removeNotificationByID,
     removeTaskTag,
+    selectActiveTaskGroup,
     selectAllTasks,
     selectTaskGroupNameByID,
     selectTaskIDs,
     selectTasksInCurrentTaskList,
-    getTaskByID,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
@@ -28,9 +31,7 @@ import reducer, {
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType,
-    TodoState,
-    selectActiveTaskGroup,
-    removeNotification
+    TodoState
 } from "./todoSlice";
 
 import { describe, expect, test } from "vitest";
@@ -1228,43 +1229,60 @@ describe("todoSlice", () => {
             test("pushNotification onto empty array", () => {
                 let state: TodoState = { ...initialState, notifications: [] };
 
-                state = reducer(state, pushNotification("Test"));
+                const notif = AppNotification({ text: "Saved", id: "id1" });
 
-                expect(state.notifications).toEqual(["Test"]);
+                state = reducer(state, pushNotification(notif));
+
+                expect(state.notifications).toEqual([notif]);
             });
 
             test("pushNotification onto array with elements", () => {
-                let state = { ...initialState, notifications: ["Mine"] };
+                const notif1 = AppNotification({ text: "Mine", id: "id1" });
+                const notif2 = AppNotification({ text: "Ok", id: "id2" });
 
-                state = reducer(state, pushNotification("Ok"));
+                let state = { ...initialState, notifications: [notif1] };
 
-                expect(state.notifications).toEqual(["Mine", "Ok"]);
+                state = reducer(state, pushNotification(notif2));
+
+                expect(state.notifications).toEqual([notif1, notif2]);
             });
         });
 
-        describe("removeNotification", () => {
-            test("removeNotification empty array", () => {
+        describe("removeNotificationByID", () => {
+            test("removeNotificationByID empty array", () => {
                 let state: TodoState = { ...initialState, notifications: [] };
 
-                state = reducer(state, removeNotification(""));
+                state = reducer(state, removeNotificationByID("id1"));
 
                 expect(state.notifications).toEqual([]);
             });
 
-            test("removeNotification array with elements", () => {
-                let state = { ...initialState, notifications: ["a", "b", "c"] };
+            test("removeNotificationByID array with elements", () => {
+                const notifs = [
+                    AppNotification({ text: "a", id: "id1" }),
+                    AppNotification({ text: "b", id: "id2" }),
+                    AppNotification({ text: "c", id: "id3" })
+                ];
 
-                state = reducer(state, removeNotification("a"));
+                let state = { ...initialState, notifications: notifs };
 
-                expect(state.notifications).toEqual(["b", "c"]);
+                state = reducer(state, removeNotificationByID("id2"));
+
+                expect(state.notifications).toEqual([notifs[0], notifs[2]]);
             });
 
-            test("removeNotification array with elements, target not present", () => {
-                let state = { ...initialState, notifications: ["a", "b", "c"] };
+            test("removeNotificationByID array with elements, target not present", () => {
+                const notifs = [
+                    AppNotification({ text: "a", id: "id1" }),
+                    AppNotification({ text: "b", id: "id2" }),
+                    AppNotification({ text: "c", id: "id3" })
+                ];
 
-                state = reducer(state, removeNotification("d"));
+                let state = { ...initialState, notifications: notifs };
 
-                expect(state.notifications).toEqual(["a", "b", "c"]);
+                state = reducer(state, removeNotificationByID("id4"));
+
+                expect(state.notifications).toEqual(notifs);
             });
         });
     });

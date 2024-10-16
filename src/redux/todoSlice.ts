@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
 import { filterMap } from "../utils/utils";
@@ -29,7 +30,8 @@ export type TodoState = {
     tasks: Task[];
 
     // List of notifications
-    notifications: string[];
+    // It seems important for there to be an ID for the notification
+    notifications: AppNotification[];
 };
 
 /**
@@ -393,16 +395,16 @@ const todoSlice = createSlice({
         /**
          * Pushes a notification onto the stack
          */
-        pushNotification(state: TodoState, action: PayloadAction<string>) {
+        pushNotification(state: TodoState, action: PayloadAction<AppNotification>) {
             state.notifications.push(action.payload);
         },
 
         /**
-         * Removes the target notification from the list
+         * Removes the notification with the given ID
          */
-        removeNotification(state: TodoState, action: PayloadAction<string>) {
+        removeNotificationByID(state: TodoState, action: PayloadAction<string>) {
             state.notifications = state.notifications.filter(
-                (notif) => notif !== action.payload
+                (notif) => notif.id !== action.payload
             );
         }
     }
@@ -419,7 +421,7 @@ export const {
     moveTaskToGroup,
     moveTaskToUngrouped,
     pushNotification,
-    removeNotification,
+    removeNotificationByID,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
@@ -540,4 +542,5 @@ export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
 /**
  * Selects all of the notifications
  */
-export const selectNotifications = (state: TodoState): string[] => state.notifications;
+export const selectNotifications = (state: TodoState): AppNotification[] =>
+    state.notifications;

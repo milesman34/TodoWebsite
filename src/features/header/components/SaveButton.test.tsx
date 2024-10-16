@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
     clickButton,
     mockLocalStorage,
+    mockNanoid,
     mockSessionStorage
 } from "../../../utils/testUtils";
 import { createStore } from "../../../redux/store";
@@ -11,6 +12,8 @@ import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { SaveButton } from "./SaveButton";
 import { Task } from "../../tasks/Task";
+import { AppNotification } from "../../notifications/AppNotification";
+import { nanoid } from "nanoid";
 
 describe("SaveButton", () => {
     describe("SaveButton when clicked saves the needed information", () => {
@@ -182,6 +185,8 @@ describe("SaveButton", () => {
 
     describe("SaveButton creates a notification", () => {
         test("SaveButton creates a notification with Saved (testing state)", async () => {
+            mockNanoid(nanoid, "id1");
+
             const store = createStore();
 
             render(
@@ -192,7 +197,10 @@ describe("SaveButton", () => {
 
             await clickButton("save-button");
 
-            expect(store.getState().notifications).toEqual(["Saved"]);
+            expect(store.getState().notifications).toEqual([AppNotification({
+                text: "Saved",
+                id: "id1"
+            })]);
         });
     });
 });
