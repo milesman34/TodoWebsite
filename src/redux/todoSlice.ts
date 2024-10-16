@@ -395,6 +395,15 @@ const todoSlice = createSlice({
          */
         pushNotification(state: TodoState, action: PayloadAction<string>) {
             state.notifications.push(action.payload);
+        },
+
+        /**
+         * Removes the target notification from the list
+         */
+        removeNotification(state: TodoState, action: PayloadAction<string>) {
+            state.notifications = state.notifications.filter(
+                (notif) => notif !== action.payload
+            );
         }
     }
 });
@@ -410,6 +419,7 @@ export const {
     moveTaskToGroup,
     moveTaskToUngrouped,
     pushNotification,
+    removeNotification,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
@@ -526,3 +536,8 @@ export const selectTaskIDs = createSelector([selectAllTasks], (tasks) =>
 export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
     tasks.filter((task) => task.isOpen).map((task) => task.id)
 );
+
+/**
+ * Selects all of the notifications
+ */
+export const selectNotifications = (state: TodoState): string[] => state.notifications;
