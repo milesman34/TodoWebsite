@@ -1,5 +1,6 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+    pushNotification,
     selectActiveTaskGroupID,
     selectAllTasks,
     selectOpenTaskIDs,
@@ -27,6 +28,8 @@ export const SaveButton = () => {
     const openTaskIDs = useSelector(selectOpenTaskIDs);
     const tasks = useSelector(selectAllTasks);
 
+    const dispatch = useDispatch();
+
     const onSaveClicked = () => {
         // Save all necessary info to localStorage and sessionStorage
         saveTaskGroups(taskGroups);
@@ -40,6 +43,8 @@ export const SaveButton = () => {
         for (const task of tasks) {
             saveTask(task);
         }
+
+        dispatch(pushNotification("Saved"));
     };
 
     return (

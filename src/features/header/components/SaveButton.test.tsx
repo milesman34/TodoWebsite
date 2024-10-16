@@ -179,4 +179,20 @@ describe("SaveButton", () => {
             );
         });
     });
+
+    describe("SaveButton creates a notification", () => {
+        test("SaveButton creates a notification with Saved (testing state)", async () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <SaveButton />
+                </Provider>
+            );
+
+            await clickButton("save-button");
+
+            expect(store.getState().notifications).toEqual(["Saved"]);
+        });
+    });
 });
