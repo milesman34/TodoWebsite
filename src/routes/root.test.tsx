@@ -891,4 +891,26 @@ describe("Root", () => {
             expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
         });
     });
+
+    describe("Pressing the save button creates a new notification", () => {
+        test("Pressing the save button creates a new notification", async () => {
+            mockNanoid(nanoid, "id1");
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <Root />
+                </Provider>
+            );
+
+            await clickButton("save-button");
+
+            const children = screen.getByTestId("notifications-container").children;
+
+            expect(children.length).toBe(1);
+
+            expect(getTestID(children[0])).toBe("notification-component-id1");
+        });
+    });
 });

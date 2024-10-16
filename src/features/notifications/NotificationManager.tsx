@@ -10,9 +10,9 @@ export const NotificationManager = () => {
     const notifications = useSelector(selectNotifications);
 
     return (
-        <div id="notification-manager">
+        <div id="notification-manager" data-testid="notification-manager">
             {notifications.length > 0 && (
-                <div id="notifications-container">
+                <div id="notifications-container" data-testid="notifications-container">
                     {notifications.map(
                         // To avoid a cutoff, only display the first 10 components
                         (notif, idx) =>

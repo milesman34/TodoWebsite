@@ -44,9 +44,12 @@ export const NotificationComponent = ({
         dispatch(removeNotificationByID(notification.id));
     };
 
-    if (expired) {
-        onNotificationClicked();
-    }
+    // When the notification has expired, delete it
+    useEffect(() => {
+        if (expired) {
+            dispatch(removeNotificationByID(notification.id));
+        }
+    }, [expired, dispatch, notification.id]);
 
     return (
         <button
