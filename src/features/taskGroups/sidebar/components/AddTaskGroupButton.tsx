@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
-import { addTaskGroup } from "../../../../redux/todoSlice";
 import { useDispatch } from "react-redux";
+import { addTaskGroup } from "../../../../redux/todoSlice";
 
 /**
  * This button lets the user add a new task group.

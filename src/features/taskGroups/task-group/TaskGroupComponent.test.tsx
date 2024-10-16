@@ -1,11 +1,11 @@
+import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
-import { TaskGroupComponent } from "./TaskGroupComponent";
-import { TaskGroup } from "../TaskGroup";
-import { render } from "@testing-library/react";
-import { clickButton, containsClass } from "../../../utils/testUtils";
 import { setActiveTaskGroup, setGroups, TaskListType } from "../../../redux/todoSlice";
+import { clickButton, containsClass } from "../../../utils/testUtils";
+import { TaskGroup } from "../TaskGroup";
+import { TaskGroupComponent } from "./TaskGroupComponent";
 
 describe("TaskGroupComponent", () => {
     describe("Component should display if it is active", () => {

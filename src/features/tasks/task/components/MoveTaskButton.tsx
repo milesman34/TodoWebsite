@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Task } from "../../Task";
 import {
     moveTaskToGroup,
     moveTaskToUngrouped,
     selectTaskGroups
 } from "../../../../redux/todoSlice";
+import { Task } from "../../Task";
 
 /**
  * This button lets the user move the task to another group.

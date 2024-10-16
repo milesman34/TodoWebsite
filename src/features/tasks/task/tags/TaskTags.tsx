@@ -1,7 +1,7 @@
 import { Task } from "../../Task";
-import { TaskTagComponent } from "./tag/TaskTagComponent";
 import { AddTagButton } from "./AddTagButton";
 import { ResetTagsButton } from "./ResetTagsButton";
+import { TaskTagComponent } from "./tag/TaskTagComponent";
 
 /**
  * This component displays the task's tags and lets the user manipulate them.

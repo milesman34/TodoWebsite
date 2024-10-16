@@ -1,10 +1,10 @@
 import { Task } from "../Task";
-import { EditNameButton } from "./components/EditNameButton";
 import { DeleteTaskButton } from "./components/DeleteTaskButton";
+import { EditNameButton } from "./components/EditNameButton";
+import { MoveTaskButton } from "./components/MoveTaskButton";
 import { TaskDescription } from "./components/TaskDescription";
 import { TaskPriority } from "./priority/TaskPriority";
 import { TaskTags } from "./tags/TaskTags";
-import { MoveTaskButton } from "./components/MoveTaskButton";
 
 /**
  * This contains the part of the TaskComponent that displays when the task is open

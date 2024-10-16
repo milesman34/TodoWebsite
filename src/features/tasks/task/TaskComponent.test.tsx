@@ -1,9 +1,7 @@
-import { describe, expect, test, vi } from "vitest";
-import { Task } from "../Task";
 import { render, screen } from "@testing-library/react";
-import { createStore } from "../../../redux/store";
 import { Provider } from "react-redux";
-import { TaskComponent } from "./TaskComponent";
+import { describe, expect, test, vi } from "vitest";
+import { createStore } from "../../../redux/store";
 import {
     addTask,
     addTaskGroup,
@@ -19,6 +17,8 @@ import {
     mockPrompt
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
+import { Task } from "../Task";
+import { TaskComponent } from "./TaskComponent";
 
 describe("TaskComponent", () => {
     describe("TaskComponent displays the correct information", () => {

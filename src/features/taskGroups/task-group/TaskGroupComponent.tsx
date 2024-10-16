@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { TaskGroup } from "../TaskGroup";
 
-import "./TaskGroupComponent.css";
-import { selectActiveTaskGroupID, setActiveTaskGroup } from "../../../redux/todoSlice";
 import classNames from "classnames";
+import { selectActiveTaskGroupID, setActiveTaskGroup } from "../../../redux/todoSlice";
+import "./TaskGroupComponent.css";
 
 /**
  * This component displays a task group and can be clicked on to activate it

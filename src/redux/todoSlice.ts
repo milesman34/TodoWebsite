@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
 import { filterMap } from "../utils/utils";
@@ -15,7 +16,7 @@ export enum TaskListType {
 /**
  * Type representing the state of the Todo slice
  */
-type TodoState = {
+export type TodoState = {
     // List of task groups
     groups: TaskGroup[];
 
@@ -27,6 +28,10 @@ type TodoState = {
 
     // List of tasks
     tasks: Task[];
+
+    // List of notifications
+    // It seems important for there to be an ID for the notification
+    notifications: AppNotification[];
 };
 
 /**
@@ -36,7 +41,8 @@ export const initialState: TodoState = {
     groups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
-    tasks: []
+    tasks: [],
+    notifications: []
 };
 
 // Todo slice handles tasks and task groups
@@ -384,6 +390,22 @@ const todoSlice = createSlice({
             // Change the active task group
             state.taskListType = TaskListType.TaskGroup;
             state.activeTaskGroup = action.payload.groupID;
+        },
+
+        /**
+         * Pushes a notification onto the stack
+         */
+        pushNotification(state: TodoState, action: PayloadAction<AppNotification>) {
+            state.notifications.push(action.payload);
+        },
+
+        /**
+         * Removes the notification with the given ID
+         */
+        removeNotificationByID(state: TodoState, action: PayloadAction<string>) {
+            state.notifications = state.notifications.filter(
+                (notif) => notif.id !== action.payload
+            );
         }
     }
 });
@@ -398,6 +420,8 @@ export const {
     deleteTaskGroup,
     moveTaskToGroup,
     moveTaskToUngrouped,
+    pushNotification,
+    removeNotificationByID,
     removeTaskTag,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
@@ -474,13 +498,20 @@ export const selectTasksInCurrentTaskList = createSelector(
 );
 
 /**
- * Returns the task with the given ID if it exists, returning undefined otherwise
+ * Returns the task with the given ID if it exists, throwing an error otherwise
  * @param id ID to search for
  */
-export const selectTaskWithID =
+export const getTaskByID =
     (id: string) =>
-    (state: TodoState): Task | undefined =>
-        state.tasks.find((task) => task.id === id);
+    (state: TodoState): Task => {
+        const task = state.tasks.find((task) => task.id === id);
+
+        if (task === undefined) {
+            throw new Error(`Task with ID ${id} not found!`);
+        } else {
+            return task;
+        }
+    };
 
 /**
  * Returns the name of the task group with the given ID if it exists, or the empty string otherwise
@@ -507,3 +538,9 @@ export const selectTaskIDs = createSelector([selectAllTasks], (tasks) =>
 export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
     tasks.filter((task) => task.isOpen).map((task) => task.id)
 );
+
+/**
+ * Selects all of the notifications
+ */
+export const selectNotifications = (state: TodoState): AppNotification[] =>
+    state.notifications;

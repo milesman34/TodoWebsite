@@ -1,8 +1,8 @@
+import { render, screen } from "@testing-library/react";
+import { nanoid } from "nanoid";
+import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
-import { render, screen } from "@testing-library/react";
-import { TasksContainer } from "./TasksContainer";
-import { Provider } from "react-redux";
 import {
     addTask,
     addTaskGroup,
@@ -11,8 +11,6 @@ import {
     switchToAllTasks,
     switchToUngroupedTasks
 } from "../../../redux/todoSlice";
-import { Task } from "../Task";
-import { nanoid } from "nanoid";
 import {
     clickButton,
     countElementChildren,
@@ -25,6 +23,8 @@ import {
     mockSessionStorage
 } from "../../../utils/testUtils";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
+import { Task } from "../Task";
+import { TasksContainer } from "./TasksContainer";
 
 describe("TasksContainer", () => {
     describe("TasksContainer displays the correct label for the list of tasks", () => {

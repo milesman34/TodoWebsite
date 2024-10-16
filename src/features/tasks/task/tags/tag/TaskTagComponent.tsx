@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import "./TaskTagComponent.css";
 import { useDispatch } from "react-redux";
 import { removeTaskTag } from "../../../../../redux/todoSlice";
+import "./TaskTagComponent.css";
 
 // Default width
 const DEFAULT_WIDTH = 65;
@@ -41,7 +41,7 @@ export const TaskTagComponent = ({ taskID, tag }: { taskID: string; tag: string 
 
     // This effect is used to maintain the size on hover
     useEffect(() => {
-        const refWidth = ref?.current?.offsetWidth;
+        const refWidth = ref.current?.offsetWidth;
 
         // Check if either is undefined or if the widths match the starting value
         if (refWidth === undefined || refWidth === DEFAULT_WIDTH) {

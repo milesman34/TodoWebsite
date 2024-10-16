@@ -17,7 +17,7 @@ describe("TaskGroup", () => {
         });
 
         test("localStorage has corrupted taskGroups", () => {
-            mockLocalStorage({ taskGroups: '[{name: "35", descriptor: "3"}]' });
+            mockLocalStorage({ taskGroups: '[{name: "35", descriptor "3"}]' });
 
             expect(parseTaskGroupsLocalStorage()).toEqual([]);
         });

@@ -1,16 +1,19 @@
+import { render } from "@testing-library/react";
+import { nanoid } from "nanoid";
+import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
+import { createStore } from "../../../redux/store";
+import { addTask, addTaskGroup } from "../../../redux/todoSlice";
 import {
     clickButton,
     mockLocalStorage,
+    mockNanoid,
     mockSessionStorage
 } from "../../../utils/testUtils";
-import { createStore } from "../../../redux/store";
-import { addTask, addTaskGroup } from "../../../redux/todoSlice";
+import { AppNotification } from "../../notifications/AppNotification";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
-import { render } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { SaveButton } from "./SaveButton";
 import { Task } from "../../tasks/Task";
+import { SaveButton } from "./SaveButton";
 
 describe("SaveButton", () => {
     describe("SaveButton when clicked saves the needed information", () => {
@@ -177,6 +180,27 @@ describe("SaveButton", () => {
                     tags: []
                 })
             );
+        });
+    });
+
+    describe("SaveButton creates a notification", () => {
+        test("SaveButton creates a notification with Saved (testing state)", async () => {
+            mockNanoid(nanoid, "id1");
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <SaveButton />
+                </Provider>
+            );
+
+            await clickButton("save-button");
+
+            expect(store.getState().notifications).toEqual([AppNotification({
+                text: "Saved",
+                id: "id1"
+            })]);
         });
     });
 });

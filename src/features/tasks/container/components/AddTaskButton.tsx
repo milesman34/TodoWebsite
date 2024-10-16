@@ -1,8 +1,8 @@
+import { nanoid } from "nanoid";
 import { useDispatch } from "react-redux";
 import { addTask } from "../../../../redux/todoSlice";
-import { Task } from "../../Task";
-import { nanoid } from "nanoid";
 import { TaskGroup } from "../../../taskGroups/TaskGroup";
+import { Task } from "../../Task";
 
 /**
  * This component adds a task to the task group

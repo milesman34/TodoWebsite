@@ -1,20 +1,21 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./TasksContainer.css";
 import {
     deleteTaskGroup,
     selectActiveTaskGroup,
+    selectActiveTaskGroupID,
     selectOpenTaskIDs,
     selectTaskIDs,
     selectTaskListType,
     selectTasksInCurrentTaskList,
     TaskListType
 } from "../../../redux/todoSlice";
+import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
 import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { EditNameButton } from "./components/EditNameButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
-import { useEffect, useState } from "react";
-import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
+import "./TasksContainer.css";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -23,6 +24,7 @@ import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
 export const TasksContainer = () => {
     const taskListType = useSelector(selectTaskListType);
     const activeTaskGroup = useSelector(selectActiveTaskGroup);
+    const activeTaskGroupID = useSelector(selectActiveTaskGroupID);
     const tasks = useSelector(selectTasksInCurrentTaskList);
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
@@ -40,7 +42,7 @@ export const TasksContainer = () => {
         if (confirm("Do you really want to delete this task group?")) {
             dispatch(
                 deleteTaskGroup({
-                    taskGroupID: activeTaskGroup?.id || "",
+                    taskGroupID: activeTaskGroupID,
                     preserveTasks
                 })
             );

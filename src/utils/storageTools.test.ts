@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { mockLocalStorage, mockSessionStorage } from "./testUtils";
-import { loadOpenTaskIDs, loadTaskListTypeSession, setupStore } from "./storageTools";
-import { TaskListType } from "../redux/todoSlice";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
+import { TaskListType } from "../redux/todoSlice";
+import { loadOpenTaskIDs, loadTaskListTypeSession, setupStore } from "./storageTools";
+import { mockLocalStorage, mockSessionStorage } from "./testUtils";
 
 describe("storageTools", () => {
     describe("loadTaskListTypeSession", () => {

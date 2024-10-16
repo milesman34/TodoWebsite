@@ -1,5 +1,7 @@
-import { useSelector } from "react-redux";
+import { nanoid } from "nanoid";
+import { useDispatch, useSelector } from "react-redux";
 import {
+    pushNotification,
     selectActiveTaskGroupID,
     selectAllTasks,
     selectOpenTaskIDs,
@@ -15,6 +17,7 @@ import {
     saveTaskIDs,
     saveTaskListType
 } from "../../../utils/storageTools";
+import { AppNotification } from "../../notifications/AppNotification";
 
 /**
  * This button can be clicked to save the user data
@@ -26,6 +29,8 @@ export const SaveButton = () => {
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
     const tasks = useSelector(selectAllTasks);
+
+    const dispatch = useDispatch();
 
     const onSaveClicked = () => {
         // Save all necessary info to localStorage and sessionStorage
@@ -40,6 +45,15 @@ export const SaveButton = () => {
         for (const task of tasks) {
             saveTask(task);
         }
+
+        dispatch(
+            pushNotification(
+                AppNotification({
+                    text: "Saved",
+                    id: nanoid()
+                })
+            )
+        );
     };
 
     return (
