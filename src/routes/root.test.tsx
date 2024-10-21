@@ -908,7 +908,7 @@ describe("Root", () => {
 
             const children = screen.getByTestId("notifications-container").children;
 
-            expect(children.length).toBe(2);
+            expect(children.length).toBe(1);
 
             expect(getTestID(children[0])).toBe("notification-component-id1");
         });
