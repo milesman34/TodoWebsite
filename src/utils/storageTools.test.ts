@@ -1,34 +1,39 @@
 import { describe, expect, test } from "vitest";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
-import { TaskListType } from "../redux/todoSlice";
-import { loadOpenTaskIDs, loadTaskListTypeSession, setupStore } from "./storageTools";
+import { AppPage, TaskListType } from "../redux/todoSlice";
+import {
+    loadCurrentPage,
+    loadOpenTaskIDs,
+    loadTaskListType,
+    setupStore
+} from "./storageTools";
 import { mockLocalStorage, mockSessionStorage } from "./testUtils";
 
 describe("storageTools", () => {
-    describe("loadTaskListTypeSession", () => {
+    describe("loadTaskListType", () => {
         test("load null", () => {
             mockSessionStorage({});
 
-            expect(loadTaskListTypeSession()).toEqual(TaskListType.All);
+            expect(loadTaskListType()).toEqual(TaskListType.All);
         });
 
         test("load all", () => {
             mockSessionStorage({ taskListType: "0" });
 
-            expect(loadTaskListTypeSession()).toEqual(TaskListType.All);
+            expect(loadTaskListType()).toEqual(TaskListType.All);
         });
 
         test("load ungrouped", () => {
             mockSessionStorage({ taskListType: "1" });
 
-            expect(loadTaskListTypeSession()).toEqual(TaskListType.Ungrouped);
+            expect(loadTaskListType()).toEqual(TaskListType.Ungrouped);
         });
 
         test("load task group", () => {
             mockSessionStorage({ taskListType: "2" });
 
-            expect(loadTaskListTypeSession()).toEqual(TaskListType.TaskGroup);
+            expect(loadTaskListType()).toEqual(TaskListType.TaskGroup);
         });
     });
 
@@ -49,6 +54,26 @@ describe("storageTools", () => {
             mockSessionStorage({ openTasks: JSON.stringify(["id1", "id2", "id3"]) });
 
             expect(loadOpenTaskIDs()).toEqual(["id1", "id2", "id3"]);
+        });
+    });
+
+    describe("loadCurrentPage", () => {
+        test("load null", () => {
+            mockSessionStorage({});
+
+            expect(loadCurrentPage()).toEqual(AppPage.Main);
+        });
+
+        test("load main", () => {
+            mockSessionStorage({ currentPage: "0" });
+
+            expect(loadCurrentPage()).toEqual(AppPage.Main);
+        });
+
+        test("load manage save", () => {
+            mockSessionStorage({ currentPage: "1" });
+
+            expect(loadCurrentPage()).toEqual(AppPage.ManageSave);
         });
     });
 
@@ -193,6 +218,26 @@ describe("storageTools", () => {
             ]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
+        });
+
+        test("setupScore switches to the main page", () => {
+            mockSessionStorage({
+                currentPage: "0"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.currentPage).toEqual(AppPage.Main);
+        });
+
+        test("setupScore switches to the manage save page", () => {
+            mockSessionStorage({
+                currentPage: "1"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.currentPage).toEqual(AppPage.ManageSave);
         });
     });
 });

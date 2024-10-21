@@ -14,6 +14,14 @@ export enum TaskListType {
 }
 
 /**
+ * Represents the current page being viewed
+ */
+export enum AppPage {
+    Main,
+    ManageSave
+}
+
+/**
  * Type representing the state of the Todo slice
  */
 export type TodoState = {
@@ -32,6 +40,9 @@ export type TodoState = {
     // List of notifications
     // It seems important for there to be an ID for the notification
     notifications: AppNotification[];
+
+    // Which page is currently being viewed?
+    currentPage: AppPage;
 };
 
 /**
@@ -42,7 +53,8 @@ export const initialState: TodoState = {
     activeTaskGroup: "",
     taskListType: TaskListType.All,
     tasks: [],
-    notifications: []
+    notifications: [],
+    currentPage: AppPage.Main
 };
 
 // Todo slice handles tasks and task groups
@@ -406,6 +418,13 @@ const todoSlice = createSlice({
             state.notifications = state.notifications.filter(
                 (notif) => notif.id !== action.payload
             );
+        },
+
+        /**
+         * Sets the current app page
+         */
+        setCurrentPage(state: TodoState, action: PayloadAction<AppPage>) {
+            state.currentPage = action.payload;
         }
     }
 });
@@ -426,6 +445,7 @@ export const {
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
+    setCurrentPage,
     setGroups,
     setTaskDescription,
     setTaskName,
@@ -544,3 +564,8 @@ export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
  */
 export const selectNotifications = (state: TodoState): AppNotification[] =>
     state.notifications;
+
+/**
+ * Selects the current page
+ */
+export const selectCurrentPage = (state: TodoState): AppPage => state.currentPage;

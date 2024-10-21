@@ -3,7 +3,9 @@ import { parseTaskGroupsLocalStorage, TaskGroup } from "../features/taskGroups/T
 import { parseTasksLocalStorage, Task } from "../features/tasks/Task";
 import { createStore } from "../redux/store";
 import {
+    AppPage,
     setActiveTaskGroup,
+    setCurrentPage,
     setGroups,
     setTaskOpen,
     setTasks,
@@ -15,7 +17,7 @@ import {
 /**
  * Gets the TaskListType from session storage
  */
-export const loadTaskListTypeSession = (): TaskListType => {
+export const loadTaskListType = (): TaskListType => {
     const item = sessionStorage.getItem("taskListType");
 
     return item === null || item === "0"
@@ -43,6 +45,15 @@ export const loadOpenTaskIDs = (): string[] => {
 };
 
 /**
+ * Gets the current page from session storage
+ */
+export const loadCurrentPage = (): AppPage => {
+    const item = sessionStorage.getItem("currentPage");
+
+    return item === null || item === "0" ? AppPage.Main : AppPage.ManageSave;
+};
+
+/**
  * Sets up a store for the app with important data from localStorage and sessionStorage
  */
 export const setupStore = () => {
@@ -53,7 +64,7 @@ export const setupStore = () => {
     store.dispatch(setTasks(parseTasksLocalStorage()));
 
     // Get the task list type from session storage
-    const taskListType = loadTaskListTypeSession();
+    const taskListType = loadTaskListType();
 
     if (taskListType === TaskListType.All) {
         store.dispatch(switchToAllTasks());
@@ -74,6 +85,9 @@ export const setupStore = () => {
             })
         );
     }
+
+    // Get the current page
+    store.dispatch(setCurrentPage(loadCurrentPage()));
 
     return store;
 };
@@ -124,4 +138,11 @@ export const saveOpenTaskIDs = (taskIDs: string[]) => {
  */
 export const saveTask = (task: Task) => {
     localStorage.setItem(`tasks-${task.id}`, JSON.stringify(omit(task, "isOpen")));
+};
+
+/**
+ * Saves the current page to sessionStorage
+ */
+export const saveCurrentPage = (page: AppPage) => {
+    sessionStorage.setItem("currentPage", page.toString());
 };

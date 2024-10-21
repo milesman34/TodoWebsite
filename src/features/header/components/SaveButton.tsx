@@ -4,6 +4,7 @@ import {
     pushNotification,
     selectActiveTaskGroupID,
     selectAllTasks,
+    selectCurrentPage,
     selectOpenTaskIDs,
     selectTaskGroups,
     selectTaskIDs,
@@ -11,6 +12,7 @@ import {
 } from "../../../redux/todoSlice";
 import {
     saveActiveTaskGroup,
+    saveCurrentPage,
     saveOpenTaskIDs,
     saveTask,
     saveTaskGroups,
@@ -29,6 +31,7 @@ export const SaveButton = () => {
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
     const tasks = useSelector(selectAllTasks);
+    const currentPage = useSelector(selectCurrentPage);
 
     const dispatch = useDispatch();
 
@@ -45,6 +48,9 @@ export const SaveButton = () => {
         for (const task of tasks) {
             saveTask(task);
         }
+
+        // Save the current page
+        saveCurrentPage(currentPage);
 
         dispatch(
             pushNotification(

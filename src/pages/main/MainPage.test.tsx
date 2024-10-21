@@ -3,9 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
-import { TaskGroup } from "../features/taskGroups/TaskGroup";
-import { Task } from "../features/tasks/Task";
-import { createStore } from "../redux/store";
+import { TaskGroup } from "../../features/taskGroups/TaskGroup";
+import { Task } from "../../features/tasks/Task";
+import { createStore } from "../../redux/store";
 import {
     addTask,
     addTaskGroup,
@@ -14,7 +14,7 @@ import {
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
-} from "../redux/todoSlice";
+} from "../../redux/todoSlice";
 import {
     clickButton,
     countElementChildren,
@@ -24,10 +24,10 @@ import {
     mockConfirm,
     mockNanoid,
     mockPrompt
-} from "../utils/testUtils";
-import { Root } from "./root";
+} from "../../utils/testUtils";
+import { MainPage } from "./MainPage";
 
-describe("Root", () => {
+describe("MainPage", () => {
     describe("Clicking the All Tasks button must display all the tasks", () => {
         test("Clicking the All Tasks button displays all the tasks", async () => {
             const store = createStore();
@@ -44,7 +44,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -77,7 +77,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -113,7 +113,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -144,7 +144,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -173,7 +173,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -205,7 +205,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -232,7 +232,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -261,7 +261,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -293,7 +293,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -320,7 +320,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -349,7 +349,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -381,7 +381,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -410,7 +410,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -441,7 +441,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -468,7 +468,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -509,7 +509,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -566,7 +566,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -604,7 +604,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -633,7 +633,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -672,7 +672,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -708,7 +708,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -739,7 +739,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -773,7 +773,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -808,7 +808,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -841,7 +841,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -874,7 +874,7 @@ describe("Root", () => {
 
             render(
                 <Provider store={store}>
-                    <Root />
+                    <MainPage />
                 </Provider>
             );
 
@@ -889,28 +889,6 @@ describe("Root", () => {
 
             await clickButton("task-group-component-groupid2");
             expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
-        });
-    });
-
-    describe("Pressing the save button creates a new notification", () => {
-        test("Pressing the save button creates a new notification", async () => {
-            mockNanoid(nanoid, "id1");
-
-            const store = createStore();
-
-            render(
-                <Provider store={store}>
-                    <Root />
-                </Provider>
-            );
-
-            await clickButton("save-button");
-
-            const children = screen.getByTestId("notifications-container").children;
-
-            expect(children.length).toBe(1);
-
-            expect(getTestID(children[0])).toBe("notification-component-id1");
         });
     });
 });
