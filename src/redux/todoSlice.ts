@@ -14,6 +14,14 @@ export enum TaskListType {
 }
 
 /**
+ * Represents the current page being viewed
+ */
+export enum AppPage {
+    Main,
+    ManageSave
+}
+
+/**
  * Type representing the state of the Todo slice
  */
 export type TodoState = {
@@ -32,6 +40,9 @@ export type TodoState = {
     // List of notifications
     // It seems important for there to be an ID for the notification
     notifications: AppNotification[];
+
+    // Which page is currently being viewed?
+    currentPage: AppPage;
 };
 
 /**
@@ -42,7 +53,8 @@ export const initialState: TodoState = {
     activeTaskGroup: "",
     taskListType: TaskListType.All,
     tasks: [],
-    notifications: []
+    notifications: [],
+    currentPage: AppPage.Main
 };
 
 // Todo slice handles tasks and task groups
