@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
-import { addTask, addTaskGroup } from "../../../redux/todoSlice";
+import { addTask, addTaskGroup, AppPage, setCurrentPage } from "../../../redux/todoSlice";
 import {
     clickButton,
     mockLocalStorage,
@@ -181,6 +181,24 @@ describe("SaveButton", () => {
                 })
             );
         });
+
+        test("SaveButton saves current page", async () => {
+            const mockSetItem = mockSessionStorage({});
+
+            const store = createStore();
+
+            store.dispatch(setCurrentPage(AppPage.Main));
+
+            render(
+                <Provider store={store}>
+                    <SaveButton />
+                </Provider>
+            );
+
+            await clickButton("save-button");
+
+            expect(mockSetItem).toHaveBeenCalledWith("currentPage", "0");
+        });
     });
 
     describe("SaveButton creates a notification", () => {
@@ -197,10 +215,12 @@ describe("SaveButton", () => {
 
             await clickButton("save-button");
 
-            expect(store.getState().notifications).toEqual([AppNotification({
-                text: "Saved",
-                id: "id1"
-            })]);
+            expect(store.getState().notifications).toEqual([
+                AppNotification({
+                    text: "Saved",
+                    id: "id1"
+                })
+            ]);
         });
     });
 });

@@ -1,19 +1,22 @@
+import { useSelector } from "react-redux";
 import { AppHeader } from "../features/header/AppHeader";
 import { NotificationManager } from "../features/notifications/NotificationManager";
-import { TaskGroupSidebar } from "../features/taskGroups/sidebar/TaskGroupSidebar";
-import { TasksContainer } from "../features/tasks/container/TasksContainer";
+import { MainPage } from "./main/MainPage";
 import "./root.css";
+import { AppPage, selectCurrentPage } from "../redux/todoSlice";
 
+/**
+ * This component represents the main container for the app.
+ */
 export const Root = () => {
+    const currentPage = useSelector(selectCurrentPage);
+
     return (
         <div id="app-full">
             <div id="background">
                 <AppHeader />
 
-                <div id="main-container">
-                    <TaskGroupSidebar />
-                    <TasksContainer />
-                </div>
+                {currentPage === AppPage.Main && <MainPage />}
             </div>
 
             <NotificationManager />

@@ -418,6 +418,13 @@ const todoSlice = createSlice({
             state.notifications = state.notifications.filter(
                 (notif) => notif.id !== action.payload
             );
+        },
+
+        /**
+         * Sets the current app page
+         */
+        setCurrentPage(state: TodoState, action: PayloadAction<AppPage>) {
+            state.currentPage = action.payload;
         }
     }
 });
@@ -438,6 +445,7 @@ export const {
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
+    setCurrentPage,
     setGroups,
     setTaskDescription,
     setTaskName,
@@ -556,3 +564,8 @@ export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
  */
 export const selectNotifications = (state: TodoState): AppNotification[] =>
     state.notifications;
+
+/**
+ * Selects the current page
+ */
+export const selectCurrentPage = (state: TodoState): AppPage => state.currentPage;
