@@ -1,3 +1,4 @@
+import { ResetSaveButton } from "../../features/header/components/ResetSaveButton";
 import { SaveButton } from "../../features/header/components/SaveButton";
 import "./ManageSavePage.css";
 
@@ -9,8 +10,9 @@ export const ManageSavePage = () => {
         <div id="manage-save-container" data-testid="manage-save-page">
             <div id="manage-save-header">Manage Save</div>
 
-            <div className="safe-row">
+            <div className="save-row">
                 <SaveButton />
+                <ResetSaveButton />
             </div>
         </div>
     );

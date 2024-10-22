@@ -21,8 +21,17 @@
     font-family: "Inter";
 }
 
-.safe-row {
+.save-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    gap: 20px;
+}
+
+.reset-save-button:hover {
+    background-color: red;
+}
+
+.reset-save-button:active {
+    background-color: #ff8181;
 }
