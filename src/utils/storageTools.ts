@@ -146,3 +146,20 @@ export const saveTask = (task: Task) => {
 export const saveCurrentPage = (page: AppPage) => {
     sessionStorage.setItem("currentPage", page.toString());
 };
+
+/**
+ * Resets the current save data
+ * @param taskIDs list of task ids
+ */
+export const resetSaveData = (taskIDs: string[]) => {
+    localStorage.setItem("taskGroups", "[]");
+    localStorage.setItem("tasks", "[]");
+
+    for (const taskID of taskIDs) {
+        localStorage.removeItem(`tasks-${taskID}`);
+    }
+
+    sessionStorage.setItem("activeTaskGroup", "");
+    sessionStorage.setItem("taskListType", "0");
+    sessionStorage.setItem("openTasks", "[]");
+};

@@ -7,6 +7,8 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid black;
+    padding-right: 10px;
+    box-sizing: border-box;
 }
 
 #header-text {
@@ -17,7 +19,7 @@
     font-family: "Inter";
 }
 
-.header-button {
+.header-button, .page-button {
     background-color: #474f79;
     color: white;
     font-size: 20px;
@@ -30,14 +32,27 @@
     padding: 10px;
 }
 
-.header-button:hover {
+.header-button:hover, .page-button:hover {
     background-color: #58649e;
 }
 
-.header-button:active {
+.header-button:active, .page-button:active {
     background-color: #6b77b6;
 }
 
-.save-button {
-    margin-right: 10px;
+.page-button-active {
+    background-color: #41509c;
+}
+
+.page-button-active:hover {
+    background-color: #475cc5;
+}
+
+.page-button-active:active {
+    background-color: #3952d4;
+}
+
+.page-button {
+    margin-right: 20px;
+    width: 150px;
 }

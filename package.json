@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest --coverage",
+    "testonce": "vitest run --coverage",
     "prepare": "ts-patch install && typia patch"
   },
   "dependencies": {
