@@ -1,4 +1,6 @@
+import { AppPage } from "../../redux/todoSlice";
 import "./AppHeader.css";
+import { PageButton } from "./components/PageButton";
 import { SaveButton } from "./components/SaveButton";
 
 /**
@@ -9,7 +11,10 @@ export const AppHeader = () => {
         <div id="header">
             <div id="header-text">Todo Website</div>
 
-            <SaveButton />
+            <div className="flex-row">
+                <PageButton text="Manage Save" page={AppPage.ManageSave} />
+                <SaveButton />
+            </div>
         </div>
     );
 };

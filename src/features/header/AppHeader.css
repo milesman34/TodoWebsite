@@ -17,7 +17,7 @@
     font-family: "Inter";
 }
 
-.header-button {
+.header-button, .page-button {
     background-color: #474f79;
     color: white;
     font-size: 20px;
@@ -30,14 +30,19 @@
     padding: 10px;
 }
 
-.header-button:hover {
+.header-button:hover, .page-button:hover {
     background-color: #58649e;
 }
 
-.header-button:active {
+.header-button:active, .page-button:active {
     background-color: #6b77b6;
 }
 
 .save-button {
     margin-right: 10px;
+}
+
+.page-button {
+    margin-right: 20px;
+    width: 150px;
 }

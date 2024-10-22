@@ -4,6 +4,7 @@ import { NotificationManager } from "../features/notifications/NotificationManag
 import { MainPage } from "./main/MainPage";
 import "./root.css";
 import { AppPage, selectCurrentPage } from "../redux/todoSlice";
+import { ManageSavePage } from "./manage-save/ManageSavePage";
 
 /**
  * This component represents the main container for the app.
@@ -17,6 +18,7 @@ export const Root = () => {
                 <AppHeader />
 
                 {currentPage === AppPage.Main && <MainPage />}
+                {currentPage === AppPage.ManageSave && <ManageSavePage />}
             </div>
 
             <NotificationManager />
