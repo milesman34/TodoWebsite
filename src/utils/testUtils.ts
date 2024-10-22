@@ -86,35 +86,60 @@ export const getTestID = (element: Element): string | undefined =>
     element.attributes.getNamedItem("data-testid")?.value;
 
 /**
- * Mocks a local storage instance, returning a mock function for tracking setItem calls
- * @param cache map of keys to values
- * @returns
+ * This type represents a result mock for localStorage/sessionStorage
  */
-export const mockLocalStorage = (cache: { [key: string]: string }): Mock => {
-    const mockFn = vi.fn();
-
-    vi.stubGlobal("localStorage", {
-        getItem: (key: string): string | null => (key in cache ? cache[key] : null),
-        setItem: mockFn,
-        clear: () => {}
-    });
-
-    return mockFn;
+export type StorageMock = {
+    setItem: Mock;
+    removeItem: Mock;
 };
 
 /**
- * Mocks a session storage instance, returning a mock function for tracking setItem calls
- * @param cache map of keys to values
- * @returns
+ * This type represents a storage cache
  */
-export const mockSessionStorage = (cache: { [key: string]: string }): Mock => {
-    const mockFn = vi.fn();
+type StorageCache = {
+    [key: string]: string;
+};
 
-    vi.stubGlobal("sessionStorage", {
+/**
+ * Mocks a storage instance, returning a mock function for tracking setItem and removeItem calls
+ */
+const mockStorageFull = (cache: StorageCache, name: string): StorageMock => {
+    const mockFn = vi.fn();
+    const mockFn2 = vi.fn();
+
+    vi.stubGlobal(name, {
         getItem: (key: string): string | null => (key in cache ? cache[key] : null),
         setItem: mockFn,
+        removeItem: mockFn2,
         clear: () => {}
     });
 
-    return mockFn;
+    return {
+        setItem: mockFn,
+        removeItem: mockFn2
+    };
 };
+
+/**
+ * Mocks a local storage instance, returning the full mock storage object
+ */
+export const mockLocalStorageFull = (cache: StorageCache): StorageMock =>
+    mockStorageFull(cache, "localStorage");
+
+/**
+ * Mocks a session storage instance, returning the full mock storage object
+ */
+export const mockSessionStorageFull = (cache: StorageCache): StorageMock =>
+    mockStorageFull(cache, "sessionStorage");
+
+/**
+ * Mocks a local storage instance, returning only the setItem mock
+ */
+export const mockLocalStorage = (cache: StorageCache): Mock =>
+    mockLocalStorageFull(cache).setItem;
+
+/**
+ * Mocks a session storage instance, returning only the setItem mock
+ */
+export const mockSessionStorage = (cache: StorageCache): Mock =>
+    mockSessionStorageFull(cache).setItem;

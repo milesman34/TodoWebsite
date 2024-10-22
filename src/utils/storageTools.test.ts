@@ -6,9 +6,10 @@ import {
     loadCurrentPage,
     loadOpenTaskIDs,
     loadTaskListType,
+    resetSaveData,
     setupStore
 } from "./storageTools";
-import { mockLocalStorage, mockSessionStorage } from "./testUtils";
+import { mockLocalStorage, mockLocalStorageFull, mockSessionStorage } from "./testUtils";
 
 describe("storageTools", () => {
     describe("loadTaskListType", () => {
@@ -238,6 +239,81 @@ describe("storageTools", () => {
             const state = setupStore().getState();
 
             expect(state.currentPage).toEqual(AppPage.ManageSave);
+        });
+    });
+
+    describe("resetSaveData", () => {
+        test("Resets task groups in localStorage", () => {
+            const mockSetItem = mockLocalStorage({
+                taskGroups: JSON.stringify([
+                    {
+                        name: "My group",
+                        id: "id1"
+                    },
+                    {
+                        name: "Next group",
+                        id: "id2"
+                    }
+                ])
+            });
+
+            resetSaveData([]);
+
+            expect(mockSetItem).toHaveBeenCalledWith("taskGroups", JSON.stringify([]));
+        });
+
+        test("Resets active task group in sessionStorage", () => {
+            const mockSetItem = mockSessionStorage({
+                activeTaskGroup: "id2"
+            });
+
+            resetSaveData([]);
+
+            expect(mockSetItem).toHaveBeenCalledWith("activeTaskGroup", "");
+        });
+
+        test("Resets tasks in localStorage", () => {
+            const { setItem, removeItem } = mockLocalStorageFull({
+                tasks: JSON.stringify(["id1", "id2"]),
+                "tasks-id1": "{}",
+                "tasks-id2": "{}"
+            });
+
+            resetSaveData(["id1", "id2"]);
+
+            expect(setItem).toHaveBeenCalledWith("tasks", "[]");
+            expect(removeItem).toHaveBeenCalledWith("tasks-id1");
+            expect(removeItem).toHaveBeenCalledWith("tasks-id2");
+        });
+
+        test("Resets task list type in sessionStorage", () => {
+            const mockSetItem = mockSessionStorage({
+                taskListType: "1"
+            });
+
+            resetSaveData([]);
+
+            expect(mockSetItem).toHaveBeenCalledWith("taskListType", "0");
+        });
+
+        test("Resets open tasks in sessionStorage", () => {
+            const mockSetItem = mockSessionStorage({
+                taskListType: JSON.stringify(["id1", "id2"])
+            });
+
+            resetSaveData([]);
+
+            expect(mockSetItem).toHaveBeenCalledWith("openTasks", "[]");
+        });
+
+        test("Current page should not be reset", () => {
+            const mockSetItem = mockSessionStorage({
+                currentPage: "1"
+            });
+
+            resetSaveData([]);
+
+            expect(mockSetItem).not.toHaveBeenCalledWith("currentPage", "1");
         });
     });
 });
