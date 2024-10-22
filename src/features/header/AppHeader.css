@@ -38,6 +38,18 @@
     background-color: #6b77b6;
 }
 
+.page-button-active {
+    background-color: #41509c;
+}
+
+.page-button-active:hover {
+    background-color: #475cc5;
+}
+
+.page-button-active:active {
+    background-color: #3952d4;
+}
+
 .save-button {
     margin-right: 10px;
 }

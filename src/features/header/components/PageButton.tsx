@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { AppPage, selectCurrentPage, setCurrentPage } from "../../../redux/todoSlice";
 
@@ -23,7 +24,7 @@ export const PageButton = ({
 
     return (
         <button
-            className="page-button"
+            className={classNames("page-button", isCurrent ? "page-button-active" : "")}
             data-testid={`page-button-${text}`}
             onClick={onPageButtonClicked}
         >

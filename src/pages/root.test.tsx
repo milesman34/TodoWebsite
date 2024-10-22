@@ -43,9 +43,10 @@ describe("Root", () => {
             );
 
             expect(screen.queryByTestId("main-page")).toBeTruthy();
+            expect(screen.queryByTestId("manage-save-page")).toBeFalsy();
         });
 
-        test("Root does not display the MainPage if the current page is not the main page", () => {
+        test("Root displays the ManageSavePage if the current page is the manage save page", () => {
             const store = createStore();
 
             store.dispatch(setCurrentPage(AppPage.ManageSave));
@@ -57,6 +58,7 @@ describe("Root", () => {
             );
 
             expect(screen.queryByTestId("main-page")).toBeFalsy();
+            expect(screen.queryByTestId("manage-save-page")).toBeTruthy ();
         });
     });
 });
