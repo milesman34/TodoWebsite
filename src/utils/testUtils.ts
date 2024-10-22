@@ -55,14 +55,14 @@ export const getTextContent = (testID: string): string | null =>
     screen.getByTestId(testID).textContent;
 
 /**
- * Gets the number of children within the given test ID. Returns -1 if the children attribute doesn't exist (because the testID isn't on the screen)
+ * Gets the number of children within the given test ID.
  * @param testID
  * @returns
  */
 export const countElementChildren = (testID: string): number => {
-    const children = screen.queryByTestId(testID)?.children;
+    const children = screen.getByTestId(testID).children;
 
-    return children === undefined ? -1 : children.length;
+    return children.length;
 };
 
 /**
