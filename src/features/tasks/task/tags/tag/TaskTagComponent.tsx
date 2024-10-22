@@ -41,17 +41,10 @@ export const TaskTagComponent = ({ taskID, tag }: { taskID: string; tag: string 
 
     // This effect is used to maintain the size on hover
     useEffect(() => {
-        const refWidth = ref.current?.offsetWidth;
+        setWidth(ref.current!.offsetWidth);
 
-        // Check if either is undefined or if the widths match the starting value
-        if (refWidth === undefined || refWidth === DEFAULT_WIDTH) {
-            return;
-        } else {
-            setWidth(refWidth);
-
-            // This is no longer the initial render, so now the button can use the measured width/height
-            setInitialRender(false);
-        }
+        // This is no longer the initial render, so now the button can use the measured width/height
+        setInitialRender(false);
     }, [hovered, width]);
 
     return (
