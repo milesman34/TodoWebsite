@@ -64,11 +64,11 @@ export const SaveButton = () => {
 
     return (
         <button
-            className="header-button save-button"
+            className="header-button"
             data-testid="save-button"
             onClick={onSaveClicked}
         >
-            Save Button
+            Save Data
         </button>
     );
 };

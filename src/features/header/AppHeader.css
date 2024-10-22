@@ -7,6 +7,8 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid black;
+    padding-right: 10px;
+    box-sizing: border-box;
 }
 
 #header-text {
@@ -48,10 +50,6 @@
 
 .page-button-active:active {
     background-color: #3952d4;
-}
-
-.save-button {
-    margin-right: 10px;
 }
 
 .page-button {
