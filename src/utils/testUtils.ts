@@ -143,3 +143,18 @@ export const mockLocalStorage = (cache: StorageCache): Mock =>
  */
 export const mockSessionStorage = (cache: StorageCache): Mock =>
     mockSessionStorageFull(cache).setItem;
+
+/**
+ * Mocks writing to the clipboard, returning a mock function for writeText
+ */
+export const mockClipboardWrite = (): Mock => {
+    const mock = vi.fn();
+
+    vi.stubGlobal("navigator", {
+        clipboard: {
+            writeText: mock
+        }
+    });
+
+    return mock;
+};
