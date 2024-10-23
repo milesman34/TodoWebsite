@@ -1,0 +1,32 @@
+#modal-manager {
+    width: 100%;
+    height: calc(100vh - 80px);
+    margin-top: 80px;
+    grid-area: main;
+    pointer-events: none;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    pointer-events: all;
+}
+
+.modal-header {
+    color: white;
+    font-family: "Inter";
+    font-size: 30px;
+
+    text-align: center;
+}
+
+.exit-modal-button:hover {
+    background-color: red;
+}
+
+.exit-modal-button:active {
+    background-color: #ff8181;
+}

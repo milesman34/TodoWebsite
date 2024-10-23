@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import omit from "lodash.omit";
 import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
@@ -595,3 +596,15 @@ export const selectCurrentPage = (state: TodoState): AppPage => state.currentPag
  * Selects the active modal
  */
 export const selectActiveModal = (state: TodoState): Modal => state.activeModal;
+
+/**
+ * Returns a JSON string representing the save data, for use with exporting
+ */
+export const selectSaveData = createSelector(
+    [selectTaskGroups, selectAllTasks],
+    (taskGroups, tasks) =>
+        JSON.stringify({
+            taskGroups,
+            tasks: tasks.map((task) => omit(task, "isOpen"))
+        })
+);

@@ -1,11 +1,15 @@
-import { useDispatch } from "react-redux";
-import { Modal, setActiveModal } from "../../../redux/todoSlice";
+import classNames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
+import { Modal, selectActiveModal, setActiveModal } from "../../../redux/todoSlice";
 
 /**
  * This button exports the save data to a file.
  */
 export const ExportSaveButton = () => {
     const dispatch = useDispatch();
+
+    const activeModal = useSelector(selectActiveModal);
+    const isActive = activeModal === Modal.ExportSave;
 
     // Runs when the export save button is clicked
     const onExportSaveClicked = () => {
@@ -14,7 +18,10 @@ export const ExportSaveButton = () => {
 
     return (
         <button
-            className="header-button"
+            className={classNames(
+                "header-button",
+                isActive ? "modal-button-active" : "modal-button"
+            )}
             data-testid="export-save-button"
             onClick={onExportSaveClicked}
         >

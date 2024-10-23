@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Modal, selectActiveModal } from "../../redux/todoSlice";
 import { ExportSaveModal } from "./export-save/ExportSaveModal";
-import "./ModalManager.css";
+import "./modals.css";
 
 /**
  * This component manages active modals

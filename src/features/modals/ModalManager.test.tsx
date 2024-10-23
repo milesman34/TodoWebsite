@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../redux/store";
 import { Modal, setActiveModal } from "../../redux/todoSlice";
+import { clickButton } from "../../utils/testUtils";
 import { ModalManager } from "./ModalManager";
 
 describe("ModalManager", () => {
@@ -33,6 +34,24 @@ describe("ModalManager", () => {
             );
 
             expect(screen.queryByTestId("export-save-modal")).toBeTruthy();
+        });
+    });
+
+    describe("ModalExitButton quits out of the current modal", () => {
+        test("ModelExitButton quits out of the current modal", async () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.ExportSave));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("exit-modal-button");
+
+            expect(screen.queryByTestId("export-save-model")).toBeFalsy();
         });
     });
 });

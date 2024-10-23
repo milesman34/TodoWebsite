@@ -37,3 +37,8 @@
 .reset-save-button:active {
     background-color: #ff8181;
 }
+
+.modal-button-active, .modal-button-active:hover, .modal-button-active:active {
+    background-color: #41509c;
+    cursor: default;
+}
