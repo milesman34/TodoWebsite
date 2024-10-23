@@ -1,0 +1,7 @@
+#modal-manager {
+    width: 100%;
+    height: calc(100vh - 80px);
+    margin-top: 80px;
+    grid-area: main;
+    pointer-events: none;
+}

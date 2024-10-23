@@ -7,6 +7,7 @@ import { saveCurrentPage } from "../utils/storageTools";
 import { MainPage } from "./main/MainPage";
 import { ManageSavePage } from "./manage-save/ManageSavePage";
 import "./root.css";
+import { ModalManager } from "../features/modals/ModalManager";
 
 /**
  * This component represents the main container for the app.
@@ -28,6 +29,7 @@ export const Root = () => {
                 {currentPage === AppPage.ManageSave && <ManageSavePage />}
             </div>
 
+            <ModalManager />
             <NotificationManager />
         </div>
     );

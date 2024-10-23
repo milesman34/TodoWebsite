@@ -1,6 +1,12 @@
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { AppPage, selectCurrentPage, setCurrentPage } from "../../../redux/todoSlice";
+import {
+    AppPage,
+    Modal,
+    selectCurrentPage,
+    setActiveModal,
+    setCurrentPage
+} from "../../../redux/todoSlice";
 
 /**
  * The PageButton lets the user navigate to a specific page, or navigate backwards once they are there
@@ -19,6 +25,9 @@ export const PageButton = ({
 
     // Runs when the page button is clicked
     const onPageButtonClicked = () => {
+        // Modals should be closed on page changes regardless
+        dispatch(setActiveModal(Modal.None));
+
         dispatch(setCurrentPage(isCurrent ? AppPage.Main : page));
     };
 
