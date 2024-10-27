@@ -25,6 +25,23 @@ describe("ExportSaveButton", () => {
         expect(screen.queryByTestId("export-save-modal")).toBeTruthy();
     });
 
+    test("ExportSaveButton closes the modal when already active", async () => {
+        const store = createStore();
+
+        store.dispatch(setActiveModal(Modal.ExportSave));
+
+        render(
+            <Provider store={store}>
+                <ExportSaveButton />
+                <ModalManager />
+            </Provider>
+        );
+
+        await clickButton("export-save-button");
+
+        expect(screen.queryByTestId("export-save-modal")).toBeFalsy();
+    });
+
     describe("ExportSaveButton classes", () => {
         test("ExportSaveButton does not have modal-button-active when not active", () => {
             const store = createStore();

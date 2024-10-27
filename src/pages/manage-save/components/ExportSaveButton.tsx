@@ -13,7 +13,7 @@ export const ExportSaveButton = () => {
 
     // Runs when the export save button is clicked
     const onExportSaveClicked = () => {
-        dispatch(setActiveModal(Modal.ExportSave));
+        dispatch(setActiveModal(isActive ? Modal.None : Modal.ExportSave));
     };
 
     return (
