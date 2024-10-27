@@ -17,6 +17,7 @@ import reducer, {
     removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
+    selectSaveData,
     selectTaskGroupNameByID,
     selectTaskIDs,
     selectTasksInCurrentTaskList,
@@ -1283,6 +1284,45 @@ describe("todoSlice", () => {
                 state = reducer(state, removeNotificationByID("id4"));
 
                 expect(state.notifications).toEqual(notifs);
+            });
+        });
+    });
+
+    describe("selectSaveData", () => {
+        test("selectSaveData gets the save data", () => {
+            const state: TodoState = {
+                ...initialState,
+                groups: [TaskGroup({ id: "id1", name: "My group" })],
+                tasks: [
+                    Task({
+                        id: "id2",
+                        name: "My task"
+                    })
+                ]
+            };
+
+            const saveData = selectSaveData(state);
+
+            // Parsing the save data seems to be my best bet here to deal with uncertain order, because the save data is valid JSON
+            expect(JSON.parse(saveData)).toStrictEqual({
+                taskGroups: [
+                    {
+                        id: "id1",
+                        name: "My group",
+                        description: ""
+                    }
+                ],
+
+                tasks: [
+                    {
+                        id: "id2",
+                        name: "My task",
+                        description: "",
+                        taskGroupID: "",
+                        priority: 0,
+                        tags: []
+                    }
+                ]
             });
         });
     });

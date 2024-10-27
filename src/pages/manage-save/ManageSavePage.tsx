@@ -1,6 +1,7 @@
-import { ResetSaveButton } from "../../features/header/components/ResetSaveButton";
 import { SaveButton } from "../../features/header/components/SaveButton";
 import "./ManageSavePage.css";
+import { ExportSaveButton } from "./components/ExportSaveButton";
+import { ResetSaveButton } from "./components/ResetSaveButton";
 
 /**
  * This page manages the save file.
@@ -13,6 +14,10 @@ export const ManageSavePage = () => {
             <div className="save-row">
                 <SaveButton />
                 <ResetSaveButton />
+            </div>
+
+            <div className="save-row">
+                <ExportSaveButton />
             </div>
         </div>
     );

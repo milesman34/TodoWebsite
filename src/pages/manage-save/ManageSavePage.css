@@ -5,6 +5,8 @@
     display: flex;
     flex-direction: column;
 
+    gap: 20px;
+
     overflow-x: auto;
 }
 
@@ -34,4 +36,17 @@
 
 .reset-save-button:active {
     background-color: #ff8181;
+}
+
+.modal-button-active {
+    background-color: #41509c;
+    cursor: pointer;
+}
+
+.modal-button-active:hover {
+    background-color: #4e5ead;
+}
+
+.modal-button-active:active {
+    background-color: #5f6db4;
 }

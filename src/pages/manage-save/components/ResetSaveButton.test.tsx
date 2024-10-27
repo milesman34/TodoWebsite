@@ -1,6 +1,8 @@
 import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
+import { TaskGroup } from "../../../features/taskGroups/TaskGroup";
+import { Task } from "../../../features/tasks/Task";
 import { createStore } from "../../../redux/store";
 import {
     addTask,
@@ -16,8 +18,6 @@ import {
     mockLocalStorageFull,
     mockSessionStorage
 } from "../../../utils/testUtils";
-import { TaskGroup } from "../../taskGroups/TaskGroup";
-import { Task } from "../../tasks/Task";
 import { ResetSaveButton } from "./ResetSaveButton";
 
 describe("ResetSaveButton", () => {

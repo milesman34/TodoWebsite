@@ -163,3 +163,16 @@ export const resetSaveData = (taskIDs: string[]) => {
     sessionStorage.setItem("taskListType", "0");
     sessionStorage.setItem("openTasks", "[]");
 };
+
+/**
+ * Downloads a file with the given name and contents
+ */
+export const download = (filename: string, contents: string) => {
+    const fileInput = document.createElement("a");
+
+    // Set the data + filename
+    fileInput.setAttribute("href", `data:text/plain;charset=utf-8,${contents}`);
+    fileInput.setAttribute("download", filename);
+
+    fileInput.click();
+};

@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import omit from "lodash.omit";
 import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
@@ -19,6 +20,15 @@ export enum TaskListType {
 export enum AppPage {
     Main,
     ManageSave
+}
+
+/**
+ * Represents the current modal being viewed
+ */
+export enum Modal {
+    None,
+    ExportSave,
+    ImportSave
 }
 
 /**
@@ -43,6 +53,9 @@ export type TodoState = {
 
     // Which page is currently being viewed?
     currentPage: AppPage;
+
+    // Current type of the active modal?
+    activeModal: Modal;
 };
 
 /**
@@ -54,7 +67,8 @@ export const initialState: TodoState = {
     taskListType: TaskListType.All,
     tasks: [],
     notifications: [],
-    currentPage: AppPage.Main
+    currentPage: AppPage.Main,
+    activeModal: Modal.None
 };
 
 // Todo slice handles tasks and task groups
@@ -425,6 +439,13 @@ const todoSlice = createSlice({
          */
         setCurrentPage(state: TodoState, action: PayloadAction<AppPage>) {
             state.currentPage = action.payload;
+        },
+
+        /**
+         * Sets the current active modal
+         */
+        setActiveModal(state: TodoState, action: PayloadAction<Modal>) {
+            state.activeModal = action.payload;
         }
     }
 });
@@ -442,6 +463,7 @@ export const {
     pushNotification,
     removeNotificationByID,
     removeTaskTag,
+    setActiveModal,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
@@ -569,3 +591,20 @@ export const selectNotifications = (state: TodoState): AppNotification[] =>
  * Selects the current page
  */
 export const selectCurrentPage = (state: TodoState): AppPage => state.currentPage;
+
+/**
+ * Selects the active modal
+ */
+export const selectActiveModal = (state: TodoState): Modal => state.activeModal;
+
+/**
+ * Returns a JSON string representing the save data, for use with exporting
+ */
+export const selectSaveData = createSelector(
+    [selectTaskGroups, selectAllTasks],
+    (taskGroups, tasks) =>
+        JSON.stringify({
+            taskGroups,
+            tasks: tasks.map((task) => omit(task, "isOpen"))
+        })
+);
