@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { describe, expect, test, vi } from "vitest";
@@ -154,6 +155,22 @@ describe("ExportSaveModal", () => {
                     id: "id1"
                 })
             ]);
-        })
+        });
+    });
+
+    describe("ExportSaveModal is exited when escape is pressed", () => {
+        test("Exit modal when escape pressed", async () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <ExportSaveModal />
+                </Provider>
+            );
+
+            await userEvent.keyboard("{Escape}");
+
+            expect(store.getState().activeModal).toEqual(Modal.None);
+        });
     });
 });
