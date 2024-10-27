@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { describe, expect, test, vi } from "vitest";
 import { createStore } from "../../../redux/store";
-import { Modal, selectSaveData } from "../../../redux/todoSlice";
+import { Modal, selectSaveData, setActiveModal } from "../../../redux/todoSlice";
 import { download } from "../../../utils/storageTools";
 import {
     clickButton,
@@ -161,6 +161,8 @@ describe("ExportSaveModal", () => {
     describe("ExportSaveModal is exited when escape is pressed", () => {
         test("Exit modal when escape pressed", async () => {
             const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.ExportSave));
 
             render(
                 <Provider store={store}>

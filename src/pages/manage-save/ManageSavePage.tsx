@@ -23,6 +23,12 @@ export const ManageSavePage = () => {
                     displayText="Export Save"
                     id="export-save"
                 />
+                
+                <SaveModalButton
+                    modal={Modal.ImportSave}
+                    displayText="Import Save"
+                    id="import-save"
+                />
             </div>
         </div>
     );

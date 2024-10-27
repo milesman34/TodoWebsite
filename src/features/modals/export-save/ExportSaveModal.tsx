@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { useDispatch, useSelector } from "react-redux";
+import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 import {
     Modal,
     pushNotification,
@@ -9,7 +10,6 @@ import {
 import { download } from "../../../utils/storageTools";
 import { AppNotification } from "../../notifications/AppNotification";
 import { ExitModalButton } from "../components/ExitModalButton";
-import { useEffect } from "react";
 
 /**
  * This modal lets the user export the save file into a data format and save to a file.
@@ -52,24 +52,10 @@ export const ExportSaveModal = () => {
         dispatch(setActiveModal(Modal.None));
     };
 
-    // Set up the escape event listener
-    useEffect(() => {
-        const listener = (event: KeyboardEvent) => {
-            // When the escape key is pressed, exit the modal
-            if (event.key === "Escape") {
-                dispatch(setActiveModal(Modal.None));
-            }
-        };
-
-        document.addEventListener("keydown", listener);
-
-        return () => {
-            document.removeEventListener("keydown", listener);
-        };
-    }, [dispatch]);
+    useDetectKeydown("Escape", () => dispatch(setActiveModal(Modal.None)));
 
     return (
-        <div id="export-save-modal" className="modal" data-testid="export-save-modal">
+        <div className="modal save-modal" data-testid="export-save-modal">
             <div id="export-save-container-top">
                 <div className="modal-header">Export Save</div>
 
