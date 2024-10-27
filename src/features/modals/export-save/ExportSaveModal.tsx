@@ -47,21 +47,19 @@ export const ExportSaveModal = () => {
                 })
             )
         );
-
-        // Also exit the modal
-        dispatch(setActiveModal(Modal.None));
     };
 
+    // Exit out of modal when escape is pressed
     useDetectKeydown("Escape", () => dispatch(setActiveModal(Modal.None)));
 
     return (
         <div className="modal save-modal" data-testid="export-save-modal">
-            <div id="export-save-container-top">
+            <div className="save-modal-container-top">
                 <div className="modal-header">Export Save</div>
 
-                <div id="export-save-textarea-container">
+                <div className="save-modal-textarea-container">
                     <textarea
-                        id="export-save-textarea"
+                        className="save-modal-textarea"
                         data-testid="export-save-textarea"
                         value={saveData}
                         disabled
@@ -69,7 +67,7 @@ export const ExportSaveModal = () => {
                 </div>
             </div>
 
-            <div id="export-modal-end-row">
+            <div className="save-modal-end-row">
                 <ExitModalButton />
 
                 <button

@@ -118,22 +118,6 @@ describe("ExportSaveModal", () => {
             );
         });
 
-        test("Pressing the export to file button exits the modal", async () => {
-            exportToFileMocks();
-
-            const store = createStore();
-
-            render(
-                <Provider store={store}>
-                    <ExportSaveModal />
-                </Provider>
-            );
-
-            await clickButton("export-save-file-button");
-
-            expect(store.getState().activeModal).toEqual(Modal.None);
-        });
-
         test("Pressing the export to file button creates a new notification", async () => {
             exportToFileMocks();
 
@@ -174,5 +158,21 @@ describe("ExportSaveModal", () => {
 
             expect(store.getState().activeModal).toEqual(Modal.None);
         });
+    });
+
+    test("Exit modal when exit modal button pressed", async () => {
+        const store = createStore();
+
+        store.dispatch(setActiveModal(Modal.ExportSave));
+
+        render(
+            <Provider store={store}>
+                <ExportSaveModal />
+            </Provider>
+        );
+
+        await clickButton("exit-modal-button");
+
+        expect(store.getState().activeModal).toEqual(Modal.None);
     });
 });

@@ -38,7 +38,19 @@ export const loadOpenTaskIDs = (): string[] => {
     }
 
     try {
-        return JSON.parse(item);
+        const taskIDs = JSON.parse(item);
+
+        if (!Array.isArray(taskIDs)) {
+            return [];
+        }
+
+        for (const taskID of taskIDs) {
+            if (typeof taskID !== "string") {
+                return [];
+            }
+        }
+
+        return taskIDs;
     } catch {
         return [];
     }
