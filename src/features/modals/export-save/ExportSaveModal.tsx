@@ -1,8 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
-import { pushNotification, selectSaveData } from "../../../redux/todoSlice";
-import { ExitModalButton } from "../components/ExitModalButton";
-import { AppNotification } from "../../notifications/AppNotification";
 import { nanoid } from "nanoid";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    Modal,
+    pushNotification,
+    selectSaveData,
+    setActiveModal
+} from "../../../redux/todoSlice";
+import { download } from "../../../utils/storageTools";
+import { AppNotification } from "../../notifications/AppNotification";
+import { ExitModalButton } from "../components/ExitModalButton";
 
 /**
  * This modal lets the user export the save file into a data format and save to a file.
@@ -26,7 +32,24 @@ export const ExportSaveModal = () => {
     };
 
     // Runs when the export file button is clicked
-    const onExportFileClicked = () => {};
+    const onExportFileClicked = () => {
+        const filename = `todo-save-${Date.now().toString().replaceAll(" ", "_")}`;
+
+        download(filename, saveData);
+
+        // Add a new notification
+        dispatch(
+            pushNotification(
+                AppNotification({
+                    text: "Saved to file",
+                    id: nanoid()
+                })
+            )
+        );
+
+        // Also exit the modal
+        dispatch(setActiveModal(Modal.None));
+    };
 
     return (
         <div id="export-save-modal" className="modal" data-testid="export-save-modal">

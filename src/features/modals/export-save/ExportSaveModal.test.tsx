@@ -1,17 +1,18 @@
 import { render } from "@testing-library/react";
+import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createStore } from "../../../redux/store";
-import { selectSaveData } from "../../../redux/todoSlice";
+import { Modal, selectSaveData } from "../../../redux/todoSlice";
+import { download } from "../../../utils/storageTools";
 import {
     clickButton,
     getTextContent,
     mockClipboardWrite,
     mockNanoid
 } from "../../../utils/testUtils";
-import { ExportSaveModal } from "./ExportSaveModal";
-import { nanoid } from "nanoid";
 import { AppNotification } from "../../notifications/AppNotification";
+import { ExportSaveModal } from "./ExportSaveModal";
 
 describe("ExportSaveModal", () => {
     describe("ExportSaveModal has the correct save structure", () => {
@@ -70,5 +71,89 @@ describe("ExportSaveModal", () => {
                 })
             ]);
         });
+    });
+
+    describe("ExportSaveModal export to file", () => {
+        const exportToFileMocks = () => {
+            // Mock download function from storageTools
+            vi.mock("../../../utils/storageTools.ts", (importOriginal) => {
+                const mod = importOriginal();
+
+                return {
+                    ...mod,
+
+                    // Replace download
+                    download: vi.fn()
+                };
+            });
+
+            // Mock the timestamp
+            const dateMock = vi.fn();
+
+            vi.stubGlobal("Date", {
+                now: dateMock
+            });
+
+            // Set Date to the start of the epoch
+            dateMock.mockReturnValue(0);
+        };
+
+        test("ExportSaveModal saves the data to a save file", async () => {
+            exportToFileMocks();
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <ExportSaveModal />
+                </Provider>
+            );
+
+            await clickButton("export-save-file-button");
+
+            expect(download).toHaveBeenCalledWith(
+                "todo-save-0",
+                selectSaveData(store.getState())
+            );
+        });
+
+        test("Pressing the export to file button exits the modal", async () => {
+            exportToFileMocks();
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <ExportSaveModal />
+                </Provider>
+            );
+
+            await clickButton("export-save-file-button");
+
+            expect(store.getState().activeModal).toEqual(Modal.None);
+        });
+
+        test("Pressing the export to file button creates a new notification", async () => {
+            exportToFileMocks();
+
+            mockNanoid(nanoid, "id1");
+
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <ExportSaveModal />
+                </Provider>
+            );
+
+            await clickButton("export-save-file-button");
+
+            expect(store.getState().notifications).toEqual([
+                AppNotification({
+                    text: "Saved to file",
+                    id: "id1"
+                })
+            ]);
+        })
     });
 });

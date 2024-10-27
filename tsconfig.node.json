@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES2022",
-        "lib": ["ES2023"],
+        "lib": ["ES2022", "es2021", "es2021.string"],
         "module": "ESNext",
         "skipLibCheck": true,
 
