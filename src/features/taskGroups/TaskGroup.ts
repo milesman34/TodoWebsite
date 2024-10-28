@@ -1,3 +1,5 @@
+import { taskGroupSchema, validateWithSchema } from "../../utils/schemas";
+
 /**
  * Represents a group of tasks
  */
@@ -40,8 +42,15 @@ export const parseTaskGroupsLocalStorage = (): TaskGroup[] => {
     }
 
     try {
-        return JSON.parse(storageItem);
+        const parsed = JSON.parse(storageItem);
+
+        if (Array.isArray(parsed)) {
+            // Keep all task groups that are formed properly, get rid of the ones that aren't
+            return parsed.filter((group) => validateWithSchema(group, taskGroupSchema));
+        } else {
+            return [];
+        }
     } catch {
-        return [];
+        return [];  
     }
 };

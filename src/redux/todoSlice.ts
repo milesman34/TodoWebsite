@@ -1,8 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import omit from "lodash.omit";
 import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
-import { Task } from "../features/tasks/Task";
+import { formatTaskForStorage, Task } from "../features/tasks/Task";
 import { filterMap } from "../utils/utils";
 
 /**
@@ -605,6 +604,6 @@ export const selectSaveData = createSelector(
     (taskGroups, tasks) =>
         JSON.stringify({
             taskGroups,
-            tasks: tasks.map((task) => omit(task, "isOpen"))
+            tasks: tasks.map((task) => formatTaskForStorage(task))
         })
 );

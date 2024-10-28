@@ -1,6 +1,9 @@
-import omit from "lodash.omit";
 import { parseTaskGroupsLocalStorage, TaskGroup } from "../features/taskGroups/TaskGroup";
-import { parseTasksLocalStorage, Task } from "../features/tasks/Task";
+import {
+    formatTaskForStorage,
+    parseTasksLocalStorage,
+    Task
+} from "../features/tasks/Task";
 import { createStore } from "../redux/store";
 import {
     AppPage,
@@ -13,6 +16,12 @@ import {
     switchToUngroupedTasks,
     TaskListType
 } from "../redux/todoSlice";
+import {
+    taskGroupSchema,
+    taskIDsSchema,
+    taskSchema,
+    validateWithSchema
+} from "./schemas";
 
 /**
  * Gets the TaskListType from session storage
@@ -40,17 +49,7 @@ export const loadOpenTaskIDs = (): string[] => {
     try {
         const taskIDs = JSON.parse(item);
 
-        if (!Array.isArray(taskIDs)) {
-            return [];
-        }
-
-        for (const taskID of taskIDs) {
-            if (typeof taskID !== "string") {
-                return [];
-            }
-        }
-
-        return taskIDs;
+        return validateWithSchema(taskIDs, taskIDsSchema) ? taskIDs : [];
     } catch {
         return [];
     }
@@ -149,7 +148,7 @@ export const saveOpenTaskIDs = (taskIDs: string[]) => {
  * @param task
  */
 export const saveTask = (task: Task) => {
-    localStorage.setItem(`tasks-${task.id}`, JSON.stringify(omit(task, "isOpen")));
+    localStorage.setItem(`tasks-${task.id}`, JSON.stringify(formatTaskForStorage(task)));
 };
 
 /**
@@ -187,4 +186,57 @@ export const download = (filename: string, contents: string) => {
     fileInput.setAttribute("download", filename);
 
     fileInput.click();
+};
+
+/**
+ * Loads the save data from the save text if possible.
+ */
+export const loadFromSaveText = (
+    saveText: string
+): {
+    tasks: Task[];
+    taskGroups: TaskGroup[];
+} => {
+    try {
+        const parsed = JSON.parse(saveText);
+
+        const results: {
+            tasks: Task[];
+            taskGroups: TaskGroup[];
+        } = {
+            tasks: [],
+            taskGroups: []
+        };
+
+        // Check the tasks
+        if ("tasks" in parsed) {
+            const tasks: Task[] = parsed.tasks;
+
+            if (Array.isArray(tasks)) {
+                results.tasks = tasks
+                    .filter((task) => validateWithSchema(task, taskSchema))
+                    .map((task) => ({
+                        ...task,
+                        isOpen: false
+                    }));
+            }
+        }
+
+        if ("taskGroups" in parsed) {
+            const taskGroups: TaskGroup[] = parsed.taskGroups;
+
+            if (Array.isArray(taskGroups)) {
+                results.taskGroups = taskGroups.filter((taskGroup) =>
+                    validateWithSchema(taskGroup, taskGroupSchema)
+                );
+            }
+        }
+
+        return results;
+    } catch {
+        return {
+            tasks: [],
+            taskGroups: []
+        };
+    }
 };

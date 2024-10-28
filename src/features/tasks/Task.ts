@@ -1,3 +1,6 @@
+import omit from "lodash.omit";
+import { taskIDsSchema, taskSchema, validateWithSchema } from "../../utils/schemas";
+
 /**
  * Represents a given task
  */
@@ -66,10 +69,16 @@ const parseTaskItem = (id: string): Task | null => {
     }
 
     try {
-        return {
-            ...JSON.parse(taskStorageItem),
-            isOpen: false
-        };
+        const parsed = JSON.parse(taskStorageItem);
+
+        // It may have extra values, so cast to Task and only keep the key values
+        if (validateWithSchema(parsed, taskSchema)) {
+            const asTask = parsed as Task;
+
+            return { ...asTask, isOpen: false };
+        }
+
+        return null;
     } catch {
         return null;
     }
@@ -88,18 +97,28 @@ export const parseTasksLocalStorage = (): Task[] => {
     try {
         const parsed: string[] = JSON.parse(storageItem);
 
-        const tasks = [];
+        if (validateWithSchema(parsed, taskIDsSchema)) {
+            const tasks = [];
 
-        for (const taskID of parsed) {
-            const task = parseTaskItem(taskID);
+            for (const taskID of parsed) {
+                const task = parseTaskItem(taskID);
 
-            if (task !== null) {
-                tasks.push(task);
+                if (task !== null) {
+                    tasks.push(task);
+                }
             }
+
+            return tasks;
         }
 
-        return tasks;
+        return [];
     } catch {
         return [];
     }
 };
+
+/**
+ * Formats a Task for storage by omitting unneccessary properties (currently just isOpen)
+ */
+export const formatTaskForStorage = (task: Task): Omit<Task, "isOpen"> =>
+    omit(task, "isOpen");

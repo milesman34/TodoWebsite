@@ -1,9 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
-import { Task } from "../features/tasks/Task";
+import { formatTaskForStorage, Task } from "../features/tasks/Task";
 import { AppPage, TaskListType } from "../redux/todoSlice";
 import {
     loadCurrentPage,
+    loadFromSaveText,
     loadOpenTaskIDs,
     loadTaskListType,
     resetSaveData,
@@ -47,6 +48,12 @@ describe("storageTools", () => {
 
         test("load invalid", () => {
             mockSessionStorage({ openTasks: "[[[" });
+
+            expect(loadOpenTaskIDs()).toEqual([]);
+        });
+
+        test("load invalid with schema", () => {
+            mockSessionStorage({ openTasks: "[3, 5]" });
 
             expect(loadOpenTaskIDs()).toEqual([]);
         });
@@ -113,8 +120,8 @@ describe("storageTools", () => {
 
             mockLocalStorage({
                 tasks: JSON.stringify(["id1", "id2"]),
-                "tasks-id1": JSON.stringify(tasks[0]),
-                "tasks-id2": JSON.stringify(tasks[1])
+                "tasks-id1": JSON.stringify(formatTaskForStorage(tasks[0])),
+                "tasks-id2": JSON.stringify(formatTaskForStorage(tasks[1]))
             });
 
             mockSessionStorage({});
@@ -196,8 +203,8 @@ describe("storageTools", () => {
 
             mockLocalStorage({
                 tasks: JSON.stringify(["id1", "id2"]),
-                "tasks-id1": JSON.stringify(tasks[0]),
-                "tasks-id2": JSON.stringify(tasks[1])
+                "tasks-id1": JSON.stringify(formatTaskForStorage(tasks[0])),
+                "tasks-id2": JSON.stringify(formatTaskForStorage(tasks[1]))
             });
 
             mockSessionStorage({
@@ -314,6 +321,106 @@ describe("storageTools", () => {
             resetSaveData([]);
 
             expect(mockSetItem).not.toHaveBeenCalledWith("currentPage", "1");
+        });
+    });
+
+    describe("loadFromSaveText", () => {
+        test("Parse error with JSON", () => {
+            expect(loadFromSaveText("[[[[[")).toEqual({
+                tasks: [],
+                taskGroups: []
+            });
+        });
+
+        test("Tasks not found", () => {
+            expect(loadFromSaveText(JSON.stringify({ taskGroups: [] }))).toEqual({
+                tasks: [],
+                taskGroups: []
+            });
+        });
+
+        test("TaskGroups not found", () => {
+            expect(loadFromSaveText(JSON.stringify({ tasks: [] }))).toEqual({
+                tasks: [],
+                taskGroups: []
+            });
+        });
+
+        test("Tasks not right type", () => {
+            expect(
+                loadFromSaveText(JSON.stringify({ tasks: 5, taskGroups: [] }))
+            ).toEqual({
+                tasks: [],
+                taskGroups: []
+            });
+        });
+
+        test("Working tasks", () => {
+            const tasks = [
+                formatTaskForStorage(Task({ id: "id1", name: "My task" })),
+                formatTaskForStorage(Task({ id: "id2", name: "Another task" }))
+            ];
+
+            expect(
+                loadFromSaveText(
+                    JSON.stringify({
+                        tasks: [
+                            tasks[0],
+                            tasks[1],
+                            {
+                                invalid: "test"
+                            }
+                        ]
+                    })
+                )
+            ).toEqual({
+                tasks: [
+                    {
+                        ...tasks[0],
+                        isOpen: false
+                    },
+
+                    {
+                        ...tasks[1],
+                        isOpen: false
+                    }
+                ],
+                taskGroups: []
+            });
+        });
+
+        test("TaskGroups not right type", () => {
+            expect(
+                loadFromSaveText(JSON.stringify({ tasks: [], taskGroups: 5 }))
+            ).toEqual({
+                tasks: [],
+                taskGroups: []
+            });
+        });
+
+        test("TaskGroups working", () => {
+            const groups = [
+                TaskGroup({ id: "id1", name: "Group 1" }),
+                TaskGroup({ id: "id2", name: "Group 2" })
+            ];
+
+            expect(
+                loadFromSaveText(
+                    JSON.stringify({
+                        tasks: [],
+                        taskGroups: [
+                            groups[0],
+                            {
+                                invalid: true
+                            },
+                            groups[1]
+                        ]
+                    })
+                )
+            ).toEqual({
+                tasks: [],
+                taskGroups: groups
+            });
         });
     });
 });

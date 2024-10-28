@@ -3,6 +3,41 @@ import { validateWithSchema } from "./schemas";
 
 describe("schemas", () => {
     describe("validateWithSchema", () => {
+        describe("validate any", () => {
+            test("validate any true", () => {
+                expect(
+                    validateWithSchema("mine", {
+                        type: "any"
+                    })
+                ).toBeTruthy();
+            });
+
+            test("validate any within children", () => {
+                expect(
+                    validateWithSchema([3, "6"], {
+                        type: "array",
+                        children: {
+                            type: "any"
+                        }
+                    })
+                ).toBeTruthy();
+            });
+
+            test("validate any within children with wrong parent type", () => {
+                expect(
+                    validateWithSchema(
+                        { 3: 6 },
+                        {
+                            type: "array",
+                            children: {
+                                type: "any"
+                            }
+                        }
+                    )
+                ).toBeFalsy();
+            });
+        });
+
         describe("validate string", () => {
             test("validate string true", () => {
                 expect(
@@ -184,7 +219,7 @@ describe("schemas", () => {
                         type: "object",
                         properties: []
                     })
-                );
+                ).toBeFalsy();
             });
 
             test("validate object array false", () => {
@@ -193,7 +228,7 @@ describe("schemas", () => {
                         type: "object",
                         properties: []
                     })
-                );
+                ).toBeFalsy();
             });
 
             test("validate object null false", () => {
@@ -202,7 +237,7 @@ describe("schemas", () => {
                         type: "object",
                         properties: []
                     })
-                );
+                ).toBeFalsy();
             });
 
             test("validate object undefined false", () => {
@@ -211,7 +246,7 @@ describe("schemas", () => {
                         type: "object",
                         properties: []
                     })
-                );
+                ).toBeFalsy();
             });
 
             test("validate object wrong number of properties", () => {
@@ -237,7 +272,7 @@ describe("schemas", () => {
                             ]
                         }
                     )
-                );
+                ).toBeFalsy();
             });
 
             test("validate object wrong property name", () => {
@@ -263,7 +298,7 @@ describe("schemas", () => {
                             ]
                         }
                     )
-                );
+                ).toBeFalsy();
             });
 
             test("validate object wrong property type", () => {
@@ -289,7 +324,7 @@ describe("schemas", () => {
                             ]
                         }
                     )
-                );
+                ).toBeFalsy();
             });
 
             test("validate object correct", () => {
@@ -315,13 +350,13 @@ describe("schemas", () => {
                             ]
                         }
                     )
-                );
+                ).toBeTruthy();
             });
 
             test("validate object correct nested", () => {
                 expect(
                     validateWithSchema(
-                        { a: 3, b: [{ c: 5 }, { c: 6 }] },
+                        { b: [{ c: 5 }, { c: 6 }], a: 3 },
                         {
                             type: "object",
                             properties: [
@@ -352,7 +387,7 @@ describe("schemas", () => {
                             ]
                         }
                     )
-                );
+                ).toBeTruthy();
             });
         });
     });
