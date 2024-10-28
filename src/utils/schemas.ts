@@ -60,7 +60,7 @@ export const taskGroupsSchema: Schema = {
 };
 
 /**
- * Validates a string with the schema, returning if it matches the specified type
+ * Validates an object with the schema, returning if it matches the specified type
  */
 export const validateWithSchema = (object: unknown, schema: Schema): boolean => {
     // Object is a basic type, ensure that the type matches
