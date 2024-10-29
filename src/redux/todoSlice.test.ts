@@ -14,6 +14,7 @@ import reducer, {
     moveTaskToUngrouped,
     pushNotification,
     removeNotificationByID,
+    removeTasksInGroup,
     removeTaskTag,
     selectActiveTaskGroup,
     selectAllTasks,
@@ -373,6 +374,32 @@ describe("todoSlice", () => {
 
                 expect(state.taskListType).toEqual(TaskListType.All);
                 expect(state.activeTaskGroup).toBe("");
+            });
+        });
+
+        describe("removeTasksInGroup", () => {
+            test("Removes all tasks in the given group", () => {
+                const tasks = [
+                    Task({ id: "id1", name: "Name" }),
+                    Task({ id: "id2", name: "My task", taskGroupID: "gid" }),
+                    Task({ id: "id3", name: "My task 2", taskGroupID: "gid2" }),
+                    Task({ id: "id4", name: "My task 3", taskGroupID: "gid" })
+                ];
+
+                const groups = [
+                    TaskGroup({ id: "gid", name: "Group 1" }),
+                    TaskGroup({ id: "gid2", name: "Group 2" })
+                ];
+
+                let state = {
+                    ...initialState,
+                    tasks,
+                    groups
+                };
+
+                state = reducer(state, removeTasksInGroup("gid"));
+
+                expect(state.tasks).toEqual([tasks[0], tasks[2]]);
             });
         });
     });

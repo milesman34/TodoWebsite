@@ -445,6 +445,15 @@ const todoSlice = createSlice({
          */
         setActiveModal(state: TodoState, action: PayloadAction<Modal>) {
             state.activeModal = action.payload;
+        },
+
+        /**
+         * Removes all tasks in a task group
+         */
+        removeTasksInGroup(state: TodoState, action: PayloadAction<string>) {
+            state.tasks = state.tasks.filter(
+                (task) => task.taskGroupID !== action.payload
+            );
         }
     }
 });
@@ -461,6 +470,7 @@ export const {
     moveTaskToUngrouped,
     pushNotification,
     removeNotificationByID,
+    removeTasksInGroup,
     removeTaskTag,
     setActiveModal,
     setActiveTaskGroup,

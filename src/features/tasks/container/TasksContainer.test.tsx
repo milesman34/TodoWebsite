@@ -665,7 +665,7 @@ describe("TasksContainer", () => {
                     })
                 )
             );
-            
+
             render(
                 <Provider store={store}>
                     <TasksContainer />
@@ -674,9 +674,12 @@ describe("TasksContainer", () => {
 
             await clickButton("task-component-header-id1");
 
-            expect(mockSetItem).toHaveBeenCalledWith("openTasks", JSON.stringify(["id1"]));
+            expect(mockSetItem).toHaveBeenCalledWith(
+                "openTasks",
+                JSON.stringify(["id1"])
+            );
         });
-        
+
         test("Update openTasks when a task is closed", async () => {
             const mockSetItem = mockSessionStorage({});
 
@@ -691,7 +694,7 @@ describe("TasksContainer", () => {
                     })
                 )
             );
-            
+
             render(
                 <Provider store={store}>
                     <TasksContainer />
@@ -702,5 +705,49 @@ describe("TasksContainer", () => {
 
             expect(mockSetItem).toHaveBeenCalledWith("openTasks", "[]");
         });
-    })
+    });
+
+    describe("DeleteAllTasksButton displays in all tasks or a specific group", () => {
+        test("Shows with all tasks", () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("delete-all-tasks-button")).toBeTruthy();
+        });
+
+        test("Shows with specific task group", () => {
+            const store = createStore();
+
+            store.dispatch(addTaskGroup(TaskGroup({ id: "id1", name: "My group" })));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("delete-all-tasks-button")).toBeTruthy();
+        });
+
+        test("Does not show with ungrouped tasks", () => {
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("delete-all-tasks-button")).toBeFalsy();
+        });
+    });
 });

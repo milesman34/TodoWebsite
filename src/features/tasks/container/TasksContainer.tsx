@@ -16,6 +16,7 @@ import { AddTaskButton } from "./components/AddTaskButton";
 import { EditNameButton } from "./components/EditNameButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
 import "./TasksContainer.css";
+import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -102,7 +103,16 @@ export const TasksContainer = () => {
 
             {inTaskGroup && <TaskGroupDescription taskGroup={activeTaskGroup} />}
 
-            <AddTaskButton taskGroup={activeTaskGroup} />
+            <div className="flex-row">
+                <AddTaskButton taskGroup={activeTaskGroup} />
+
+                {taskListType !== TaskListType.Ungrouped && (
+                    <DeleteAllTasksButton
+                        taskListType={taskListType}
+                        taskGroupID={activeTaskGroupID}
+                    />
+                )}
+            </div>
 
             <div id="task-components-container" data-testid="task-components-container">
                 {tasks.map((task) => (
