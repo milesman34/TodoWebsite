@@ -22,7 +22,8 @@
     justify-content: center;
 }
 
-#add-task-button {
+#add-task-button,
+#delete-all-tasks-button {
     margin-top: 20px;
     margin-left: 20px;
     padding: 10px;
@@ -33,15 +34,23 @@
     font-family: "Inter";
     border-radius: 15px;
     user-select: none;
+    cursor: pointer;
 }
 
 #add-task-button:hover {
     background-color: #414c87;
-    cursor: pointer;
 }
 
 #add-task-button:active {
     background-color: #4654a7;
+}
+
+#delete-all-tasks-button:hover {
+    background-color: red;
+}
+
+#delete-all-tasks-button:active {
+    background-color: #ff8181;
 }
 
 #task-components-container {
@@ -54,7 +63,8 @@
     align-items: flex-start;
 }
 
-#group-edit-name-button, #group-delete-button {
+#group-edit-name-button,
+#group-delete-button {
     margin-left: 20px;
     background-color: #3f4666;
     color: white;
