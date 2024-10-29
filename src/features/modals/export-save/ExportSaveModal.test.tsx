@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
 import { describe, expect, test, vi } from "vitest";
 import { createStore } from "../../../redux/store";
-import { Modal, selectSaveData } from "../../../redux/todoSlice";
+import { Modal, selectSaveData, setActiveModal } from "../../../redux/todoSlice";
 import { download } from "../../../utils/storageTools";
 import {
     clickButton,
@@ -77,8 +77,8 @@ describe("ExportSaveModal", () => {
     describe("ExportSaveModal export to file", () => {
         const exportToFileMocks = () => {
             // Mock download function from storageTools
-            vi.mock("../../../utils/storageTools.ts", (importOriginal) => {
-                const mod = importOriginal();
+            vi.mock("../../../utils/storageTools.ts", async (importOriginal) => {
+                const mod = await importOriginal<typeof import("../../../utils/storageTools.ts")>();
 
                 return {
                     ...mod,
@@ -118,22 +118,6 @@ describe("ExportSaveModal", () => {
             );
         });
 
-        test("Pressing the export to file button exits the modal", async () => {
-            exportToFileMocks();
-
-            const store = createStore();
-
-            render(
-                <Provider store={store}>
-                    <ExportSaveModal />
-                </Provider>
-            );
-
-            await clickButton("export-save-file-button");
-
-            expect(store.getState().activeModal).toEqual(Modal.None);
-        });
-
         test("Pressing the export to file button creates a new notification", async () => {
             exportToFileMocks();
 
@@ -162,6 +146,8 @@ describe("ExportSaveModal", () => {
         test("Exit modal when escape pressed", async () => {
             const store = createStore();
 
+            store.dispatch(setActiveModal(Modal.ExportSave));
+
             render(
                 <Provider store={store}>
                     <ExportSaveModal />
@@ -172,5 +158,21 @@ describe("ExportSaveModal", () => {
 
             expect(store.getState().activeModal).toEqual(Modal.None);
         });
+    });
+
+    test("Exit modal when exit modal button pressed", async () => {
+        const store = createStore();
+
+        store.dispatch(setActiveModal(Modal.ExportSave));
+
+        render(
+            <Provider store={store}>
+                <ExportSaveModal />
+            </Provider>
+        );
+
+        await clickButton("exit-modal-button");
+
+        expect(store.getState().activeModal).toEqual(Modal.None);
     });
 });

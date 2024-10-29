@@ -20,6 +20,7 @@ describe("ModalManager", () => {
             );
 
             expect(screen.queryByTestId("export-save-modal")).toBeFalsy();
+            expect(screen.queryByTestId("import-save-modal")).toBeFalsy();
         });
 
         test("ModalManager displays the export save modal when set to ExportSave", () => {
@@ -34,6 +35,20 @@ describe("ModalManager", () => {
             );
 
             expect(screen.queryByTestId("export-save-modal")).toBeTruthy();
+        });
+
+        test("ModalManager displays the import save modal when set to ImportSave", () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.ImportSave));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("import-save-modal")).toBeTruthy();
         });
     });
 

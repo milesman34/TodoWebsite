@@ -40,5 +40,46 @@ describe("TaskGroup", () => {
                 }
             ]);
         });
+
+        test("localStorage with wrong type", () => {
+            mockLocalStorage({
+                taskGroups: JSON.stringify([3, 5])
+            });
+
+            expect(parseTaskGroupsLocalStorage()).toEqual([]);
+        });
+
+        test("localStorage with only some working task groups", () => {
+            const group1 = TaskGroup({
+                name: "Group 1",
+                id: "id1"
+            });
+
+            const group2 = TaskGroup({
+                name: "Group 2",
+                id: "id2"
+            });
+
+            mockLocalStorage({
+                taskGroups: JSON.stringify([
+                    group1,
+                    {
+                        name: "My group",
+                        id2: "id"
+                    },
+                    group2
+                ])
+            });
+
+            expect(parseTaskGroupsLocalStorage()).toEqual([group1, group2]);
+        });
+
+        test("localStorage when not an array", () => {
+            mockLocalStorage({
+                taskGroups: "35"
+            });
+
+            expect(parseTaskGroupsLocalStorage()).toEqual([]);
+        });
     });
 });

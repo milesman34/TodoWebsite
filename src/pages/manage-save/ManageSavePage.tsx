@@ -1,7 +1,8 @@
 import { SaveButton } from "../../features/header/components/SaveButton";
+import { Modal } from "../../redux/todoSlice";
 import "./ManageSavePage.css";
-import { ExportSaveButton } from "./components/ExportSaveButton";
 import { ResetSaveButton } from "./components/ResetSaveButton";
+import { SaveModalButton } from "./components/SaveModalButton";
 
 /**
  * This page manages the save file.
@@ -17,7 +18,17 @@ export const ManageSavePage = () => {
             </div>
 
             <div className="save-row">
-                <ExportSaveButton />
+                <SaveModalButton
+                    modal={Modal.ExportSave}
+                    displayText="Export Save"
+                    id="export-save"
+                />
+                
+                <SaveModalButton
+                    modal={Modal.ImportSave}
+                    displayText="Import Save"
+                    id="import-save"
+                />
             </div>
         </div>
     );
