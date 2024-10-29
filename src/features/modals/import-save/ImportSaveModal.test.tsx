@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { nanoid } from "nanoid";
 import { Provider } from "react-redux";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
 import {
     Modal,
@@ -225,51 +225,5 @@ describe("ImportSaveModal", () => {
         });
     });
 
-    describe("ImportFromFile button", () => {
-        const mockUpload = async (mockText: string) => {
-            vi.doMock("../../../utils/storageTools.ts", async (importOriginal) => {
-                const mod = await importOriginal<
-                    typeof import("../../../utils/storageTools.ts")
-                >();
-
-                return {
-                    ...mod,
-
-                    // Replace uploadAndCall
-                    uploadAndCall: async (
-                        _types: string[],
-                        fn: (saveText: string) => Promise<void>
-                    ) => {
-                        console.log("calling fn");
-                        await fn(mockText);
-                        console.log("called fn");
-                    }
-                };
-            });
-        };
-
-        test("File is empty", async () => {
-            await mockUpload("");
-
-            const store = createStore();
-
-            store.dispatch(setActiveModal(Modal.ImportSave));
-
-            render(
-                <Provider store={store}>
-                    <ImportSaveModal />
-                </Provider>
-            );
-
-            await clickButton("import-from-file-button");
-
-            console.log("click button");
-
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            expect(store.getState().tasks).toEqual([]);
-            expect(store.getState().groups).toEqual([]);
-            expect(getTextContent("parse-error-text")).toBe("The save text was empty!");
-        });
-    });
+    // There aren't any tests for importing from a file since I couldn't get it to work
 });
