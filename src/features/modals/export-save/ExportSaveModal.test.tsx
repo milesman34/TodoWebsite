@@ -77,8 +77,8 @@ describe("ExportSaveModal", () => {
     describe("ExportSaveModal export to file", () => {
         const exportToFileMocks = () => {
             // Mock download function from storageTools
-            vi.mock("../../../utils/storageTools.ts", (importOriginal) => {
-                const mod = importOriginal();
+            vi.mock("../../../utils/storageTools.ts", async (importOriginal) => {
+                const mod = await importOriginal<typeof import("../../../utils/storageTools.ts")>();
 
                 return {
                     ...mod,

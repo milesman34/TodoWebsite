@@ -1,15 +1,17 @@
 import { nanoid } from "nanoid";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 import {
     Modal,
     pushNotification,
+    selectActiveTaskGroupID,
     setActiveModal,
     setGroups,
-    setTasks
+    setTasks,
+    switchToAllTasks
 } from "../../../redux/todoSlice";
-import { loadFromSaveText } from "../../../utils/storageTools";
+import { loadFromSaveText, uploadAndCall } from "../../../utils/storageTools";
 import { AppNotification } from "../../notifications/AppNotification";
 import { ExitModalButton } from "../components/ExitModalButton";
 
@@ -25,19 +27,21 @@ export const ImportSaveModal = () => {
     // Text to display for parsing errors
     const [parseError, setParseError] = useState("");
 
+    const activeTaskGroup = useSelector(selectActiveTaskGroupID);
+
     // Exit out of modal when escape is pressed
     useDetectKeydown("Escape", () => dispatch(setActiveModal(Modal.None)));
 
-    // Runs when the import from text button is clicked
-    const onImportFromTextClicked = () => {
+    // Helper function that processes text and sets the tasks/groups from it
+    const processSaveText = (text: string) => {
         // Don't do anything if there is no text in the textarea
-        if (saveText.trim() === "") {
+        if (text.trim() === "") {
             setParseError("The save text was empty!");
             return;
         }
 
         try {
-            const parsed = JSON.parse(saveText);
+            const parsed = JSON.parse(text);
 
             if (!("tasks" in parsed)) {
                 setParseError("Save data missing tasks!");
@@ -51,10 +55,15 @@ export const ImportSaveModal = () => {
             return;
         }
 
-        const loadedData = loadFromSaveText(saveText);
+        const loadedData = loadFromSaveText(text);
 
         dispatch(setTasks(loadedData.tasks));
         dispatch(setGroups(loadedData.taskGroups));
+
+        // Go back to All Tasks if the active task group no longer exists
+        if (!loadedData.taskGroups.map((group) => group.id).includes(activeTaskGroup)) {
+            dispatch(switchToAllTasks());
+        }
 
         setParseError("");
 
@@ -68,8 +77,19 @@ export const ImportSaveModal = () => {
         );
     };
 
+    // Runs when the import from text button is clicked
+    const onImportFromTextClicked = () => {
+        processSaveText(saveText);
+    };
+
     // Runs when the import from file button is clicked
-    const onImportFromFileClicked = () => {};
+    const onImportFromFileClicked = async () => {
+        await uploadAndCall([".txt", ".json"], async (fileText) => {
+            processSaveText(fileText);
+
+            setSaveText(fileText);
+        });
+    };
 
     return (
         <div className="modal save-modal" data-testid="import-save-modal">

@@ -189,6 +189,27 @@ export const download = (filename: string, contents: string) => {
 };
 
 /**
+ * Uploads a file from the computer and calls a function with the contents
+ */
+export const uploadAndCall = async (types: string[] = [".json", ".txt"], fn: (fileText: string) => Promise<void>) => {
+    // This creates a new file picker so the user can select a file
+    const filePicker = document.createElement("input");
+    filePicker.type = "file";
+    filePicker.accept = types.join(", ");
+
+    filePicker.onchange = () => {
+        // Read the chosen file
+        filePicker.files![0].arrayBuffer().then(async (arrayBuffer) => {
+            const fileText = new TextDecoder().decode(arrayBuffer);
+
+            await fn(fileText);
+        });
+    };
+
+    filePicker.click();
+};
+
+/**
  * Loads the save data from the save text if possible.
  */
 export const loadFromSaveText = (
