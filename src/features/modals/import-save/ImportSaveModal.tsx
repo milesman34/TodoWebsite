@@ -1,12 +1,17 @@
+import { nanoid } from "nanoid";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
-import { Modal, pushNotification, setActiveModal, setGroups, setTasks } from "../../../redux/todoSlice";
-import { TaskGroup } from "../../taskGroups/TaskGroup";
-import { Task } from "../../tasks/Task";
-import { ExitModalButton } from "../components/ExitModalButton";
+import {
+    Modal,
+    pushNotification,
+    setActiveModal,
+    setGroups,
+    setTasks
+} from "../../../redux/todoSlice";
+import { loadFromSaveText } from "../../../utils/storageTools";
 import { AppNotification } from "../../notifications/AppNotification";
-import { nanoid } from "nanoid";
+import { ExitModalButton } from "../components/ExitModalButton";
 
 /**
  * This modal lets the user import the save file from a file or a textbox.
@@ -27,50 +32,40 @@ export const ImportSaveModal = () => {
     const onImportFromTextClicked = () => {
         // Don't do anything if there is no text in the textarea
         if (saveText.trim() === "") {
-            setParseError("The save text was empty");
+            setParseError("The save text was empty!");
             return;
         }
 
         try {
-            const parsed: {
-                tasks: Task[];
-                taskGroups: TaskGroup[];
-            } = JSON.parse(saveText);
+            const parsed = JSON.parse(saveText);
 
-            // Get the tasks and task groups from the JSON
-            const tasks = parsed.tasks;
-            const taskGroups = parsed.taskGroups;
-
-            // Make sure the JSON is properly formed
-
-            dispatch(
-                setTasks(
-                    tasks.map((task) => Task({
-                        name: task.name,
-                        id: task.id,
-                        description: task.description,
-                        taskGroupID: task.taskGroupID,
-                        priority: task.priority,
-                        tags: task.tags
-                    }))
-                )
-            );
-
-            dispatch(setGroups(taskGroups.map(taskGroup => TaskGroup({
-                name: taskGroup.name,
-                id: taskGroup.id,
-                description: taskGroup.description
-            }))));
-
-            setParseError("");
-
-            dispatch(pushNotification(AppNotification({
-                id: nanoid(),
-                text: "Imported save data"
-            })))
+            if (!("tasks" in parsed)) {
+                setParseError("Save data missing tasks!");
+                return;
+            } else if (!("taskGroups" in parsed)) {
+                setParseError("Save data missing task groups!");
+                return;
+            }
         } catch {
-            setParseError("There was an error parsing the save data");
+            setParseError("There was an error parsing the save data!");
+            return;
         }
+
+        const loadedData = loadFromSaveText(saveText);
+
+        dispatch(setTasks(loadedData.tasks));
+        dispatch(setGroups(loadedData.taskGroups));
+
+        setParseError("");
+
+        dispatch(
+            pushNotification(
+                AppNotification({
+                    id: nanoid(),
+                    text: "Imported save data"
+                })
+            )
+        );
     };
 
     // Runs when the import from file button is clicked
@@ -84,7 +79,7 @@ export const ImportSaveModal = () => {
                 <div className="save-modal-textarea-container">
                     <textarea
                         className="save-modal-textarea"
-                        data-testid="export-save-textarea"
+                        data-testid="import-save-textarea"
                         value={saveText}
                         onChange={(event) => setSaveText(event.target.value)}
                     />

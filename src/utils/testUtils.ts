@@ -158,3 +158,9 @@ export const mockClipboardWrite = (): Mock => {
 
     return mock;
 };
+
+/**
+ * Converts JSON into a format that userEvent.type can handle
+ */
+export const makeJSONTypable = (json: string): string =>
+    json.replaceAll("[", "[[").replaceAll("{", "{{");
