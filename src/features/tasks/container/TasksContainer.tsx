@@ -15,9 +15,9 @@ import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
 import { EditNameButton } from "./components/EditNameButton";
+import { SortSelectorButton } from "./components/SortSelectorButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
 import "./TasksContainer.css";
-import { SortSelectorButton } from "./components/SortSelectorButton";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
