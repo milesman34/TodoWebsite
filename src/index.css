@@ -9,6 +9,9 @@ body {
 :root {
     --background-color: #1e2028;
     --header-color: #26293a;
+    --main-button-color: #3f4666;
+    --main-button-color-hover: #414c87;
+    --main-button-color-active: #4654a7;
 }
 
 .flex-column {

@@ -30,6 +30,8 @@ import reducer, {
     setTaskOpen,
     setTaskPriority,
     setTaskTags,
+    SortOrder,
+    SortParameter,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType,
@@ -470,152 +472,810 @@ describe("todoSlice", () => {
         });
 
         describe("selectTasksInCurrentTaskList", () => {
-            test("selectTasksInCurrentTaskList with all tasks", () => {
-                const taskList = [
-                    Task({
-                        name: "My task",
-                        id: "id1",
-                        taskGroupID: ""
-                    }),
+            describe("No sorting or filtering", () => {
+                test("selectTasksInCurrentTaskList with all tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "My task",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
 
-                    Task({
-                        name: "My task 2",
-                        description: "Why",
-                        id: "id2",
-                        taskGroupID: "id1",
-                        priority: 1
-                    }),
+                        Task({
+                            name: "My task 2",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
 
-                    Task({
-                        name: "My task 3",
-                        description: "Testing",
-                        id: "id3",
-                        taskGroupID: "id1",
-                        priority: 2
-                    }),
+                        Task({
+                            name: "My task 3",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
 
-                    Task({
-                        name: "My task 4",
-                        id: "id4",
-                        taskGroupID: ""
-                    }),
+                        Task({
+                            name: "My task 4",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
 
-                    Task({
-                        name: "My task 5",
-                        id: "id5",
-                        taskGroupID: "id3",
-                        priority: -1
-                    })
-                ];
+                        Task({
+                            name: "My task 5",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
 
-                const state = {
-                    ...initialState,
-                    tasks: taskList,
-                    taskListType: TaskListType.All
-                };
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.All
+                    };
 
-                expect(selectTasksInCurrentTaskList(state)).toEqual(taskList);
+                    expect(selectTasksInCurrentTaskList(state)).toEqual(taskList);
+                });
+
+                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "My task",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My task 2",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "My task 3",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "My task 4",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My task 5",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.Ungrouped
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[0],
+                        taskList[3]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with an active task group", () => {
+                    const taskList = [
+                        Task({
+                            name: "My task",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My task 2",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "My task 3",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "My task 4",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My task 5",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.TaskGroup,
+                        activeTaskGroup: "id1"
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[1],
+                        taskList[2]
+                    ]);
+                });
             });
+            describe("Sorting by name ascending", () => {
+                test("selectTasksInCurrentTaskList with all tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
 
-            test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
-                const taskList = [
-                    Task({
-                        name: "My task",
-                        id: "id1",
-                        taskGroupID: ""
-                    }),
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
 
-                    Task({
-                        name: "My task 2",
-                        description: "Why",
-                        id: "id2",
-                        taskGroupID: "id1",
-                        priority: 1
-                    }),
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
 
-                    Task({
-                        name: "My task 3",
-                        description: "Testing",
-                        id: "id3",
-                        taskGroupID: "id1",
-                        priority: 2
-                    }),
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
 
-                    Task({
-                        name: "My task 4",
-                        id: "id4",
-                        taskGroupID: ""
-                    }),
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
 
-                    Task({
-                        name: "My task 5",
-                        id: "id5",
-                        taskGroupID: "id3",
-                        priority: -1
-                    })
-                ];
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.All,
+                        taskSortParam: SortParameter.Name,
+                        taskSortOrder: SortOrder.Ascending
+                    };
 
-                const state = {
-                    ...initialState,
-                    tasks: taskList,
-                    taskListType: TaskListType.Ungrouped
-                };
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[3],
+                        taskList[1],
+                        taskList[0],
+                        taskList[2],
+                        taskList[4]
+                    ]);
+                });
 
-                expect(selectTasksInCurrentTaskList(state)).toEqual([
-                    taskList[0],
-                    taskList[3]
-                ]);
+                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.Ungrouped,
+                        taskSortParam: SortParameter.Name,
+                        taskSortOrder: SortOrder.Ascending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[3],
+                        taskList[0]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with an active task group", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.TaskGroup,
+                        activeTaskGroup: "id1",
+                        taskSortParam: SortParameter.Name,
+                        taskSortOrder: SortOrder.Ascending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[1],
+                        taskList[2]
+                    ]);
+                });
             });
+            describe("Sorting by name descending", () => {
+                test("selectTasksInCurrentTaskList with all tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
 
-            test("selectTasksInCurrentTaskList with an active task group", () => {
-                const taskList = [
-                    Task({
-                        name: "My task",
-                        id: "id1",
-                        taskGroupID: ""
-                    }),
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
 
-                    Task({
-                        name: "My task 2",
-                        description: "Why",
-                        id: "id2",
-                        taskGroupID: "id1",
-                        priority: 1
-                    }),
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
 
-                    Task({
-                        name: "My task 3",
-                        description: "Testing",
-                        id: "id3",
-                        taskGroupID: "id1",
-                        priority: 2
-                    }),
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
 
-                    Task({
-                        name: "My task 4",
-                        id: "id4",
-                        taskGroupID: ""
-                    }),
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
 
-                    Task({
-                        name: "My task 5",
-                        id: "id5",
-                        taskGroupID: "id3",
-                        priority: -1
-                    })
-                ];
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.All,
+                        taskSortParam: SortParameter.Name,
+                        taskSortOrder: SortOrder.Descending
+                    };
 
-                const state = {
-                    ...initialState,
-                    tasks: taskList,
-                    taskListType: TaskListType.TaskGroup,
-                    activeTaskGroup: "id1"
-                };
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[4],
+                        taskList[2],
+                        taskList[0],
+                        taskList[1],
+                        taskList[3]
+                    ]);
+                });
 
-                expect(selectTasksInCurrentTaskList(state)).toEqual([
-                    taskList[1],
-                    taskList[2]
-                ]);
+                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.Ungrouped,
+                        taskSortParam: SortParameter.Name,
+                        taskSortOrder: SortOrder.Descending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[0],
+                        taskList[3]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with an active task group", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.TaskGroup,
+                        activeTaskGroup: "id1",
+                        taskSortParam: SortParameter.Name,
+                        taskSortOrder: SortOrder.Descending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[2],
+                        taskList[1]
+                    ]);
+                });
+            });
+            describe("Sorting by priority ascending", () => {
+                test("selectTasksInCurrentTaskList with all tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: "",
+                            priority: 0
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: "",
+                            priority: -4
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.All,
+                        taskSortParam: SortParameter.Priority,
+                        taskSortOrder: SortOrder.Ascending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[3],
+                        taskList[4],
+                        taskList[0],
+                        taskList[1],
+                        taskList[2]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: "",
+                            priority: 0
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: "",
+                            priority: -4
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.Ungrouped,
+                        taskSortParam: SortParameter.Priority,
+                        taskSortOrder: SortOrder.Ascending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[3],
+                        taskList[0]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with an active task group", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: "",
+                            priority: 0
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: "",
+                            priority: -4
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.TaskGroup,
+                        activeTaskGroup: "id1",
+                        taskSortParam: SortParameter.Priority,
+                        taskSortOrder: SortOrder.Ascending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[1],
+                        taskList[2]
+                    ]);
+                });
+            });
+            describe("Sorting by priority descending", () => {
+                test("selectTasksInCurrentTaskList with all tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: "",
+                            priority: 0
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: "",
+                            priority: -4
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.All,
+                        taskSortParam: SortParameter.Priority,
+                        taskSortOrder: SortOrder.Descending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[2],
+                        taskList[1],
+                        taskList[0],
+                        taskList[4],
+                        taskList[3]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: "",
+                            priority: 0
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: "",
+                            priority: -4
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.Ungrouped,
+                        taskSortParam: SortParameter.Priority,
+                        taskSortOrder: SortOrder.Descending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[0],
+                        taskList[3]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with an active task group", () => {
+                    const taskList = [
+                        Task({
+                            name: "D",
+                            id: "id1",
+                            taskGroupID: "",
+                            priority: 0
+                        }),
+
+                        Task({
+                            name: "C",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "E",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "A",
+                            id: "id4",
+                            taskGroupID: "",
+                            priority: -4
+                        }),
+
+                        Task({
+                            name: "F",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1
+                        })
+                    ];
+
+                    const state = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.TaskGroup,
+                        activeTaskGroup: "id1",
+                        taskSortParam: SortParameter.Priority,
+                        taskSortOrder: SortOrder.Descending
+                    };
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[2],
+                        taskList[1]
+                    ]);
+                });
             });
         });
 
