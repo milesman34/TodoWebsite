@@ -13,10 +13,11 @@ import {
 import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
 import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
+import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
 import { EditNameButton } from "./components/EditNameButton";
+import { SortSelectorButton } from "./components/SortSelectorButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
 import "./TasksContainer.css";
-import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -103,8 +104,10 @@ export const TasksContainer = () => {
 
             {inTaskGroup && <TaskGroupDescription taskGroup={activeTaskGroup} />}
 
-            <div className="flex-row">
+            <div className="tasks-container-controls-row-2">
                 <AddTaskButton taskGroup={activeTaskGroup} />
+
+                <SortSelectorButton />
 
                 {taskListType !== TaskListType.Ungrouped && (
                     <DeleteAllTasksButton

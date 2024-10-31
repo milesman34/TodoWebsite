@@ -31,6 +31,23 @@ export enum Modal {
 }
 
 /**
+ * Represents the way tasks are being sorted
+ */
+export enum SortParameter {
+    None,
+    Name,
+    Priority
+}
+
+/**
+ * Represents the order of sorting
+ */
+export enum SortOrder {
+    Ascending,
+    Descending
+}
+
+/**
  * Type representing the state of the Todo slice
  */
 export type TodoState = {
@@ -55,6 +72,12 @@ export type TodoState = {
 
     // Current type of the active modal?
     activeModal: Modal;
+
+    // Current parameter for sorting tasks
+    taskSortParam: SortParameter;
+
+    // Current order for sorting tasks
+    taskSortOrder: SortOrder;
 };
 
 /**
@@ -67,7 +90,9 @@ export const initialState: TodoState = {
     tasks: [],
     notifications: [],
     currentPage: AppPage.Main,
-    activeModal: Modal.None
+    activeModal: Modal.None,
+    taskSortParam: SortParameter.None,
+    taskSortOrder: SortOrder.Ascending
 };
 
 // Todo slice handles tasks and task groups
@@ -454,6 +479,20 @@ const todoSlice = createSlice({
             state.tasks = state.tasks.filter(
                 (task) => task.taskGroupID !== action.payload
             );
+        },
+
+        /**
+         * Sets the current task sort parameter
+         */
+        setTaskSortParam(state: TodoState, action: PayloadAction<SortParameter>) {
+            state.taskSortParam = action.payload;
+        },
+
+        /**
+         * Sets the current task sort order
+         */
+        setTaskSortOrder(state: TodoState, action: PayloadAction<SortOrder>) {
+            state.taskSortOrder = action.payload;
         }
     }
 });
@@ -482,6 +521,8 @@ export const {
     setTaskName,
     setTaskOpen,
     setTaskPriority,
+    setTaskSortOrder,
+    setTaskSortParam,
     setTaskTags,
     setTasks,
     switchToAllTasks,
@@ -530,21 +571,65 @@ export const selectAllTasks = (state: TodoState): Task[] => state.tasks;
 export const selectTaskListType = (state: TodoState): TaskListType => state.taskListType;
 
 /**
- * Returns all of the tasks currently visible based on the task list type
+ * Selects the current task sort parameter
+ */
+export const selectTaskSortParam = (state: TodoState): SortParameter =>
+    state.taskSortParam;
+
+/**
+ * Selects the current task sort order
+ */
+export const selectTaskSortOrder = (state: TodoState): SortOrder => state.taskSortOrder;
+
+// Gets the list of tasks to use (as a helper for selectTasksInCurrentTaskList)
+const tasksInCurrentTaskList = (
+    taskListType: TaskListType,
+    tasks: Task[],
+    taskGroupID: string
+): Task[] => {
+    switch (taskListType) {
+        case TaskListType.All:
+            return tasks;
+
+        case TaskListType.Ungrouped:
+            return tasks.filter((task) => task.taskGroupID === "");
+
+        case TaskListType.TaskGroup:
+            return tasks.filter((task) => task.taskGroupID === taskGroupID);
+    }
+};
+
+/**
+ * Returns all of the tasks currently visible based on the task list type, factoring in necessary sorting and filtering
  */
 export const selectTasksInCurrentTaskList = createSelector(
-    [selectTaskListType, selectAllTasks, selectActiveTaskGroupID],
-    (taskListType, tasks, activeTaskGroupID) => {
-        switch (taskListType) {
-            case TaskListType.All:
-                return tasks;
+    [
+        selectTaskListType,
+        selectAllTasks,
+        selectActiveTaskGroupID,
+        selectTaskSortOrder,
+        selectTaskSortParam
+    ],
+    (taskListType, tasks, activeTaskGroupID, taskSortOrder, taskSortParam) => {
+        const activeTasks = [
+            ...tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID)
+        ];
 
-            case TaskListType.Ungrouped:
-                return tasks.filter((task) => task.taskGroupID === "");
-
-            case TaskListType.TaskGroup:
-                return tasks.filter((task) => task.taskGroupID === activeTaskGroupID);
+        if (taskSortParam === SortParameter.Name) {
+            activeTasks.sort((task1, task2) => task1.name.localeCompare(task2.name));
+        } else if (taskSortParam === SortParameter.Priority) {
+            activeTasks.sort((task1, task2) => task1.priority - task2.priority);
         }
+
+        // Reverse the sort order as needed
+        if (
+            taskSortParam !== SortParameter.None &&
+            taskSortOrder === SortOrder.Descending
+        ) {
+            activeTasks.reverse();
+        }
+
+        return activeTasks;
     }
 );
 

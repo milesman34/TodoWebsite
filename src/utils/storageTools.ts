@@ -12,6 +12,10 @@ import {
     setGroups,
     setTaskOpen,
     setTasks,
+    setTaskSortOrder,
+    setTaskSortParam,
+    SortOrder,
+    SortParameter,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
@@ -65,6 +69,28 @@ export const loadCurrentPage = (): AppPage => {
 };
 
 /**
+ * Gets the current task sort parameter from session storage
+ */
+export const loadTaskSortParam = (): SortParameter => {
+    const item = sessionStorage.getItem("taskSortParam");
+
+    return item === null || item === "0"
+        ? SortParameter.None
+        : item === "1"
+        ? SortParameter.Name
+        : SortParameter.Priority;
+};
+
+/**
+ * Gets the current task sort order from session storage
+ */
+export const loadTaskSortOrder = (): SortOrder => {
+    const item = sessionStorage.getItem("taskSortOrder");
+
+    return item === null || item === "0" ? SortOrder.Ascending : SortOrder.Descending;
+};
+
+/**
  * Sets up a store for the app with important data from localStorage and sessionStorage
  */
 export const setupStore = () => {
@@ -99,6 +125,10 @@ export const setupStore = () => {
 
     // Get the current page
     store.dispatch(setCurrentPage(loadCurrentPage()));
+
+    // Gets the task sort info
+    store.dispatch(setTaskSortParam(loadTaskSortParam()));
+    store.dispatch(setTaskSortOrder(loadTaskSortOrder()));
 
     return store;
 };
@@ -159,6 +189,20 @@ export const saveCurrentPage = (page: AppPage) => {
 };
 
 /**
+ * Saves the current task sort parameter to sessionStorage
+ */
+export const saveTaskSortParam = (param: SortParameter) => {
+    sessionStorage.setItem("taskSortParam", param.toString());
+};
+
+/**
+ * Saves the current task sort order to sessionStorage
+ */
+export const saveTaskSortOrder = (order: SortOrder) => {
+    sessionStorage.setItem("taskSortOrder", order.toString());
+};
+
+/**
  * Resets the current save data
  * @param taskIDs list of task ids
  */
@@ -191,7 +235,10 @@ export const download = (filename: string, contents: string) => {
 /**
  * Uploads a file from the computer and calls a function with the contents
  */
-export const uploadAndCall = async (types: string[] = [".json", ".txt"], fn: (fileText: string) => Promise<void>) => {
+export const uploadAndCall = async (
+    types: string[] = [".json", ".txt"],
+    fn: (fileText: string) => Promise<void>
+) => {
     // This creates a new file picker so the user can select a file
     const filePicker = document.createElement("input");
     filePicker.type = "file";

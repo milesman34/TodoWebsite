@@ -13,7 +13,7 @@
     margin-top: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
-    background-color: #3f4666;
+    background-color: var(--main-button-color);
     color: white;
     font-size: 18px;
     border: none;
@@ -23,12 +23,12 @@
 }
 
 .tasks-button:hover {
-    background-color: #414c87;
+    background-color: var(--main-button-color-hover);
     cursor: pointer;
 }
 
 .tasks-button:active {
-    background-color: #4654a7;
+    background-color: var(--main-button-color-active);
 }
 
 .tasks-button-active {
@@ -60,7 +60,7 @@
 }
 
 #task-groups-container {
-    background-color: #3f4666;
+    background-color: var(--main-button-color);
     height: 100%;
 
     border-top: 1px solid black;

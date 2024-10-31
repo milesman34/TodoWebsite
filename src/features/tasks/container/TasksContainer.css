@@ -24,10 +24,9 @@
 
 #add-task-button,
 #delete-all-tasks-button {
-    margin-top: 20px;
     margin-left: 20px;
     padding: 10px;
-    background-color: #3f4666;
+    background-color: var(--main-button-color);
     color: white;
     font-size: 18px;
     border: none;
@@ -38,11 +37,11 @@
 }
 
 #add-task-button:hover {
-    background-color: #414c87;
+    background-color: var(--main-button-color-hover);
 }
 
 #add-task-button:active {
-    background-color: #4654a7;
+    background-color: var(--main-button-color-active);
 }
 
 #delete-all-tasks-button:hover {
@@ -66,7 +65,7 @@
 #group-edit-name-button,
 #group-delete-button {
     margin-left: 20px;
-    background-color: #3f4666;
+    background-color: var(--main-button-color);
     color: white;
     font-size: 14px;
     border: none;
@@ -77,12 +76,12 @@
 }
 
 #group-edit-name-button:hover {
-    background-color: #414c87;
+    background-color: var(--main-button-color-hover);
     cursor: pointer;
 }
 
 #group-edit-name-button:active {
-    background-color: #4654a7;
+    background-color: var(--main-button-color-active);
 }
 
 #group-delete-button:hover {
@@ -134,4 +133,76 @@
     border-radius: 5px;
 
     padding: 5px;
+}
+
+.sort-select-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    font-family: "Inter";
+    font-size: 16px;
+    text-align: center;
+}
+
+.sort-select-button {
+    background-color: var(--main-button-color);
+    color: white;
+    font-size: 16px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100px;
+    margin-left: 5px;
+}
+
+.sort-select-direction {
+    background-color: var(--main-button-color);
+    color: white;
+    font-size: 16px;
+    border: none;
+    font-family: "Inter";
+    border-radius: 5px;
+    user-select: none;
+
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    width: 100px;
+}
+
+.sort-select-button:hover,
+.sort-select-direction:hover {
+    background-color: var(--main-button-color-hover);
+}
+
+.sort-select-button:active,
+.sort-select-direction:active {
+    background-color: var(--main-button-color-active);
+}
+
+.sort-select-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.tasks-container-controls-row-2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
 }
