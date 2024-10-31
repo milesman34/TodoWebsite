@@ -1,13 +1,15 @@
+import React, { useEffect, useState } from "react";
 import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import {
     selectTaskSortOrder,
+    selectTaskSortParam,
     setTaskSortOrder,
     setTaskSortParam,
     SortOrder,
     SortParameter
 } from "../../../../redux/todoSlice";
-import React, { useState } from "react";
+import { saveTaskSortOrder, saveTaskSortParam } from "../../../../utils/storageTools";
 
 /**
  * This button lets the user select which method to sort by
@@ -16,7 +18,16 @@ export const SortSelectorButton = () => {
     const dispatch = useDispatch();
 
     const sortOrder = useSelector(selectTaskSortOrder);
-    const [sortParamValue, setSortParamValue] = useState("None");
+    const sortParam = useSelector(selectTaskSortParam);
+
+    // useState needs a different value to deal with the auto-saving functionality
+    const [sortParamValue, setSortParamValue] = useState(
+        sortParam === SortParameter.None
+            ? "None"
+            : sortParam === SortParameter.Name
+            ? "Name"
+            : "Priority"
+    );
 
     const onSortSelectChanged = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSortParamValue(event.target.value);
@@ -31,6 +42,15 @@ export const SortSelectorButton = () => {
             )
         );
     };
+
+    // Update data in sessionStorage
+    useEffect(() => {
+        saveTaskSortParam(sortParam);
+    }, [sortParam]);
+
+    useEffect(() => {
+        saveTaskSortOrder(sortOrder);
+    }, [sortOrder]);
 
     return (
         <div className="sort-select-container">

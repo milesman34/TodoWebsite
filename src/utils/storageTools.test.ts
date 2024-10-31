@@ -1,87 +1,136 @@
 import { describe, expect, test } from "vitest";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { formatTaskForStorage, Task } from "../features/tasks/Task";
-import { AppPage, TaskListType } from "../redux/todoSlice";
+import { AppPage, SortOrder, SortParameter, TaskListType } from "../redux/todoSlice";
 import {
     loadCurrentPage,
     loadFromSaveText,
     loadOpenTaskIDs,
     loadTaskListType,
+    loadTaskSortOrder,
+    loadTaskSortParam,
     resetSaveData,
     setupStore
 } from "./storageTools";
 import { mockLocalStorage, mockLocalStorageFull, mockSessionStorage } from "./testUtils";
 
 describe("storageTools", () => {
-    describe("loadTaskListType", () => {
-        test("load null", () => {
-            mockSessionStorage({});
+    describe("loaders", () => {
+        describe("loadTaskListType", () => {
+            test("load null", () => {
+                mockSessionStorage({});
 
-            expect(loadTaskListType()).toEqual(TaskListType.All);
+                expect(loadTaskListType()).toEqual(TaskListType.All);
+            });
+
+            test("load all", () => {
+                mockSessionStorage({ taskListType: "0" });
+
+                expect(loadTaskListType()).toEqual(TaskListType.All);
+            });
+
+            test("load ungrouped", () => {
+                mockSessionStorage({ taskListType: "1" });
+
+                expect(loadTaskListType()).toEqual(TaskListType.Ungrouped);
+            });
+
+            test("load task group", () => {
+                mockSessionStorage({ taskListType: "2" });
+
+                expect(loadTaskListType()).toEqual(TaskListType.TaskGroup);
+            });
+        });
+        describe("loadOpenTaskIDs", () => {
+            test("load null", () => {
+                mockSessionStorage({});
+
+                expect(loadOpenTaskIDs()).toEqual([]);
+            });
+
+            test("load invalid", () => {
+                mockSessionStorage({ openTasks: "[[[" });
+
+                expect(loadOpenTaskIDs()).toEqual([]);
+            });
+
+            test("load invalid with schema", () => {
+                mockSessionStorage({ openTasks: "[3, 5]" });
+
+                expect(loadOpenTaskIDs()).toEqual([]);
+            });
+
+            test("load valid", () => {
+                mockSessionStorage({ openTasks: JSON.stringify(["id1", "id2", "id3"]) });
+
+                expect(loadOpenTaskIDs()).toEqual(["id1", "id2", "id3"]);
+            });
         });
 
-        test("load all", () => {
-            mockSessionStorage({ taskListType: "0" });
+        describe("loadCurrentPage", () => {
+            test("load null", () => {
+                mockSessionStorage({});
 
-            expect(loadTaskListType()).toEqual(TaskListType.All);
+                expect(loadCurrentPage()).toEqual(AppPage.Main);
+            });
+
+            test("load main", () => {
+                mockSessionStorage({ currentPage: "0" });
+
+                expect(loadCurrentPage()).toEqual(AppPage.Main);
+            });
+
+            test("load manage save", () => {
+                mockSessionStorage({ currentPage: "1" });
+
+                expect(loadCurrentPage()).toEqual(AppPage.ManageSave);
+            });
         });
 
-        test("load ungrouped", () => {
-            mockSessionStorage({ taskListType: "1" });
+        describe("loadTaskSortParam", () => {
+            test("load null", () => {
+                mockSessionStorage({});
 
-            expect(loadTaskListType()).toEqual(TaskListType.Ungrouped);
+                expect(loadTaskSortParam()).toEqual(SortParameter.None);
+            });
+
+            test("load none", () => {
+                mockSessionStorage({ taskSortParam: "0" });
+
+                expect(loadTaskSortParam()).toEqual(SortParameter.None);
+            });
+
+            test("load name", () => {
+                mockSessionStorage({ taskSortParam: "1" });
+
+                expect(loadTaskSortParam()).toEqual(SortParameter.Name);
+            });
+
+            test("load priority", () => {
+                mockSessionStorage({ taskSortParam: "2" });
+
+                expect(loadTaskSortParam()).toEqual(SortParameter.Priority);
+            });
         });
 
-        test("load task group", () => {
-            mockSessionStorage({ taskListType: "2" });
+        describe("loadTaskSortOrder", () => {
+            test("load null", () => {
+                mockSessionStorage({});
 
-            expect(loadTaskListType()).toEqual(TaskListType.TaskGroup);
-        });
-    });
+                expect(loadTaskSortOrder()).toEqual(SortOrder.Ascending);
+            });
 
-    describe("loadOpenTaskIDs", () => {
-        test("load null", () => {
-            mockSessionStorage({});
+            test("load ascending", () => {
+                mockSessionStorage({ taskSortOrder: "0" });
 
-            expect(loadOpenTaskIDs()).toEqual([]);
-        });
+                expect(loadTaskSortOrder()).toEqual(SortOrder.Ascending);
+            });
 
-        test("load invalid", () => {
-            mockSessionStorage({ openTasks: "[[[" });
+            test("load descending", () => {
+                mockSessionStorage({ taskSortOrder: "1" });
 
-            expect(loadOpenTaskIDs()).toEqual([]);
-        });
-
-        test("load invalid with schema", () => {
-            mockSessionStorage({ openTasks: "[3, 5]" });
-
-            expect(loadOpenTaskIDs()).toEqual([]);
-        });
-
-        test("load valid", () => {
-            mockSessionStorage({ openTasks: JSON.stringify(["id1", "id2", "id3"]) });
-
-            expect(loadOpenTaskIDs()).toEqual(["id1", "id2", "id3"]);
-        });
-    });
-
-    describe("loadCurrentPage", () => {
-        test("load null", () => {
-            mockSessionStorage({});
-
-            expect(loadCurrentPage()).toEqual(AppPage.Main);
-        });
-
-        test("load main", () => {
-            mockSessionStorage({ currentPage: "0" });
-
-            expect(loadCurrentPage()).toEqual(AppPage.Main);
-        });
-
-        test("load manage save", () => {
-            mockSessionStorage({ currentPage: "1" });
-
-            expect(loadCurrentPage()).toEqual(AppPage.ManageSave);
+                expect(loadTaskSortOrder()).toEqual(SortOrder.Descending);
+            });
         });
     });
 
@@ -228,7 +277,7 @@ describe("storageTools", () => {
             expect(state.activeTaskGroup).toBe("");
         });
 
-        test("setupScore switches to the main page", () => {
+        test("setupStore switches to the main page", () => {
             mockSessionStorage({
                 currentPage: "0"
             });
@@ -238,7 +287,7 @@ describe("storageTools", () => {
             expect(state.currentPage).toEqual(AppPage.Main);
         });
 
-        test("setupScore switches to the manage save page", () => {
+        test("setupStore switches to the manage save page", () => {
             mockSessionStorage({
                 currentPage: "1"
             });
@@ -246,6 +295,56 @@ describe("storageTools", () => {
             const state = setupStore().getState();
 
             expect(state.currentPage).toEqual(AppPage.ManageSave);
+        });
+
+        test("setupStore sets the task sort parameter to none", () => {
+            mockSessionStorage({
+                taskSortParam: "0"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.taskSortParam).toEqual(SortParameter.None);
+        });
+
+        test("setupStore sets the task sort parameter to name", () => {
+            mockSessionStorage({
+                taskSortParam: "1"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.taskSortParam).toEqual(SortParameter.Name);
+        });
+
+        test("setupStore sets the task sort parameter to priority", () => {
+            mockSessionStorage({
+                taskSortParam: "2"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.taskSortParam).toEqual(SortParameter.Priority);
+        });
+
+        test("setupStore sets the task sort order to ascending", () => {
+            mockSessionStorage({
+                taskSortOrder: "0"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.taskSortOrder).toEqual(SortOrder.Ascending);
+        });
+
+        test("setupStore sets the task sort order to descending", () => {
+            mockSessionStorage({
+                taskSortOrder: "1"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.taskSortOrder).toEqual(SortOrder.Descending);
         });
     });
 
