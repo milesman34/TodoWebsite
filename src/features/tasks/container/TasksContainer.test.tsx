@@ -7,6 +7,7 @@ import {
     addTask,
     addTaskGroup,
     setActiveTaskGroup,
+    setFilterName,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -22,6 +23,7 @@ import {
     mockPrompt,
     mockSessionStorage
 } from "../../../utils/testUtils";
+import { ModalManager } from "../../modals/ModalManager";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
 import { Task } from "../Task";
 import { TasksContainer } from "./TasksContainer";
@@ -749,5 +751,38 @@ describe("TasksContainer", () => {
 
             expect(screen.queryByTestId("delete-all-tasks-button")).toBeFalsy();
         });
+    });
+
+    describe("FilterTasksButton", () => {
+        test("Click on filter tasks button to open modal", async () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("filter-tasks-button");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeTruthy();
+        });
+    });
+
+    test("Click on reset filters button to reset filters", async () => {
+        const store = createStore();
+
+        store.dispatch(setFilterName("task"));
+
+        render(
+            <Provider store={store}>
+                <TasksContainer />
+            </Provider>
+        );
+
+        await clickButton("reset-filters-button");
+
+        expect(store.getState().filterSettings.name).toBe("");
     });
 });

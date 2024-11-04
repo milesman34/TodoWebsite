@@ -36,6 +36,7 @@ export const AddTaskButton = ({
         <button
             id="add-task-button"
             data-testid="add-task-button"
+            className="tasks-controls-button"
             onClick={onAddTaskButtonClicked}
         >
             Add Task

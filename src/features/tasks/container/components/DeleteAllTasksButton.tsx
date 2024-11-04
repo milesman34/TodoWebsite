@@ -34,6 +34,7 @@ export const DeleteAllTasksButton = ({
         <button
             id="delete-all-tasks-button"
             data-testid="delete-all-tasks-button"
+            className="tasks-controls-button"
             onClick={onDeleteTasksClicked}
         >
             Delete All Tasks

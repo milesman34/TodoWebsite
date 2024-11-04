@@ -535,6 +535,13 @@ const todoSlice = createSlice({
          */
         setFilterName(state: TodoState, action: PayloadAction<string>) {
             state.filterSettings.name = action.payload;
+        },
+
+        /**
+         * Resets the filter settings
+         */
+        resetFilters(state: TodoState) {
+            state.filterSettings.name = "";
         }
 
         // #endregion
@@ -555,6 +562,7 @@ export const {
     removeNotificationByID,
     removeTasksInGroup,
     removeTaskTag,
+    resetFilters,
     setActiveModal,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
@@ -589,6 +597,20 @@ export const selectTaskSortParam = (state: TodoState): SortParameter =>
  * Selects the current task sort order
  */
 export const selectTaskSortOrder = (state: TodoState): SortOrder => state.taskSortOrder;
+
+// #endregion
+
+// #region filtering
+/**
+ * Returns the name to filter by
+ */
+export const selectFilterName = (state: TodoState): string => state.filterSettings.name;
+
+/**
+ * Returns the full filter settings
+ */
+export const selectFilterSettings = (state: TodoState): FilterSettings =>
+    state.filterSettings;
 
 // #endregion
 
@@ -664,6 +686,32 @@ const tasksInCurrentTaskList = (
     }
 };
 
+// Filters the tasks based on the filter settings (as a helper for selectTasksInCurrentTaskList)
+const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[] => {
+    const lowerName = settings.name.toLowerCase().trim();
+
+    return tasks.filter((task) => task.name.toLowerCase().includes(lowerName));
+};
+
+// Sorts the tasks based on the parameter and order
+const sortTasks = (tasks: Task[], parameter: SortParameter, order: SortOrder): Task[] => {
+    // Make a copy to avoid mutating the original
+    const copyTasks = [...tasks];
+
+    if (parameter === SortParameter.Name) {
+        copyTasks.sort((task1, task2) => task1.name.localeCompare(task2.name));
+    } else if (parameter === SortParameter.Priority) {
+        copyTasks.sort((task1, task2) => task1.priority - task2.priority);
+    }
+
+    // Reverse the sort order as needed
+    if (parameter !== SortParameter.None && order === SortOrder.Descending) {
+        copyTasks.reverse();
+    }
+
+    return copyTasks;
+};
+
 /**
  * Returns all of the tasks currently visible based on the task list type, factoring in necessary sorting and filtering
  */
@@ -673,28 +721,25 @@ export const selectTasksInCurrentTaskList = createSelector(
         selectAllTasks,
         selectActiveTaskGroupID,
         selectTaskSortOrder,
-        selectTaskSortParam
+        selectTaskSortParam,
+        selectFilterSettings
     ],
-    (taskListType, tasks, activeTaskGroupID, taskSortOrder, taskSortParam) => {
-        const activeTasks = [
-            ...tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID)
-        ];
-
-        if (taskSortParam === SortParameter.Name) {
-            activeTasks.sort((task1, task2) => task1.name.localeCompare(task2.name));
-        } else if (taskSortParam === SortParameter.Priority) {
-            activeTasks.sort((task1, task2) => task1.priority - task2.priority);
-        }
-
-        // Reverse the sort order as needed
-        if (
-            taskSortParam !== SortParameter.None &&
-            taskSortOrder === SortOrder.Descending
-        ) {
-            activeTasks.reverse();
-        }
-
-        return activeTasks;
+    (
+        taskListType,
+        tasks,
+        activeTaskGroupID,
+        taskSortOrder,
+        taskSortParam,
+        filterSettings
+    ) => {
+        return sortTasks(
+            filterTasksWithSettings(
+                tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID),
+                filterSettings
+            ),
+            taskSortParam,
+            taskSortOrder
+        );
     }
 );
 
@@ -736,14 +781,6 @@ export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
  */
 export const selectNotifications = (state: TodoState): AppNotification[] =>
     state.notifications;
-
-// #endregion
-
-// #region filtering
-/**
- * Returns the name to filter by
- */
-export const selectFilterName = (state: TodoState): string => state.filterSettings.name;
 
 // #endregion
 

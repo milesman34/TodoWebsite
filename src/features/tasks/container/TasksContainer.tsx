@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     deleteTaskGroup,
+    Modal,
     selectActiveTaskGroup,
     selectActiveTaskGroupID,
     selectOpenTaskIDs,
@@ -11,6 +12,7 @@ import {
     TaskListType
 } from "../../../redux/todoSlice";
 import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
+import { ModalButton } from "../../modals/components/ModalButton";
 import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
@@ -18,6 +20,7 @@ import { EditNameButton } from "./components/EditNameButton";
 import { SortSelectorButton } from "./components/SortSelectorButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
 import "./TasksContainer.css";
+import { ResetFiltersButton } from "../../modals/filter-tasks/components/ResetFiltersButton";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -108,6 +111,15 @@ export const TasksContainer = () => {
                 <AddTaskButton taskGroup={activeTaskGroup} />
 
                 <SortSelectorButton />
+
+                <ModalButton
+                    modal={Modal.FilterTasks}
+                    displayText="Filter Tasks"
+                    id="filter-tasks"
+                    className="tasks-controls-button filter-tasks-button"
+                />
+
+                <ResetFiltersButton className="tasks-controls-button" />
 
                 {taskListType !== TaskListType.Ungrouped && (
                     <DeleteAllTasksButton
