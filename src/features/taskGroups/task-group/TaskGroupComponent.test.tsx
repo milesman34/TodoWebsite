@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
-import { setActiveTaskGroup, setGroups, TaskListType } from "../../../redux/todoSlice";
+import { setActiveTaskGroup, setTaskGroups, TaskListType } from "../../../redux/todoSlice";
 import { clickButton, containsClass } from "../../../utils/testUtils";
 import { TaskGroup } from "../TaskGroup";
 import { TaskGroupComponent } from "./TaskGroupComponent";
@@ -58,7 +58,7 @@ describe("TaskGroupComponent", () => {
 
             // Set up the store with the task group
             const store = createStore();
-            store.dispatch(setGroups([taskGroup]));
+            store.dispatch(setTaskGroups([taskGroup]));
 
             render(
                 <Provider store={store}>
@@ -82,7 +82,7 @@ describe("TaskGroupComponent", () => {
 
             // Set up the store with the task group
             const store = createStore();
-            store.dispatch(setGroups([taskGroup]));
+            store.dispatch(setTaskGroups([taskGroup]));
             store.dispatch(setActiveTaskGroup("id1"));
 
             render(
@@ -105,7 +105,7 @@ describe("TaskGroupComponent", () => {
 
             // Set up the store with the task group
             const store = createStore();
-            store.dispatch(setGroups([taskGroup]));
+            store.dispatch(setTaskGroups([taskGroup]));
             store.dispatch(setActiveTaskGroup("id1"));
 
             render(

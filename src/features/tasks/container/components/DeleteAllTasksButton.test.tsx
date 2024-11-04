@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { createStore } from "../../../../redux/store";
 import {
     setActiveTaskGroup,
-    setGroups,
+    setTaskGroups,
     setTasks,
     switchToAllTasks,
     TaskListType
@@ -34,7 +34,7 @@ describe("DeleteAllTasksButton", () => {
             const store = createStore();
 
             store.dispatch(setTasks(tasks));
-            store.dispatch(setGroups(groups));
+            store.dispatch(setTaskGroups(groups));
 
             store.dispatch(setActiveTaskGroup("gid"));
 
@@ -70,7 +70,7 @@ describe("DeleteAllTasksButton", () => {
             const store = createStore();
 
             store.dispatch(setTasks(tasks));
-            store.dispatch(setGroups(groups));
+            store.dispatch(setTaskGroups(groups));
 
             store.dispatch(setActiveTaskGroup("gid"));
 
@@ -108,7 +108,7 @@ describe("DeleteAllTasksButton", () => {
             const store = createStore();
 
             store.dispatch(setTasks(tasks));
-            store.dispatch(setGroups(groups));
+            store.dispatch(setTaskGroups(groups));
 
             store.dispatch(switchToAllTasks());
 
@@ -144,7 +144,7 @@ describe("DeleteAllTasksButton", () => {
             const store = createStore();
 
             store.dispatch(setTasks(tasks));
-            store.dispatch(setGroups(groups));
+            store.dispatch(setTaskGroups(groups));
 
             store.dispatch(switchToAllTasks());
 

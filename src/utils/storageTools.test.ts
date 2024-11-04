@@ -141,7 +141,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -155,7 +155,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual(groups);
+            expect(state.taskGroups).toEqual(groups);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -177,7 +177,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual(tasks);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -192,7 +192,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -207,7 +207,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.Ungrouped);
             expect(state.activeTaskGroup).toBe("");
@@ -222,7 +222,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -238,7 +238,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.TaskGroup);
             expect(state.activeTaskGroup).toBe("id1");
@@ -262,7 +262,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([
                 {
                     ...tasks[0],

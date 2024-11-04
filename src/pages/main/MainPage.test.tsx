@@ -10,7 +10,7 @@ import {
     addTask,
     addTaskGroup,
     setActiveTaskGroup,
-    setGroups,
+    setTaskGroups,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -109,7 +109,7 @@ describe("MainPage", () => {
             ];
 
             store.dispatch(setTasks(tasks));
-            store.dispatch(setGroups(taskGroups));
+            store.dispatch(setTaskGroups(taskGroups));
 
             render(
                 <Provider store={store}>

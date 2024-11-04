@@ -7,7 +7,7 @@ import {
     pushNotification,
     selectActiveTaskGroupID,
     setActiveModal,
-    setGroups,
+    setTaskGroups,
     setTasks,
     switchToAllTasks
 } from "../../../redux/todoSlice";
@@ -58,7 +58,7 @@ export const ImportSaveModal = () => {
         const loadedData = loadFromSaveText(text);
 
         dispatch(setTasks(loadedData.tasks));
-        dispatch(setGroups(loadedData.taskGroups));
+        dispatch(setTaskGroups(loadedData.taskGroups));
 
         // Go back to All Tasks if the active task group no longer exists
         if (!loadedData.taskGroups.map((group) => group.id).includes(activeTaskGroup)) {

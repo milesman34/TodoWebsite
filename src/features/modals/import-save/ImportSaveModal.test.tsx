@@ -70,7 +70,7 @@ describe("ImportSaveModal", () => {
             await clickButton("import-from-text-button");
 
             expect(store.getState().tasks).toEqual([]);
-            expect(store.getState().groups).toEqual([]);
+            expect(store.getState().taskGroups).toEqual([]);
             expect(getTextContent("parse-error-text")).toBe("The save text was empty!");
         });
 
@@ -90,7 +90,7 @@ describe("ImportSaveModal", () => {
             await clickButton("import-from-text-button");
 
             expect(store.getState().tasks).toEqual([]);
-            expect(store.getState().groups).toEqual([]);
+            expect(store.getState().taskGroups).toEqual([]);
             expect(getTextContent("parse-error-text")).toBe(
                 "There was an error parsing the save data!"
             );
@@ -119,7 +119,7 @@ describe("ImportSaveModal", () => {
             await clickButton("import-from-text-button");
 
             expect(store.getState().tasks).toEqual([]);
-            expect(store.getState().groups).toEqual([]);
+            expect(store.getState().taskGroups).toEqual([]);
             expect(getTextContent("parse-error-text")).toBe("Save data missing tasks!");
         });
 
@@ -146,7 +146,7 @@ describe("ImportSaveModal", () => {
             await clickButton("import-from-text-button");
 
             expect(store.getState().tasks).toEqual([]);
-            expect(store.getState().groups).toEqual([]);
+            expect(store.getState().taskGroups).toEqual([]);
             expect(getTextContent("parse-error-text")).toBe(
                 "Save data missing task groups!"
             );
@@ -181,7 +181,7 @@ describe("ImportSaveModal", () => {
             await clickButton("import-from-text-button");
 
             expect(store.getState().tasks).toEqual([{ ...task, isOpen: false }]);
-            expect(store.getState().groups).toEqual([group]);
+            expect(store.getState().taskGroups).toEqual([group]);
             expect(getTextContent("parse-error-text")).toBe("");
             expect(store.getState().notifications).toEqual([
                 AppNotification({

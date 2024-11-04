@@ -50,7 +50,7 @@ describe("todoSlice", () => {
 
                 const newState = reducer(state, addTaskGroup(taskGroup));
 
-                expect(newState.groups).toEqual([taskGroup]);
+                expect(newState.taskGroups).toEqual([taskGroup]);
             });
 
             test("addTaskGroup adds multiple task groups", () => {
@@ -66,7 +66,7 @@ describe("todoSlice", () => {
                 const newState1 = reducer(state, addTaskGroup(taskGroup1));
                 const newState2 = reducer(newState1, addTaskGroup(taskGroup2));
 
-                expect(newState2.groups).toEqual([taskGroup1, taskGroup2]);
+                expect(newState2.taskGroups).toEqual([taskGroup1, taskGroup2]);
             });
 
             test("addTaskGroup updates active task group", () => {
@@ -82,7 +82,7 @@ describe("todoSlice", () => {
                 const newState1 = reducer(state, addTaskGroup(taskGroup1));
                 const newState2 = reducer(newState1, addTaskGroup(taskGroup2));
 
-                expect(newState2.groups).toEqual([taskGroup1, taskGroup2]);
+                expect(newState2.taskGroups).toEqual([taskGroup1, taskGroup2]);
                 expect(newState2.activeTaskGroup).toBe("1");
             });
 
@@ -185,7 +185,7 @@ describe("todoSlice", () => {
 
                 const state = {
                     ...initialState,
-                    groups: taskGroups,
+                    taskGroups: taskGroups,
                     activeTaskGroup: "id1"
                 };
 
@@ -200,7 +200,7 @@ describe("todoSlice", () => {
 
                 const state = {
                     ...initialState,
-                    groups: taskGroups,
+                    taskGroups: taskGroups,
                     activeTaskGroup: "id3"
                 };
 
@@ -222,13 +222,13 @@ describe("todoSlice", () => {
 
                 let state = {
                     ...initialState,
-                    groups: inputGroups,
+                    taskGroups: inputGroups,
                     activeTaskGroup: "id1"
                 };
 
                 state = reducer(state, setActiveTaskGroupName("My group"));
 
-                expect(state.groups).toEqual(outputGroups);
+                expect(state.taskGroups).toEqual(outputGroups);
             });
         });
 
@@ -250,13 +250,13 @@ describe("todoSlice", () => {
 
                 let state = {
                     ...initialState,
-                    groups: inputGroups,
+                    taskGroups: inputGroups,
                     activeTaskGroup: "id2"
                 };
 
                 state = reducer(state, setActiveTaskGroupDescription("My description"));
 
-                expect(state.groups).toEqual(outputGroups);
+                expect(state.taskGroups).toEqual(outputGroups);
             });
         });
 
@@ -269,7 +269,7 @@ describe("todoSlice", () => {
 
                 const state = {
                     ...initialState,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 expect(selectTaskGroupNameByID("id1")(state)).toBe("Group 1");
@@ -283,7 +283,7 @@ describe("todoSlice", () => {
 
                 const state = {
                     ...initialState,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 expect(selectTaskGroupNameByID("id3")(state)).toBe("");
@@ -307,7 +307,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(
@@ -319,7 +319,7 @@ describe("todoSlice", () => {
                 );
 
                 expect(state.tasks).toEqual(outputTasks);
-                expect(state.groups).toEqual([]);
+                expect(state.taskGroups).toEqual([]);
             });
 
             test("deleteTaskGroup deletes a task group, deleting the tasks", () => {
@@ -337,7 +337,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(
@@ -349,7 +349,7 @@ describe("todoSlice", () => {
                 );
 
                 expect(state.tasks).toEqual(outputTasks);
-                expect(state.groups).toEqual([]);
+                expect(state.taskGroups).toEqual([]);
             });
 
             test("deleteTaskGroup switches to displaying All Tasks", () => {
@@ -363,7 +363,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(
@@ -388,7 +388,7 @@ describe("todoSlice", () => {
                     Task({ id: "id4", name: "My task 3", taskGroupID: "gid" })
                 ];
 
-                const groups = [
+                const taskGroups = [
                     TaskGroup({ id: "gid", name: "Group 1" }),
                     TaskGroup({ id: "gid2", name: "Group 2" })
                 ];
@@ -396,7 +396,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks,
-                    groups
+                    taskGroups
                 };
 
                 state = reducer(state, removeTasksInGroup("gid"));
@@ -1691,7 +1691,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(state, moveTaskToUngrouped("id1"));
@@ -1715,7 +1715,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(state, moveTaskToUngrouped("id2"));
@@ -1734,7 +1734,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups,
+                    taskGroups: taskGroups,
                     taskListType: TaskListType.All
                 };
 
@@ -1754,7 +1754,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups,
+                    taskGroups: taskGroups,
                     taskListType: TaskListType.Ungrouped
                 };
 
@@ -1774,7 +1774,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups,
+                    taskGroups: taskGroups,
                     taskListType: TaskListType.Ungrouped,
                     activeTaskGroup: "gid1"
                 };
@@ -1806,7 +1806,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(
@@ -1841,7 +1841,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups
+                    taskGroups: taskGroups
                 };
 
                 state = reducer(
@@ -1876,7 +1876,7 @@ describe("todoSlice", () => {
                 let state = {
                     ...initialState,
                     tasks: inputTasks,
-                    groups: taskGroups,
+                    taskGroups: taskGroups,
                     taskListType: TaskListType.TaskGroup,
                     activeTaskGroup: "gid1"
                 };
@@ -1979,7 +1979,7 @@ describe("todoSlice", () => {
         test("selectSaveData gets the save data", () => {
             const state: TodoState = {
                 ...initialState,
-                groups: [TaskGroup({ id: "id1", name: "My group" })],
+                taskGroups: [TaskGroup({ id: "id1", name: "My group" })],
                 tasks: [
                     Task({
                         id: "id2",

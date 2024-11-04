@@ -27,7 +27,8 @@ export enum AppPage {
 export enum Modal {
     None,
     ExportSave,
-    ImportSave
+    ImportSave,
+    FilterTasks
 }
 
 /**
@@ -48,11 +49,19 @@ export enum SortOrder {
 }
 
 /**
+ * Represents the filter settings for the app
+ */
+export type FilterSettings = {
+    // What name should be searched for? (empty means don't filter by name)
+    name: string;
+};
+
+/**
  * Type representing the state of the Todo slice
  */
 export type TodoState = {
     // List of task groups
-    groups: TaskGroup[];
+    taskGroups: TaskGroup[];
 
     // Active task group is an ID
     activeTaskGroup: string;
@@ -78,13 +87,16 @@ export type TodoState = {
 
     // Current order for sorting tasks
     taskSortOrder: SortOrder;
+
+    // Settings for task filtering
+    filterSettings: FilterSettings;
 };
 
 /**
  * Initial state for the slice
  */
 export const initialState: TodoState = {
-    groups: [],
+    taskGroups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
     tasks: [],
@@ -92,7 +104,10 @@ export const initialState: TodoState = {
     currentPage: AppPage.Main,
     activeModal: Modal.None,
     taskSortParam: SortParameter.None,
-    taskSortOrder: SortOrder.Ascending
+    taskSortOrder: SortOrder.Ascending,
+    filterSettings: {
+        name: ""
+    }
 };
 
 // Todo slice handles tasks and task groups
@@ -102,6 +117,7 @@ const todoSlice = createSlice({
     initialState,
 
     reducers: {
+        // #region taskGroups
         /**
          * Adds a task group to the list of task groups
          * @param state
@@ -109,7 +125,7 @@ const todoSlice = createSlice({
          * @returns
          */
         addTaskGroup(state: TodoState, action: PayloadAction<TaskGroup>) {
-            state.groups.push(action.payload);
+            state.taskGroups.push(action.payload);
 
             // Set the active task group
             state.activeTaskGroup = action.payload.id;
@@ -135,9 +151,11 @@ const todoSlice = createSlice({
          * @param state
          * @param action
          */
-        setGroups(state: TodoState, action: PayloadAction<TaskGroup[]>) {
-            state.groups = action.payload;
+        setTaskGroups(state: TodoState, action: PayloadAction<TaskGroup[]>) {
+            state.taskGroups = action.payload;
         },
+
+        // #endregion
 
         /**
          * Switches to displaying all tasks
@@ -181,8 +199,8 @@ const todoSlice = createSlice({
          * Changes the name of the active task group
          */
         setActiveTaskGroupName(state: TodoState, action: PayloadAction<string>) {
-            state.groups = filterMap(
-                state.groups,
+            state.taskGroups = filterMap(
+                state.taskGroups,
                 (group) => group.id === state.activeTaskGroup,
                 (group) => ({ ...group, name: action.payload })
             );
@@ -192,8 +210,8 @@ const todoSlice = createSlice({
          * Changes the description of the active task group
          */
         setActiveTaskGroupDescription(state: TodoState, action: PayloadAction<string>) {
-            state.groups = filterMap(
-                state.groups,
+            state.taskGroups = filterMap(
+                state.taskGroups,
                 (group) => group.id === state.activeTaskGroup,
                 (group) => ({ ...group, description: action.payload })
             );
@@ -366,7 +384,7 @@ const todoSlice = createSlice({
                 preserveTasks: boolean;
             }>
         ) {
-            state.groups = state.groups.filter(
+            state.taskGroups = state.taskGroups.filter(
                 (taskGroup) => taskGroup.id !== action.payload.taskGroupID
             );
 
@@ -493,6 +511,13 @@ const todoSlice = createSlice({
          */
         setTaskSortOrder(state: TodoState, action: PayloadAction<SortOrder>) {
             state.taskSortOrder = action.payload;
+        },
+
+        /**
+         * Sets the name to filter by
+         */
+        setFilterName(state: TodoState, action: PayloadAction<string>) {
+            state.filterSettings.name = action.payload;
         }
     }
 });
@@ -516,8 +541,9 @@ export const {
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setCurrentPage,
-    setGroups,
+    setFilterName,
     setTaskDescription,
+    setTaskGroups,
     setTaskName,
     setTaskOpen,
     setTaskPriority,
@@ -538,7 +564,7 @@ export default todoSlice.reducer;
  * @param state
  * @returns
  */
-export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
+export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.taskGroups;
 
 /**
  * Selects the active task group (ID)
@@ -554,7 +580,7 @@ export const selectActiveTaskGroupID = (state: TodoState): string =>
  * @returns
  */
 export const selectActiveTaskGroup = (state: TodoState): TaskGroup | undefined =>
-    state.groups.find((taskGroup) => taskGroup.id === state.activeTaskGroup);
+    state.taskGroups.find((taskGroup) => taskGroup.id === state.activeTaskGroup);
 
 /**
  * Selects the list of all tasks
@@ -656,7 +682,7 @@ export const getTaskByID =
 export const selectTaskGroupNameByID =
     (id: string) =>
     (state: TodoState): string => {
-        const targetGroup = state.groups.find((taskGroup) => taskGroup.id === id);
+        const targetGroup = state.taskGroups.find((taskGroup) => taskGroup.id === id);
 
         return targetGroup === undefined ? "" : targetGroup.name;
     };
@@ -702,3 +728,8 @@ export const selectSaveData = createSelector(
             tasks: tasks.map((task) => formatTaskForStorage(task))
         })
 );
+
+/**
+ * Returns the name to filter by
+ */
+export const selectFilterName = (state: TodoState): string => state.filterSettings.name;

@@ -9,7 +9,7 @@ import {
     AppPage,
     setActiveTaskGroup,
     setCurrentPage,
-    setGroups,
+    setTaskGroups,
     setTaskOpen,
     setTasks,
     setTaskSortOrder,
@@ -97,7 +97,7 @@ export const setupStore = () => {
     const store = createStore();
 
     // Runs when the app loads, to load from localStorage
-    store.dispatch(setGroups(parseTaskGroupsLocalStorage()));
+    store.dispatch(setTaskGroups(parseTaskGroupsLocalStorage()));
     store.dispatch(setTasks(parseTasksLocalStorage()));
 
     // Get the task list type from session storage
