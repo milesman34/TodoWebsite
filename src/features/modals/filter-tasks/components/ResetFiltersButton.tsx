@@ -6,11 +6,11 @@ import classNames from "classnames";
  * This button resets the current filters for tasks
  */
 export const ResetFiltersButton = ({
-    extraFn = () => {},
-    className
+    className,
+    extraFn = () => {}
 }: {
-    extraFn?: () => void; // Extra on-click function to pass
     className: string;
+    extraFn?: () => void; // Extra on-click function to pass
 }) => {
     const dispatch = useDispatch();
 
