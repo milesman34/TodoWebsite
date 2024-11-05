@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
-import { Modal, setActiveModal, setFilterName } from "../../../redux/todoSlice";
+import { Modal, setActiveModal, setFilterDescription, setFilterName } from "../../../redux/todoSlice";
 import { clickButton, enterText, getInputText } from "../../../utils/testUtils";
 import { ModalManager } from "../ModalManager";
 import { FilterTasksModal } from "./FilterTasksModal";
@@ -24,10 +24,25 @@ describe("FilterTasksModal", () => {
 
             expect(getInputText("filter-modal-name")).toBe("task");
         });
+        
+        test("Modal name input displays filter description", () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+            store.dispatch(setFilterDescription("desc"));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(getInputText("filter-modal-description")).toBe("desc");
+        });
     });
 
     describe("Setting filters", () => {
-        test("Set filters button sets filters", async () => {
+        test("Set filters button sets filter for name", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -44,6 +59,24 @@ describe("FilterTasksModal", () => {
 
             expect(store.getState().filterSettings.name).toBe("task");
         });
+        
+        test("Set filters button sets filter for description", async () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await enterText("filter-modal-description", "desc");
+
+            await clickButton("set-filters-button");
+
+            expect(store.getState().filterSettings.description).toBe("desc");
+        });
     });
 
     describe("Resetting filters", () => {
@@ -52,6 +85,7 @@ describe("FilterTasksModal", () => {
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
             store.dispatch(setFilterName("task"));
+            store.dispatch(setFilterDescription("desc"));
 
             render(
                 <Provider store={store}>
@@ -62,6 +96,7 @@ describe("FilterTasksModal", () => {
             await clickButton("reset-filters-button");
 
             expect(store.getState().filterSettings.name).toBe("");
+            expect(store.getState().filterSettings.description).toBe("");
         });
 
         test("Reset filters button resets UI elements", async () => {
@@ -69,6 +104,7 @@ describe("FilterTasksModal", () => {
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
             store.dispatch(setFilterName("task"));
+            store.dispatch(setFilterDescription("desc"));
 
             render(
                 <Provider store={store}>
@@ -79,6 +115,7 @@ describe("FilterTasksModal", () => {
             await clickButton("reset-filters-button");
 
             expect(getInputText("filter-modal-name")).toBe("");
+            expect(getInputText("filter-modal-description")).toBe("");
         });
     });
 

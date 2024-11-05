@@ -9,6 +9,7 @@ import {
     AppPage,
     setActiveTaskGroup,
     setCurrentPage,
+    setFilterDescription,
     setFilterName,
     setTaskGroups,
     setTaskOpen,
@@ -101,6 +102,15 @@ export const loadFilterName = (): string => {
 };
 
 /**
+ * Gets the filter description from session storage
+ */
+export const loadFilterDescription = (): string => {
+    const item = sessionStorage.getItem("filterDescription");
+
+    return item === null ? "" : item;
+};
+
+/**
  * Sets up a store for the app with important data from localStorage and sessionStorage
  */
 export const setupStore = () => {
@@ -142,6 +152,7 @@ export const setupStore = () => {
 
     // Gets the filtering info
     store.dispatch(setFilterName(loadFilterName()));
+    store.dispatch(setFilterDescription(loadFilterDescription()));
 
     return store;
 };
@@ -220,7 +231,14 @@ export const saveTaskSortOrder = (order: SortOrder) => {
  */
 export const saveFilterName = (name: string) => {
     sessionStorage.setItem("filterName", name);
-}
+};
+
+/**
+ * Saves the current filter description
+ */
+export const saveFilterDescription = (description: string) => {
+    sessionStorage.setItem("filterDescription", description);
+};
 
 /**
  * Resets the current save data

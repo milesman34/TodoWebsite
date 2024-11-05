@@ -27,6 +27,7 @@ import reducer, {
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
+    setFilterDescription,
     setFilterName,
     setTaskDescription,
     setTaskName,
@@ -1438,6 +1439,172 @@ describe("todoSlice", () => {
                     expect(selectTasksInCurrentTaskList(state)).toEqual([taskList[2]]);
                 });
             });
+
+            describe("Filter by description", () => {
+                test("selectTasksInCurrentTaskList with all tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "My task",
+                            id: "id1",
+                            taskGroupID: "",
+                            description: "First"
+                        }),
+
+                        Task({
+                            name: "Not real",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "My Task 3",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "Very real",
+                            description: "fIRST",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My taSK 5",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1,
+                            description: "first"
+                        })
+                    ];
+
+                    let state: TodoState = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.All
+                    };
+
+                    state = reducer(state, setFilterDescription("first"));
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[0],
+                        taskList[3],
+                        taskList[4]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
+                    const taskList = [
+                        Task({
+                            name: "My task",
+                            id: "id1",
+                            taskGroupID: "",
+                            description: "First"
+                        }),
+
+                        Task({
+                            name: "Not real",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "My Task 3",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "Very real",
+                            description: "fIRST",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My taSK 5",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1,
+                            description: "first"
+                        })
+                    ];
+
+                    let state: TodoState = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.Ungrouped
+                    };
+
+                    state = reducer(state, setFilterDescription("first"));
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([
+                        taskList[0],
+                        taskList[3]
+                    ]);
+                });
+
+                test("selectTasksInCurrentTaskList with an active task group", () => {
+                    const taskList = [
+                        Task({
+                            name: "My task",
+                            id: "id1",
+                            taskGroupID: "",
+                            description: "First"
+                        }),
+
+                        Task({
+                            name: "Not real",
+                            description: "Why",
+                            id: "id2",
+                            taskGroupID: "id1",
+                            priority: 1
+                        }),
+
+                        Task({
+                            name: "My Task 3",
+                            description: "Testing",
+                            id: "id3",
+                            taskGroupID: "id1",
+                            priority: 2
+                        }),
+
+                        Task({
+                            name: "Very real",
+                            description: "fIRST",
+                            id: "id4",
+                            taskGroupID: ""
+                        }),
+
+                        Task({
+                            name: "My taSK 5",
+                            id: "id5",
+                            taskGroupID: "id3",
+                            priority: -1,
+                            description: "first"
+                        })
+                    ];
+
+                    let state: TodoState = {
+                        ...initialState,
+                        tasks: taskList,
+                        taskListType: TaskListType.TaskGroup,
+                        activeTaskGroup: "id1"
+                    };
+
+                    state = reducer(state, setFilterDescription("first"));
+
+                    expect(selectTasksInCurrentTaskList(state)).toEqual([]);
+                });
+            });
         });
 
         describe("setTaskName", () => {
@@ -2178,15 +2345,24 @@ describe("todoSlice", () => {
     describe("filters", () => {
         describe("resetFilters", () => {
             const filterObject = {
-                name: "my search"
+                name: "my search",
+                description: "my description"
             };
+
+            test("resetFilters resets name", () => {
+                let state: TodoState = { ...initialState, filterSettings: filterObject };
+
+                state = reducer(state, resetFilters());
+
+                expect(state.filterSettings.name).toBe("");
+            });
 
             test("resetFilters resets description", () => {
                 let state: TodoState = { ...initialState, filterSettings: filterObject };
 
                 state = reducer(state, resetFilters());
 
-                expect(state.filterSettings.name).toBe("");
+                expect(state.filterSettings.description).toBe("");
             });
         });
 
@@ -2201,6 +2377,14 @@ describe("todoSlice", () => {
                 let state = initialState;
 
                 state = reducer(state, setFilterName("task"));
+
+                expect(selectFiltersAreDefault(state)).toBeFalsy();
+            });
+
+            test("Changed description", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterDescription("desc"));
 
                 expect(selectFiltersAreDefault(state)).toBeFalsy();
             });
