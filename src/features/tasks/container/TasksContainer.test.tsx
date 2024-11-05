@@ -7,6 +7,7 @@ import {
     addTask,
     addTaskGroup,
     setActiveTaskGroup,
+    setFilterDescription,
     setFilterName,
     setTasks,
     switchToAllTasks,
@@ -737,6 +738,7 @@ describe("TasksContainer", () => {
             const store = createStore();
 
             store.dispatch(setFilterName("task"));
+            store.dispatch(setFilterDescription("desc"));
 
             render(
                 <Provider store={store}>
@@ -745,6 +747,7 @@ describe("TasksContainer", () => {
             );
 
             expect(mockSetItem).toHaveBeenCalledWith("filterName", "task");
+            expect(mockSetItem).toHaveBeenCalledWith("filterDescription", "desc");
         });
 
         test("Reset filters button affects session storage", async () => {
@@ -752,6 +755,7 @@ describe("TasksContainer", () => {
             const store = createStore();
 
             store.dispatch(setFilterName("task"));
+            store.dispatch(setFilterDescription("desc"));
 
             render(
                 <Provider store={store}>
@@ -762,6 +766,7 @@ describe("TasksContainer", () => {
             await clickButton("reset-filters-button");
 
             expect(mockSetItem).toHaveBeenCalledWith("filterName", "");
+            expect(mockSetItem).toHaveBeenCalledWith("filterDescription", "");
         });
     });
 

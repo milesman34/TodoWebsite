@@ -5,6 +5,7 @@ import {
     Modal,
     selectActiveTaskGroup,
     selectActiveTaskGroupID,
+    selectFilterDescription,
     selectFilterName,
     selectFiltersAreDefault,
     selectOpenTaskIDs,
@@ -14,6 +15,7 @@ import {
     TaskListType
 } from "../../../redux/todoSlice";
 import {
+    saveFilterDescription,
     saveFilterName,
     saveOpenTaskIDs,
     saveTaskIDs
@@ -40,6 +42,7 @@ export const TasksContainer = () => {
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
     const filterName = useSelector(selectFilterName);
+    const filterDescription = useSelector(selectFilterDescription);
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
@@ -78,6 +81,10 @@ export const TasksContainer = () => {
     useEffect(() => {
         saveFilterName(filterName);
     }, [filterName]);
+    
+    useEffect(() => {
+        saveFilterDescription(filterDescription);
+    }, [filterDescription]);
 
     return (
         <div id="tasks-container">

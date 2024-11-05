@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 import {
     Modal,
+    selectFilterDescription,
     selectFilterName,
     setActiveModal,
+    setFilterDescription,
     setFilterName
 } from "../../../redux/todoSlice";
 import { ExitModalButton } from "../components/ExitModalButton";
@@ -17,20 +19,26 @@ export const FilterTasksModal = () => {
     const dispatch = useDispatch();
 
     const filterName = useSelector(selectFilterName);
+    const filterDescription = useSelector(selectFilterDescription);
 
     // Name to filter by
     const [name, setName] = useState(filterName);
+
+    // Description to filter by
+    const [description, setDescription] = useState(filterDescription);
 
     useDetectKeydown("Escape", () => dispatch(setActiveModal(Modal.None)));
 
     // Extra function to call when the ResetFiltersButton is clicked to clear out the textboxes and reset other UI elements
     const resetUIElements = () => {
         setName("");
+        setDescription("");
     };
 
     // Button that sets the filters
     const onSetFiltersClicked = () => {
         dispatch(setFilterName(name));
+        dispatch(setFilterDescription(description));
     };
 
     return (
@@ -46,6 +54,19 @@ export const FilterTasksModal = () => {
                         data-testid="filter-modal-name"
                         value={name}
                         onChange={(event) => setName(event.target.value)}
+                    />
+                </div>
+
+                <div className="filter-modal-row">
+                    <label className="filter-modal-row-label">
+                        Filter by Description:
+                    </label>
+
+                    <input
+                        className="filter-modal-row-input"
+                        data-testid="filter-modal-description"
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
                     />
                 </div>
             </div>

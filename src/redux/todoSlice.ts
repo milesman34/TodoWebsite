@@ -54,6 +54,9 @@ export enum SortOrder {
 export type FilterSettings = {
     // What name should be searched for? (empty means don't filter by name)
     name: string;
+
+    // What description should be searched for? (empty means don't filter by description)
+    description: string;
 };
 
 /**
@@ -106,7 +109,8 @@ export const initialState: TodoState = {
     taskSortParam: SortParameter.None,
     taskSortOrder: SortOrder.Ascending,
     filterSettings: {
-        name: ""
+        name: "",
+        description: ""
     }
 };
 
@@ -531,6 +535,14 @@ const todoSlice = createSlice({
         // #region filtering
 
         /**
+         * Resets the filter settings
+         */
+        resetFilters(state: TodoState) {
+            state.filterSettings.name = "";
+            state.filterSettings.description = "";
+        },
+
+        /**
          * Sets the name to filter by
          */
         setFilterName(state: TodoState, action: PayloadAction<string>) {
@@ -538,10 +550,10 @@ const todoSlice = createSlice({
         },
 
         /**
-         * Resets the filter settings
+         * Sets the description to filter by
          */
-        resetFilters(state: TodoState) {
-            state.filterSettings.name = "";
+        setFilterDescription(state: TodoState, action: PayloadAction<string>) {
+            state.filterSettings.description = action.payload;
         }
 
         // #endregion
@@ -568,6 +580,7 @@ export const {
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setCurrentPage,
+    setFilterDescription,
     setFilterName,
     setTaskDescription,
     setTaskGroups,
@@ -607,6 +620,12 @@ export const selectTaskSortOrder = (state: TodoState): SortOrder => state.taskSo
 export const selectFilterName = (state: TodoState): string => state.filterSettings.name;
 
 /**
+ * Returns the description to filter by
+ */
+export const selectFilterDescription = (state: TodoState): string =>
+    state.filterSettings.description;
+
+/**
  * Returns the full filter settings
  */
 export const selectFilterSettings = (state: TodoState): FilterSettings =>
@@ -615,9 +634,12 @@ export const selectFilterSettings = (state: TodoState): FilterSettings =>
 /**
  * Returns if the filters are default or not
  */
-export const selectFiltersAreDefault = createSelector([selectFilterName], (name) => {
-    return name === "";
-});
+export const selectFiltersAreDefault = createSelector(
+    [selectFilterName, selectFilterDescription],
+    (name, description) => {
+        return name === "" && description === "";
+    }
+);
 
 // #endregion
 
@@ -705,8 +727,13 @@ export const selectCountTotalTasksInList = createSelector(
 // Filters the tasks based on the filter settings (as a helper for selectTasksInCurrentTaskList)
 const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[] => {
     const lowerName = settings.name.toLowerCase().trim();
+    const lowerDesc = settings.description.toLowerCase().trim();
 
-    return tasks.filter((task) => task.name.toLowerCase().includes(lowerName));
+    return tasks.filter(
+        (task) =>
+            task.name.toLowerCase().includes(lowerName) &&
+            task.description.toLowerCase().includes(lowerDesc)
+    );
 };
 
 // Sorts the tasks based on the parameter and order
