@@ -9,8 +9,10 @@ import { createStore } from "../../redux/store";
 import {
     addTask,
     addTaskGroup,
+    Modal,
+    setActiveModal,
     setActiveTaskGroup,
-    setGroups,
+    setTaskGroups,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -26,6 +28,7 @@ import {
     mockPrompt
 } from "../../utils/testUtils";
 import { MainPage } from "./MainPage";
+import { ModalManager } from "../../features/modals/ModalManager";
 
 describe("MainPage", () => {
     describe("Clicking the All Tasks button must display all the tasks", () => {
@@ -109,7 +112,7 @@ describe("MainPage", () => {
             ];
 
             store.dispatch(setTasks(tasks));
-            store.dispatch(setGroups(taskGroups));
+            store.dispatch(setTaskGroups(taskGroups));
 
             render(
                 <Provider store={store}>
@@ -889,6 +892,135 @@ describe("MainPage", () => {
 
             await clickButton("task-group-component-groupid2");
             expect(screen.queryByTestId("task-component-id1")).toBeFalsy();
+        });
+    });
+
+    describe("Turn off filter tasks modal when going between task lists", () => {
+        test("It stays on when staying on all tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <MainPage />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("all-tasks-button");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeTruthy();
+        });
+
+        test("It stays on when staying on ungrouped tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <MainPage />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("ungrouped-tasks-button");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeTruthy();
+        });
+
+        test("It turns off when switching to all tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(switchToUngroupedTasks());
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <MainPage />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("all-tasks-button");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeFalsy();
+        });
+
+        test("It turns off when switching to ungrouped tasks", async () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <MainPage />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("ungrouped-tasks-button");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeFalsy();
+        });
+
+        test("It turns off when switching to a task group", async () => {
+            const store = createStore();
+
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            store.dispatch(switchToAllTasks());
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <MainPage />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("task-group-component-id1");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeFalsy();
+        });
+
+        test("It turns off when switching out of a task group", async () => {
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+            store.dispatch(
+                addTaskGroup(
+                    TaskGroup({
+                        name: "My group",
+                        id: "id1"
+                    })
+                )
+            );
+
+            store.dispatch(setActiveTaskGroup("id1"));
+
+            render(
+                <Provider store={store}>
+                    <MainPage />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("task-group-component-id1");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeFalsy();
         });
     });
 });

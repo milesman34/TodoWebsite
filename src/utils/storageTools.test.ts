@@ -4,6 +4,7 @@ import { formatTaskForStorage, Task } from "../features/tasks/Task";
 import { AppPage, SortOrder, SortParameter, TaskListType } from "../redux/todoSlice";
 import {
     loadCurrentPage,
+    loadFilterName,
     loadFromSaveText,
     loadOpenTaskIDs,
     loadTaskListType,
@@ -132,6 +133,20 @@ describe("storageTools", () => {
                 expect(loadTaskSortOrder()).toEqual(SortOrder.Descending);
             });
         });
+
+        describe("loadFilterName", () => {
+            test("load null", () => {
+                mockSessionStorage({});
+
+                expect(loadFilterName()).toBe("");
+            });
+
+            test("load with value", () => {
+                mockSessionStorage({ filterName: "task" });
+
+                expect(loadFilterName()).toBe("task");
+            });
+        });
     });
 
     describe("setupStore", () => {
@@ -141,7 +156,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -155,7 +170,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual(groups);
+            expect(state.taskGroups).toEqual(groups);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -177,7 +192,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual(tasks);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -192,7 +207,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -207,7 +222,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.Ungrouped);
             expect(state.activeTaskGroup).toBe("");
@@ -222,7 +237,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.activeTaskGroup).toBe("");
@@ -238,7 +253,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.TaskGroup);
             expect(state.activeTaskGroup).toBe("id1");
@@ -262,7 +277,7 @@ describe("storageTools", () => {
 
             const state = setupStore().getState();
 
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.tasks).toEqual([
                 {
                     ...tasks[0],
@@ -345,6 +360,16 @@ describe("storageTools", () => {
             const state = setupStore().getState();
 
             expect(state.taskSortOrder).toEqual(SortOrder.Descending);
+        });
+
+        test("setupStore sets the task filter name", () => {
+            mockSessionStorage({
+                filterName: "task"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.name).toBe("task");
         });
     });
 

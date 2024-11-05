@@ -67,7 +67,7 @@ export const ExportSaveModal = () => {
                 </div>
             </div>
 
-            <div className="save-modal-end-row">
+            <div className="modal-end-row">
                 <ExitModalButton />
 
                 <button

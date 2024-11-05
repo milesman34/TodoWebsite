@@ -2,15 +2,24 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     deleteTaskGroup,
+    Modal,
     selectActiveTaskGroup,
     selectActiveTaskGroupID,
+    selectFilterName,
+    selectFiltersAreDefault,
     selectOpenTaskIDs,
     selectTaskIDs,
     selectTaskListType,
     selectTasksInCurrentTaskList,
     TaskListType
 } from "../../../redux/todoSlice";
-import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
+import {
+    saveFilterName,
+    saveOpenTaskIDs,
+    saveTaskIDs
+} from "../../../utils/storageTools";
+import { ModalButton } from "../../modals/components/ModalButton";
+import { ResetFiltersButton } from "../../modals/filter-tasks/components/ResetFiltersButton";
 import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
@@ -30,9 +39,13 @@ export const TasksContainer = () => {
     const tasks = useSelector(selectTasksInCurrentTaskList);
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
+    const filterName = useSelector(selectFilterName);
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
+
+    // Are any filters on?
+    const areFiltersOn = useSelector(selectFiltersAreDefault);
 
     const dispatch = useDispatch();
 
@@ -60,6 +73,11 @@ export const TasksContainer = () => {
     useEffect(() => {
         saveOpenTaskIDs(openTaskIDs);
     }, [openTaskIDs]);
+
+    // Handles saving filtering data to session storage
+    useEffect(() => {
+        saveFilterName(filterName);
+    }, [filterName]);
 
     return (
         <div id="tasks-container">
@@ -108,6 +126,17 @@ export const TasksContainer = () => {
                 <AddTaskButton taskGroup={activeTaskGroup} />
 
                 <SortSelectorButton />
+
+                <ModalButton
+                    modal={Modal.FilterTasks}
+                    displayText={
+                        areFiltersOn ? "Filter Tasks" : `Filter Tasks (${tasks.length})`
+                    }
+                    id="filter-tasks"
+                    className="tasks-controls-button filter-tasks-button"
+                />
+
+                <ResetFiltersButton className="tasks-controls-button" />
 
                 {taskListType !== TaskListType.Ungrouped && (
                     <DeleteAllTasksButton

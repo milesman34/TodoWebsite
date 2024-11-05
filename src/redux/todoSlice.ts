@@ -27,7 +27,8 @@ export enum AppPage {
 export enum Modal {
     None,
     ExportSave,
-    ImportSave
+    ImportSave,
+    FilterTasks
 }
 
 /**
@@ -48,11 +49,19 @@ export enum SortOrder {
 }
 
 /**
+ * Represents the filter settings for the app
+ */
+export type FilterSettings = {
+    // What name should be searched for? (empty means don't filter by name)
+    name: string;
+};
+
+/**
  * Type representing the state of the Todo slice
  */
 export type TodoState = {
     // List of task groups
-    groups: TaskGroup[];
+    taskGroups: TaskGroup[];
 
     // Active task group is an ID
     activeTaskGroup: string;
@@ -78,13 +87,16 @@ export type TodoState = {
 
     // Current order for sorting tasks
     taskSortOrder: SortOrder;
+
+    // Settings for task filtering
+    filterSettings: FilterSettings;
 };
 
 /**
  * Initial state for the slice
  */
 export const initialState: TodoState = {
-    groups: [],
+    taskGroups: [],
     activeTaskGroup: "",
     taskListType: TaskListType.All,
     tasks: [],
@@ -92,7 +104,10 @@ export const initialState: TodoState = {
     currentPage: AppPage.Main,
     activeModal: Modal.None,
     taskSortParam: SortParameter.None,
-    taskSortOrder: SortOrder.Ascending
+    taskSortOrder: SortOrder.Ascending,
+    filterSettings: {
+        name: ""
+    }
 };
 
 // Todo slice handles tasks and task groups
@@ -102,6 +117,7 @@ const todoSlice = createSlice({
     initialState,
 
     reducers: {
+        // #region taskGroups
         /**
          * Adds a task group to the list of task groups
          * @param state
@@ -109,7 +125,7 @@ const todoSlice = createSlice({
          * @returns
          */
         addTaskGroup(state: TodoState, action: PayloadAction<TaskGroup>) {
-            state.groups.push(action.payload);
+            state.taskGroups.push(action.payload);
 
             // Set the active task group
             state.activeTaskGroup = action.payload.id;
@@ -135,28 +151,80 @@ const todoSlice = createSlice({
          * @param state
          * @param action
          */
-        setGroups(state: TodoState, action: PayloadAction<TaskGroup[]>) {
-            state.groups = action.payload;
+        setTaskGroups(state: TodoState, action: PayloadAction<TaskGroup[]>) {
+            state.taskGroups = action.payload;
         },
 
         /**
-         * Switches to displaying all tasks
-         * @param state
+         * Changes the name of the active task group
          */
-        switchToAllTasks(state: TodoState) {
+        setActiveTaskGroupName(state: TodoState, action: PayloadAction<string>) {
+            state.taskGroups = filterMap(
+                state.taskGroups,
+                (group) => group.id === state.activeTaskGroup,
+                (group) => ({ ...group, name: action.payload })
+            );
+        },
+
+        /**
+         * Changes the description of the active task group
+         */
+        setActiveTaskGroupDescription(state: TodoState, action: PayloadAction<string>) {
+            state.taskGroups = filterMap(
+                state.taskGroups,
+                (group) => group.id === state.activeTaskGroup,
+                (group) => ({ ...group, description: action.payload })
+            );
+        },
+
+        /**
+         * Deletes a task group. If the preserveTasks option is enabled then it keeps the tasks, otherwise deleting them
+         */
+        deleteTaskGroup(
+            state: TodoState,
+            action: PayloadAction<{
+                taskGroupID: string;
+                preserveTasks: boolean;
+            }>
+        ) {
+            state.taskGroups = state.taskGroups.filter(
+                (taskGroup) => taskGroup.id !== action.payload.taskGroupID
+            );
+
+            if (action.payload.preserveTasks) {
+                // Set all the tasks in the task group to be ungrouped
+                state.tasks = filterMap(
+                    state.tasks,
+                    (task) => task.taskGroupID === action.payload.taskGroupID,
+                    (task) => ({
+                        ...task,
+                        taskGroupID: ""
+                    })
+                );
+            } else {
+                // Delete all tasks in the task group
+                state.tasks = state.tasks.filter(
+                    (task) => task.taskGroupID !== action.payload.taskGroupID
+                );
+            }
+
+            // Switch to All Tasks
             state.taskListType = TaskListType.All;
             state.activeTaskGroup = "";
         },
 
         /**
-         * Switches to displaying ungrouped tasks
-         * @param state
+         * Removes all tasks in a task group
          */
-        switchToUngroupedTasks(state: TodoState) {
-            state.taskListType = TaskListType.Ungrouped;
-            state.activeTaskGroup = "";
+        removeTasksInGroup(state: TodoState, action: PayloadAction<string>) {
+            state.tasks = state.tasks.filter(
+                (task) => task.taskGroupID !== action.payload
+            );
         },
 
+        // #endregion
+
+        // #region tasks
         /**
          * Adds a task to the list of tasks
          * @param state
@@ -178,25 +246,21 @@ const todoSlice = createSlice({
         },
 
         /**
-         * Changes the name of the active task group
+         * Switches to displaying all tasks
+         * @param state
          */
-        setActiveTaskGroupName(state: TodoState, action: PayloadAction<string>) {
-            state.groups = filterMap(
-                state.groups,
-                (group) => group.id === state.activeTaskGroup,
-                (group) => ({ ...group, name: action.payload })
-            );
+        switchToAllTasks(state: TodoState) {
+            state.taskListType = TaskListType.All;
+            state.activeTaskGroup = "";
         },
 
         /**
-         * Changes the description of the active task group
+         * Switches to displaying ungrouped tasks
+         * @param state
          */
-        setActiveTaskGroupDescription(state: TodoState, action: PayloadAction<string>) {
-            state.groups = filterMap(
-                state.groups,
-                (group) => group.id === state.activeTaskGroup,
-                (group) => ({ ...group, description: action.payload })
-            );
+        switchToUngroupedTasks(state: TodoState) {
+            state.taskListType = TaskListType.Ungrouped;
+            state.activeTaskGroup = "";
         },
 
         /**
@@ -357,42 +421,6 @@ const todoSlice = createSlice({
         },
 
         /**
-         * Deletes a task group. If the preserveTasks option is enabled then it keeps the tasks, otherwise deleting them
-         */
-        deleteTaskGroup(
-            state: TodoState,
-            action: PayloadAction<{
-                taskGroupID: string;
-                preserveTasks: boolean;
-            }>
-        ) {
-            state.groups = state.groups.filter(
-                (taskGroup) => taskGroup.id !== action.payload.taskGroupID
-            );
-
-            if (action.payload.preserveTasks) {
-                // Set all the tasks in the task group to be ungrouped
-                state.tasks = filterMap(
-                    state.tasks,
-                    (task) => task.taskGroupID === action.payload.taskGroupID,
-                    (task) => ({
-                        ...task,
-                        taskGroupID: ""
-                    })
-                );
-            } else {
-                // Delete all tasks in the task group
-                state.tasks = state.tasks.filter(
-                    (task) => task.taskGroupID !== action.payload.taskGroupID
-                );
-            }
-
-            // Switch to All Tasks
-            state.taskListType = TaskListType.All;
-            state.activeTaskGroup = "";
-        },
-
-        /**
          * Deletes a task
          */
         deleteTask(state: TodoState, action: PayloadAction<string>) {
@@ -442,6 +470,19 @@ const todoSlice = createSlice({
             state.activeTaskGroup = action.payload.groupID;
         },
 
+        // #endregion
+
+        // #region mainUI
+        /**
+         * Sets the current app page
+         */
+        setCurrentPage(state: TodoState, action: PayloadAction<AppPage>) {
+            state.currentPage = action.payload;
+        },
+
+        // #endregion
+
+        // #region notifications
         /**
          * Pushes a notification onto the stack
          */
@@ -458,13 +499,9 @@ const todoSlice = createSlice({
             );
         },
 
-        /**
-         * Sets the current app page
-         */
-        setCurrentPage(state: TodoState, action: PayloadAction<AppPage>) {
-            state.currentPage = action.payload;
-        },
+        // #endregion
 
+        // #region modals
         /**
          * Sets the current active modal
          */
@@ -472,15 +509,9 @@ const todoSlice = createSlice({
             state.activeModal = action.payload;
         },
 
-        /**
-         * Removes all tasks in a task group
-         */
-        removeTasksInGroup(state: TodoState, action: PayloadAction<string>) {
-            state.tasks = state.tasks.filter(
-                (task) => task.taskGroupID !== action.payload
-            );
-        },
+        // #endregion
 
+        // #region sorting
         /**
          * Sets the current task sort parameter
          */
@@ -493,7 +524,27 @@ const todoSlice = createSlice({
          */
         setTaskSortOrder(state: TodoState, action: PayloadAction<SortOrder>) {
             state.taskSortOrder = action.payload;
+        },
+
+        // #endregion
+
+        // #region filtering
+
+        /**
+         * Sets the name to filter by
+         */
+        setFilterName(state: TodoState, action: PayloadAction<string>) {
+            state.filterSettings.name = action.payload;
+        },
+
+        /**
+         * Resets the filter settings
+         */
+        resetFilters(state: TodoState) {
+            state.filterSettings.name = "";
         }
+
+        // #endregion
     }
 });
 
@@ -511,13 +562,15 @@ export const {
     removeNotificationByID,
     removeTasksInGroup,
     removeTaskTag,
+    resetFilters,
     setActiveModal,
     setActiveTaskGroup,
     setActiveTaskGroupDescription,
     setActiveTaskGroupName,
     setCurrentPage,
-    setGroups,
+    setFilterName,
     setTaskDescription,
+    setTaskGroups,
     setTaskName,
     setTaskOpen,
     setTaskPriority,
@@ -533,12 +586,48 @@ export const {
 export default todoSlice.reducer;
 
 // Set up selectors
+// #region sorting
+/**
+ * Selects the current task sort parameter
+ */
+export const selectTaskSortParam = (state: TodoState): SortParameter =>
+    state.taskSortParam;
+
+/**
+ * Selects the current task sort order
+ */
+export const selectTaskSortOrder = (state: TodoState): SortOrder => state.taskSortOrder;
+
+// #endregion
+
+// #region filtering
+/**
+ * Returns the name to filter by
+ */
+export const selectFilterName = (state: TodoState): string => state.filterSettings.name;
+
+/**
+ * Returns the full filter settings
+ */
+export const selectFilterSettings = (state: TodoState): FilterSettings =>
+    state.filterSettings;
+
+/**
+ * Returns if the filters are default or not
+ */
+export const selectFiltersAreDefault = createSelector([selectFilterName], (name) => {
+    return name === "";
+});
+
+// #endregion
+
+// #region taskGroups
 /**
  * Selects the list of task groups
  * @param state
  * @returns
  */
-export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.groups;
+export const selectTaskGroups = (state: TodoState): TaskGroup[] => state.taskGroups;
 
 /**
  * Selects the active task group (ID)
@@ -554,7 +643,23 @@ export const selectActiveTaskGroupID = (state: TodoState): string =>
  * @returns
  */
 export const selectActiveTaskGroup = (state: TodoState): TaskGroup | undefined =>
-    state.groups.find((taskGroup) => taskGroup.id === state.activeTaskGroup);
+    state.taskGroups.find((taskGroup) => taskGroup.id === state.activeTaskGroup);
+
+/**
+ * Returns the name of the task group with the given ID if it exists, or the empty string otherwise
+ * @param id ID to search for
+ */
+export const selectTaskGroupNameByID =
+    (id: string) =>
+    (state: TodoState): string => {
+        const targetGroup = state.taskGroups.find((taskGroup) => taskGroup.id === id);
+
+        return targetGroup === undefined ? "" : targetGroup.name;
+    };
+
+// #endregion
+
+// #region tasks
 
 /**
  * Selects the list of all tasks
@@ -569,17 +674,6 @@ export const selectAllTasks = (state: TodoState): Task[] => state.tasks;
  * @returns
  */
 export const selectTaskListType = (state: TodoState): TaskListType => state.taskListType;
-
-/**
- * Selects the current task sort parameter
- */
-export const selectTaskSortParam = (state: TodoState): SortParameter =>
-    state.taskSortParam;
-
-/**
- * Selects the current task sort order
- */
-export const selectTaskSortOrder = (state: TodoState): SortOrder => state.taskSortOrder;
 
 // Gets the list of tasks to use (as a helper for selectTasksInCurrentTaskList)
 const tasksInCurrentTaskList = (
@@ -599,6 +693,32 @@ const tasksInCurrentTaskList = (
     }
 };
 
+// Filters the tasks based on the filter settings (as a helper for selectTasksInCurrentTaskList)
+const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[] => {
+    const lowerName = settings.name.toLowerCase().trim();
+
+    return tasks.filter((task) => task.name.toLowerCase().includes(lowerName));
+};
+
+// Sorts the tasks based on the parameter and order
+const sortTasks = (tasks: Task[], parameter: SortParameter, order: SortOrder): Task[] => {
+    // Make a copy to avoid mutating the original
+    const copyTasks = [...tasks];
+
+    if (parameter === SortParameter.Name) {
+        copyTasks.sort((task1, task2) => task1.name.localeCompare(task2.name));
+    } else if (parameter === SortParameter.Priority) {
+        copyTasks.sort((task1, task2) => task1.priority - task2.priority);
+    }
+
+    // Reverse the sort order as needed
+    if (parameter !== SortParameter.None && order === SortOrder.Descending) {
+        copyTasks.reverse();
+    }
+
+    return copyTasks;
+};
+
 /**
  * Returns all of the tasks currently visible based on the task list type, factoring in necessary sorting and filtering
  */
@@ -608,28 +728,25 @@ export const selectTasksInCurrentTaskList = createSelector(
         selectAllTasks,
         selectActiveTaskGroupID,
         selectTaskSortOrder,
-        selectTaskSortParam
+        selectTaskSortParam,
+        selectFilterSettings
     ],
-    (taskListType, tasks, activeTaskGroupID, taskSortOrder, taskSortParam) => {
-        const activeTasks = [
-            ...tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID)
-        ];
-
-        if (taskSortParam === SortParameter.Name) {
-            activeTasks.sort((task1, task2) => task1.name.localeCompare(task2.name));
-        } else if (taskSortParam === SortParameter.Priority) {
-            activeTasks.sort((task1, task2) => task1.priority - task2.priority);
-        }
-
-        // Reverse the sort order as needed
-        if (
-            taskSortParam !== SortParameter.None &&
-            taskSortOrder === SortOrder.Descending
-        ) {
-            activeTasks.reverse();
-        }
-
-        return activeTasks;
+    (
+        taskListType,
+        tasks,
+        activeTaskGroupID,
+        taskSortOrder,
+        taskSortParam,
+        filterSettings
+    ) => {
+        return sortTasks(
+            filterTasksWithSettings(
+                tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID),
+                filterSettings
+            ),
+            taskSortParam,
+            taskSortOrder
+        );
     }
 );
 
@@ -650,18 +767,6 @@ export const getTaskByID =
     };
 
 /**
- * Returns the name of the task group with the given ID if it exists, or the empty string otherwise
- * @param id ID to search for
- */
-export const selectTaskGroupNameByID =
-    (id: string) =>
-    (state: TodoState): string => {
-        const targetGroup = state.groups.find((taskGroup) => taskGroup.id === id);
-
-        return targetGroup === undefined ? "" : targetGroup.name;
-    };
-
-/**
  * Selects the ids of all tasks
  */
 export const selectTaskIDs = createSelector([selectAllTasks], (tasks) =>
@@ -675,11 +780,16 @@ export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
     tasks.filter((task) => task.isOpen).map((task) => task.id)
 );
 
+// #endregion
+
+// #region notifications
 /**
  * Selects all of the notifications
  */
 export const selectNotifications = (state: TodoState): AppNotification[] =>
     state.notifications;
+
+// #endregion
 
 /**
  * Selects the current page

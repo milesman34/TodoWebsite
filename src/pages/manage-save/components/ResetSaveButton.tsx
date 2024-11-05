@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     selectTaskIDs,
     setActiveTaskGroup,
-    setGroups,
+    setTaskGroups,
     setTasks,
     switchToAllTasks
 } from "../../../redux/todoSlice";
@@ -21,7 +21,7 @@ export const ResetSaveButton = () => {
             resetSaveData(taskIDs);
 
             dispatch(setTasks([]));
-            dispatch(setGroups([]));
+            dispatch(setTaskGroups([]));
             dispatch(setActiveTaskGroup(""));
             dispatch(switchToAllTasks());
         }

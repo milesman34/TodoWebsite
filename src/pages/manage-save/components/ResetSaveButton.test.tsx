@@ -132,7 +132,7 @@ describe("ResetSaveButton", () => {
 
             expect(state.activeTaskGroup).toBe("");
             expect(state.currentPage).toEqual(AppPage.ManageSave);
-            expect(state.groups).toEqual([]);
+            expect(state.taskGroups).toEqual([]);
             expect(state.taskListType).toEqual(TaskListType.All);
             expect(state.tasks).toEqual([]);
         });

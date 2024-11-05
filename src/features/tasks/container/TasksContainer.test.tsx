@@ -7,6 +7,7 @@ import {
     addTask,
     addTaskGroup,
     setActiveTaskGroup,
+    setFilterName,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -22,6 +23,7 @@ import {
     mockPrompt,
     mockSessionStorage
 } from "../../../utils/testUtils";
+import { ModalManager } from "../../modals/ModalManager";
 import { TaskGroup } from "../../taskGroups/TaskGroup";
 import { Task } from "../Task";
 import { TasksContainer } from "./TasksContainer";
@@ -256,6 +258,28 @@ describe("TasksContainer", () => {
             await clickButton("add-task-button");
 
             expect(mockSetItem).toHaveBeenCalledWith("tasks", JSON.stringify(["id1"]));
+        });
+
+        test("Add Task button disables filters", async () => {
+            // Set up the mock results
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("add-task-button");
+
+            expect(store.getState().filterSettings.name).toBe("");
         });
     });
 
@@ -707,6 +731,40 @@ describe("TasksContainer", () => {
         });
     });
 
+    describe("update filtering in session storage", () => {
+        test("update filtering in session storage", () => {
+            const mockSetItem = mockSessionStorage({});
+            const store = createStore();
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(mockSetItem).toHaveBeenCalledWith("filterName", "task");
+        });
+
+        test("Reset filters button affects session storage", async () => {
+            const mockSetItem = mockSessionStorage({});
+            const store = createStore();
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("reset-filters-button");
+
+            expect(mockSetItem).toHaveBeenCalledWith("filterName", "");
+        });
+    });
+
     describe("DeleteAllTasksButton displays in all tasks or a specific group", () => {
         test("Shows with all tasks", () => {
             const store = createStore();
@@ -749,5 +807,66 @@ describe("TasksContainer", () => {
 
             expect(screen.queryByTestId("delete-all-tasks-button")).toBeFalsy();
         });
+    });
+
+    describe("FilterTasksButton", () => {
+        test("Click on filter tasks button to open modal", async () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("filter-tasks-button");
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeTruthy();
+        });
+
+        test("Displays that filters are on", () => {
+            const store = createStore();
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(getTextContent("filter-tasks-button")).toBe("Filter Tasks (0)");
+        });
+
+        test("Displays that filters are off", () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(getTextContent("filter-tasks-button")).toBe("Filter Tasks");
+        });
+    });
+
+    test("Click on reset filters button to reset filters", async () => {
+        const store = createStore();
+
+        store.dispatch(setFilterName("task"));
+
+        render(
+            <Provider store={store}>
+                <TasksContainer />
+            </Provider>
+        );
+
+        await clickButton("reset-filters-button");
+
+        expect(store.getState().filterSettings.name).toBe("");
     });
 });

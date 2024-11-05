@@ -2,7 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { TaskGroup } from "../TaskGroup";
 
 import classNames from "classnames";
-import { selectActiveTaskGroupID, setActiveTaskGroup } from "../../../redux/todoSlice";
+import {
+    Modal,
+    selectActiveTaskGroupID,
+    setActiveModal,
+    setActiveTaskGroup
+} from "../../../redux/todoSlice";
 import "./TaskGroupComponent.css";
 
 /**
@@ -21,6 +26,9 @@ export const TaskGroupComponent = ({ taskGroup }: { taskGroup: TaskGroup }) => {
 
     // Runs when this task group is clicked
     const onTaskGroupClicked = () => {
+        // Turn off the filter tasks modal anyways
+        dispatch(setActiveModal(Modal.None));
+
         // If this task group is already active, then deselect it
         dispatch(setActiveTaskGroup(isActive ? "" : taskGroup.id));
     };

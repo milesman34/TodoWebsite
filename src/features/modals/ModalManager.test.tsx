@@ -21,6 +21,7 @@ describe("ModalManager", () => {
 
             expect(screen.queryByTestId("export-save-modal")).toBeFalsy();
             expect(screen.queryByTestId("import-save-modal")).toBeFalsy();
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeFalsy();
         });
 
         test("ModalManager displays the export save modal when set to ExportSave", () => {
@@ -49,6 +50,20 @@ describe("ModalManager", () => {
             );
 
             expect(screen.queryByTestId("import-save-modal")).toBeTruthy();
+        });
+
+        test("ModalManager displays the filter tasks modal when set to FilterTasks", () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(screen.queryByTestId("filter-tasks-modal")).toBeTruthy();
         });
     });
 

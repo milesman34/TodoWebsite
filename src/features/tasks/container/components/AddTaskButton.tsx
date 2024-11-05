@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { useDispatch } from "react-redux";
-import { addTask } from "../../../../redux/todoSlice";
+import { addTask, resetFilters } from "../../../../redux/todoSlice";
 import { TaskGroup } from "../../../taskGroups/TaskGroup";
 import { Task } from "../../Task";
 
@@ -29,6 +29,9 @@ export const AddTaskButton = ({
                     })
                 )
             );
+
+            // Disable filters as well, because it is bad to have the user think that creating a task didn't work
+            dispatch(resetFilters());
         }
     };
 
@@ -36,6 +39,7 @@ export const AddTaskButton = ({
         <button
             id="add-task-button"
             data-testid="add-task-button"
+            className="tasks-controls-button"
             onClick={onAddTaskButtonClicked}
         >
             Add Task

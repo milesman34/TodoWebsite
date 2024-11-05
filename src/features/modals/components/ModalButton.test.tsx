@@ -1,22 +1,23 @@
-import { describe, expect, test } from "vitest";
-import { createStore } from "../../../redux/store";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { SaveModalButton } from "./SaveModalButton";
+import { describe, expect, test } from "vitest";
+import { ModalManager } from "../../../features/modals/ModalManager";
+import { createStore } from "../../../redux/store";
 import { Modal, setActiveModal } from "../../../redux/todoSlice";
 import { clickButton, containsClass, getTextContent } from "../../../utils/testUtils";
-import { ModalManager } from "../../../features/modals/ModalManager";
+import { ModalButton } from "./ModalButton";
 
-describe("SaveModalButton", () => {
-    test("SaveModalButton displays the correct text", () => {
+describe("ModalButton", () => {
+    test("ModalButton displays the correct text", () => {
         const store = createStore();
 
         render(
             <Provider store={store}>
-                <SaveModalButton
+                <ModalButton
                     modal={Modal.ExportSave}
                     displayText="Export Save"
                     id="export-save"
+                    className="modal"
                 />
             </Provider>
         );
@@ -24,17 +25,18 @@ describe("SaveModalButton", () => {
         expect(getTextContent("export-save-button")).toBe("Export Save");
     });
 
-    test("SaveModalButton opens the modal", async () => {
+    test("ModalButton opens the modal", async () => {
         const store = createStore();
 
         store.dispatch(setActiveModal(Modal.None));
 
         render(
             <Provider store={store}>
-                <SaveModalButton
+                <ModalButton
                     modal={Modal.ExportSave}
                     displayText="Export Save"
                     id="export-save"
+                    className="modal"
                 />
                 <ModalManager />
             </Provider>
@@ -45,17 +47,18 @@ describe("SaveModalButton", () => {
         expect(screen.queryByTestId("export-save-modal")).toBeTruthy();
     });
 
-    test("SaveModalButton closes the modal when already active", async () => {
+    test("ModalButton closes the modal when already active", async () => {
         const store = createStore();
 
         store.dispatch(setActiveModal(Modal.ExportSave));
 
         render(
             <Provider store={store}>
-                <SaveModalButton
+                <ModalButton
                     modal={Modal.ExportSave}
                     displayText="Export Save"
                     id="export-save"
+                    className="modal"
                 />
                 <ModalManager />
             </Provider>
@@ -66,18 +69,19 @@ describe("SaveModalButton", () => {
         expect(screen.queryByTestId("export-save-modal")).toBeFalsy();
     });
 
-    describe("SaveModalButton classes", () => {
-        test("SaveModalButton does not have modal-button-active when not active", () => {
+    describe("ModalButton classes", () => {
+        test("ModalButton does not have modal-button-active when not active", () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.None));
 
             render(
                 <Provider store={store}>
-                    <SaveModalButton
+                    <ModalButton
                         modal={Modal.ExportSave}
                         displayText="Export Save"
                         id="export-save"
+                        className="modal"
                     />
                 </Provider>
             );
@@ -87,17 +91,18 @@ describe("SaveModalButton", () => {
             ).toBeFalsy();
         });
 
-        test("SaveModalButton has modal-button-active when active", () => {
+        test("ModalButton has modal-button-active when active", () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.ExportSave));
 
             render(
                 <Provider store={store}>
-                    <SaveModalButton
+                    <ModalButton
                         modal={Modal.ExportSave}
                         displayText="Export Save"
                         id="export-save"
+                        className="modal"
                     />
                 </Provider>
             );
