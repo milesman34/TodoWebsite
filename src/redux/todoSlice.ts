@@ -693,6 +693,15 @@ const tasksInCurrentTaskList = (
     }
 };
 
+/**
+ * Counts the number of total tasks in the active task list, w/o
+ */
+export const selectCountTotalTasksInList = createSelector(
+    [selectTaskListType, selectAllTasks, selectActiveTaskGroupID],
+    (taskListType, tasks, activeTaskGroupID) =>
+        tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID).length
+);
+
 // Filters the tasks based on the filter settings (as a helper for selectTasksInCurrentTaskList)
 const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[] => {
     const lowerName = settings.name.toLowerCase().trim();
