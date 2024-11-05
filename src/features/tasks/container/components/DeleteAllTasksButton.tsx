@@ -1,5 +1,10 @@
-import { useDispatch } from "react-redux";
-import { removeTasksInGroup, setTasks, TaskListType } from "../../../../redux/todoSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    removeTasksInGroup,
+    selectCountTotalTasksInList,
+    setTasks,
+    TaskListType
+} from "../../../../redux/todoSlice";
 
 /**
  * This button deletes all tasks in the task container.
@@ -13,13 +18,15 @@ export const DeleteAllTasksButton = ({
 }) => {
     const dispatch = useDispatch();
 
+    const tasksCount = useSelector(selectCountTotalTasksInList);
+
     // Runs when the button is clicked
     const onDeleteTasksClicked = () => {
         if (
             confirm(
                 taskListType === TaskListType.TaskGroup
-                    ? "Do you really want to delete all tasks in this task group?"
-                    : "Do you really want to delete all tasks?"
+                    ? `Do you really want to delete all tasks (${tasksCount}) in this task group? `
+                    : `Do you really want to delete all tasks (${tasksCount})`
             )
         ) {
             if (taskListType === TaskListType.TaskGroup) {
