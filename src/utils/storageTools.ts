@@ -9,6 +9,7 @@ import {
     AppPage,
     setActiveTaskGroup,
     setCurrentPage,
+    setFilterName,
     setTaskGroups,
     setTaskOpen,
     setTasks,
@@ -91,6 +92,15 @@ export const loadTaskSortOrder = (): SortOrder => {
 };
 
 /**
+ * Gets the filter name from session storage
+ */
+export const loadFilterName = (): string => {
+    const item = sessionStorage.getItem("filterName");
+
+    return item === null ? "" : item;
+};
+
+/**
  * Sets up a store for the app with important data from localStorage and sessionStorage
  */
 export const setupStore = () => {
@@ -129,6 +139,9 @@ export const setupStore = () => {
     // Gets the task sort info
     store.dispatch(setTaskSortParam(loadTaskSortParam()));
     store.dispatch(setTaskSortOrder(loadTaskSortOrder()));
+
+    // Gets the filtering info
+    store.dispatch(setFilterName(loadFilterName()));
 
     return store;
 };
@@ -201,6 +214,13 @@ export const saveTaskSortParam = (param: SortParameter) => {
 export const saveTaskSortOrder = (order: SortOrder) => {
     sessionStorage.setItem("taskSortOrder", order.toString());
 };
+
+/**
+ * Saves the current filter name
+ */
+export const saveFilterName = (name: string) => {
+    sessionStorage.setItem("filterName", name);
+}
 
 /**
  * Resets the current save data

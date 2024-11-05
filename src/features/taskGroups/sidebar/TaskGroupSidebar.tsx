@@ -1,15 +1,21 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
+    Modal,
     selectActiveTaskGroupID,
     selectTaskGroups,
     selectTaskListType,
+    setActiveModal,
     switchToAllTasks,
     switchToUngroupedTasks,
     TaskListType
 } from "../../../redux/todoSlice";
 
 import { useEffect } from "react";
-import { saveActiveTaskGroup, saveTaskGroups, saveTaskListType } from "../../../utils/storageTools";
+import {
+    saveActiveTaskGroup,
+    saveTaskGroups,
+    saveTaskListType
+} from "../../../utils/storageTools";
 import { TaskGroupComponent } from "../task-group/TaskGroupComponent";
 import { AddTaskGroupButton } from "./components/AddTaskGroupButton";
 import { TaskListButton } from "./components/TaskListButton";
@@ -40,20 +46,36 @@ export const TaskGroupSidebar = () => {
         saveActiveTaskGroup(activeTaskGroup);
     }, [activeTaskGroup]);
 
+    const onAllTasksClicked = () => {
+        if (taskListType !== TaskListType.All) {
+            dispatch(setActiveModal(Modal.None));
+        }
+
+        dispatch(switchToAllTasks());
+    };
+
+    const onUngroupedTasksClicked = () => {
+        if (taskListType !== TaskListType.Ungrouped) {
+            dispatch(setActiveModal(Modal.None));
+        }
+
+        dispatch(switchToUngroupedTasks());
+    };
+
     return (
         <div id="task-group-sidebar">
             <div id="tasks-buttons-container" className="flex-column">
                 <TaskListButton
                     id="all-tasks-button"
                     taskType={TaskListType.All}
-                    onClick={() => dispatch(switchToAllTasks())}
+                    onClick={onAllTasksClicked}
                     text="All Tasks"
                 />
 
                 <TaskListButton
                     id="ungrouped-tasks-button"
                     taskType={TaskListType.Ungrouped}
-                    onClick={() => dispatch(switchToUngroupedTasks())}
+                    onClick={onUngroupedTasksClicked}
                     text="Ungrouped Tasks"
                 />
             </div>

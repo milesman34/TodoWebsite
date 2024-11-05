@@ -731,6 +731,40 @@ describe("TasksContainer", () => {
         });
     });
 
+    describe("update filtering in session storage", () => {
+        test("update filtering in session storage", () => {
+            const mockSetItem = mockSessionStorage({});
+            const store = createStore();
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            expect(mockSetItem).toHaveBeenCalledWith("filterName", "task");
+        });
+
+        test("Reset filters button affects session storage", async () => {
+            const mockSetItem = mockSessionStorage({});
+            const store = createStore();
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("reset-filters-button");
+
+            expect(mockSetItem).toHaveBeenCalledWith("filterName", "");
+        });
+    });
+
     describe("DeleteAllTasksButton displays in all tasks or a specific group", () => {
         test("Shows with all tasks", () => {
             const store = createStore();

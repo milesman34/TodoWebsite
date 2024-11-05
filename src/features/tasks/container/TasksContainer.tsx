@@ -5,6 +5,7 @@ import {
     Modal,
     selectActiveTaskGroup,
     selectActiveTaskGroupID,
+    selectFilterName,
     selectFiltersAreDefault,
     selectOpenTaskIDs,
     selectTaskIDs,
@@ -12,8 +13,13 @@ import {
     selectTasksInCurrentTaskList,
     TaskListType
 } from "../../../redux/todoSlice";
-import { saveOpenTaskIDs, saveTaskIDs } from "../../../utils/storageTools";
+import {
+    saveFilterName,
+    saveOpenTaskIDs,
+    saveTaskIDs
+} from "../../../utils/storageTools";
 import { ModalButton } from "../../modals/components/ModalButton";
+import { ResetFiltersButton } from "../../modals/filter-tasks/components/ResetFiltersButton";
 import { TaskComponent } from "../task/TaskComponent";
 import { AddTaskButton } from "./components/AddTaskButton";
 import { DeleteAllTasksButton } from "./components/DeleteAllTasksButton";
@@ -21,7 +27,6 @@ import { EditNameButton } from "./components/EditNameButton";
 import { SortSelectorButton } from "./components/SortSelectorButton";
 import { TaskGroupDescription } from "./components/TaskGroupDescription";
 import "./TasksContainer.css";
-import { ResetFiltersButton } from "../../modals/filter-tasks/components/ResetFiltersButton";
 
 /**
  * TasksContainer contains the list of tasks, as well as related features
@@ -34,6 +39,7 @@ export const TasksContainer = () => {
     const tasks = useSelector(selectTasksInCurrentTaskList);
     const taskIDs = useSelector(selectTaskIDs);
     const openTaskIDs = useSelector(selectOpenTaskIDs);
+    const filterName = useSelector(selectFilterName);
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
@@ -67,6 +73,11 @@ export const TasksContainer = () => {
     useEffect(() => {
         saveOpenTaskIDs(openTaskIDs);
     }, [openTaskIDs]);
+
+    // Handles saving filtering data to session storage
+    useEffect(() => {
+        saveFilterName(filterName);
+    }, [filterName]);
 
     return (
         <div id="tasks-container">
@@ -118,7 +129,9 @@ export const TasksContainer = () => {
 
                 <ModalButton
                     modal={Modal.FilterTasks}
-                    displayText={areFiltersOn ? "Filter Tasks" : `Filter Tasks (${tasks.length})`}
+                    displayText={
+                        areFiltersOn ? "Filter Tasks" : `Filter Tasks (${tasks.length})`
+                    }
                     id="filter-tasks"
                     className="tasks-controls-button filter-tasks-button"
                 />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 import {
     Modal,
     selectFilterName,
@@ -8,7 +9,6 @@ import {
 } from "../../../redux/todoSlice";
 import { ExitModalButton } from "../components/ExitModalButton";
 import { ResetFiltersButton } from "./components/ResetFiltersButton";
-import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 
 /**
  * This modal lets the user configure how tasks are filtered.

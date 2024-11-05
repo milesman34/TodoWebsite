@@ -4,6 +4,7 @@ import { formatTaskForStorage, Task } from "../features/tasks/Task";
 import { AppPage, SortOrder, SortParameter, TaskListType } from "../redux/todoSlice";
 import {
     loadCurrentPage,
+    loadFilterName,
     loadFromSaveText,
     loadOpenTaskIDs,
     loadTaskListType,
@@ -130,6 +131,20 @@ describe("storageTools", () => {
                 mockSessionStorage({ taskSortOrder: "1" });
 
                 expect(loadTaskSortOrder()).toEqual(SortOrder.Descending);
+            });
+        });
+
+        describe("loadFilterName", () => {
+            test("load null", () => {
+                mockSessionStorage({});
+
+                expect(loadFilterName()).toBe("");
+            });
+
+            test("load with value", () => {
+                mockSessionStorage({ filterName: "task" });
+
+                expect(loadFilterName()).toBe("task");
             });
         });
     });
@@ -345,6 +360,16 @@ describe("storageTools", () => {
             const state = setupStore().getState();
 
             expect(state.taskSortOrder).toEqual(SortOrder.Descending);
+        });
+
+        test("setupStore sets the task filter name", () => {
+            mockSessionStorage({
+                filterName: "task"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.name).toBe("task");
         });
     });
 
