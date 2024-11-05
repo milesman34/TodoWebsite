@@ -612,6 +612,13 @@ export const selectFilterName = (state: TodoState): string => state.filterSettin
 export const selectFilterSettings = (state: TodoState): FilterSettings =>
     state.filterSettings;
 
+/**
+ * Returns if the filters are default or not
+ */
+export const selectFiltersAreDefault = createSelector([selectFilterName], (name) => {
+    return name === "";
+});
+
 // #endregion
 
 // #region taskGroups

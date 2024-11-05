@@ -1,10 +1,12 @@
 import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { describe, expect, test } from "vitest";
 import { createStore } from "../../../redux/store";
 import { Modal, setActiveModal, setFilterName } from "../../../redux/todoSlice";
 import { clickButton, enterText, getInputText } from "../../../utils/testUtils";
 import { ModalManager } from "../ModalManager";
+import { FilterTasksModal } from "./FilterTasksModal";
 
 describe("FilterTasksModal", () => {
     describe("UI elements are correct when loading the modal", () => {
@@ -78,5 +80,39 @@ describe("FilterTasksModal", () => {
 
             expect(getInputText("filter-modal-name")).toBe("");
         });
+    });
+
+    describe("FilterTasksModal is exited when escape is pressed", () => {
+        test("Exit modal when escape pressed", async () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <FilterTasksModal />
+                </Provider>
+            );
+
+            await userEvent.keyboard("{Escape}");
+
+            expect(store.getState().activeModal).toEqual(Modal.None);
+        });
+    });
+
+    test("Exit modal when exit modal button pressed", async () => {
+        const store = createStore();
+
+        store.dispatch(setActiveModal(Modal.FilterTasks));
+
+        render(
+            <Provider store={store}>
+                <FilterTasksModal />
+            </Provider>
+        );
+
+        await clickButton("exit-modal-button");
+
+        expect(store.getState().activeModal).toEqual(Modal.None);
     });
 });

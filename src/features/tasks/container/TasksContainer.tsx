@@ -5,6 +5,7 @@ import {
     Modal,
     selectActiveTaskGroup,
     selectActiveTaskGroupID,
+    selectFiltersAreDefault,
     selectOpenTaskIDs,
     selectTaskIDs,
     selectTaskListType,
@@ -36,6 +37,9 @@ export const TasksContainer = () => {
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
+
+    // Are any filters on?
+    const areFiltersOn = useSelector(selectFiltersAreDefault);
 
     const dispatch = useDispatch();
 
@@ -114,7 +118,7 @@ export const TasksContainer = () => {
 
                 <ModalButton
                     modal={Modal.FilterTasks}
-                    displayText="Filter Tasks"
+                    displayText={areFiltersOn ? "Filter Tasks" : `Filter Tasks (${tasks.length})`}
                     id="filter-tasks"
                     className="tasks-controls-button filter-tasks-button"
                 />

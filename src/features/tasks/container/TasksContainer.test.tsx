@@ -259,6 +259,28 @@ describe("TasksContainer", () => {
 
             expect(mockSetItem).toHaveBeenCalledWith("tasks", JSON.stringify(["id1"]));
         });
+
+        test("Add Task button disables filters", async () => {
+            // Set up the mock results
+            mockNanoid(nanoid, "id1");
+            mockPrompt("My Task");
+
+            const store = createStore();
+
+            store.dispatch(switchToAllTasks());
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                </Provider>
+            );
+
+            await clickButton("add-task-button");
+
+            expect(store.getState().filterSettings.name).toBe("");
+        });
     });
 
     describe("Only displays Edit Name button if in a task group", () => {
@@ -767,6 +789,34 @@ describe("TasksContainer", () => {
             await clickButton("filter-tasks-button");
 
             expect(screen.queryByTestId("filter-tasks-modal")).toBeTruthy();
+        });
+
+        test("Displays that filters are on", () => {
+            const store = createStore();
+
+            store.dispatch(setFilterName("task"));
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(getTextContent("filter-tasks-button")).toBe("Filter Tasks (0)");
+        });
+
+        test("Displays that filters are off", () => {
+            const store = createStore();
+
+            render(
+                <Provider store={store}>
+                    <TasksContainer />
+                    <ModalManager />
+                </Provider>
+            );
+
+            expect(getTextContent("filter-tasks-button")).toBe("Filter Tasks");
         });
     });
 

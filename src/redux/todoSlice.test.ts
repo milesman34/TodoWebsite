@@ -19,6 +19,7 @@ import reducer, {
     resetFilters,
     selectActiveTaskGroup,
     selectAllTasks,
+    selectFiltersAreDefault,
     selectSaveData,
     selectTaskGroupNameByID,
     selectTaskIDs,
@@ -2186,6 +2187,22 @@ describe("todoSlice", () => {
                 state = reducer(state, resetFilters());
 
                 expect(state.filterSettings.name).toBe("");
+            });
+        });
+
+        describe("selectFiltersAreDefault", () => {
+            test("Are default", () => {
+                const state = initialState;
+
+                expect(selectFiltersAreDefault(state)).toBeTruthy();
+            });
+
+            test("Changed name", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterName("task"));
+
+                expect(selectFiltersAreDefault(state)).toBeFalsy();
             });
         });
     });

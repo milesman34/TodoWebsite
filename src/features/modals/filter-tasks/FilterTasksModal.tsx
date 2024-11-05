@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    Modal,
     selectFilterName,
+    setActiveModal,
     setFilterName
 } from "../../../redux/todoSlice";
 import { ExitModalButton } from "../components/ExitModalButton";
 import { ResetFiltersButton } from "./components/ResetFiltersButton";
+import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 
 /**
  * This modal lets the user configure how tasks are filtered.
@@ -17,6 +20,8 @@ export const FilterTasksModal = () => {
 
     // Name to filter by
     const [name, setName] = useState(filterName);
+
+    useDetectKeydown("Escape", () => dispatch(setActiveModal(Modal.None)));
 
     // Extra function to call when the ResetFiltersButton is clicked to clear out the textboxes and reset other UI elements
     const resetUIElements = () => {
