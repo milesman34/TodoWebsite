@@ -14,7 +14,7 @@ describe("ResetFiltersButton", () => {
 
         render(
             <Provider store={store}>
-                <ResetFiltersButton />
+                <ResetFiltersButton className="" />
             </Provider>
         );
 
