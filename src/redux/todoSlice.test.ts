@@ -12,6 +12,7 @@ import reducer, {
     initialState,
     moveTaskToGroup,
     moveTaskToUngrouped,
+    Operator,
     pushNotification,
     removeNotificationByID,
     removeTasksInGroup,
@@ -29,6 +30,8 @@ import reducer, {
     setActiveTaskGroupName,
     setFilterDescription,
     setFilterName,
+    setFilterPriorityOperator,
+    setFilterPriorityThreshold,
     setTaskDescription,
     setTaskName,
     setTaskOpen,
@@ -1440,170 +1443,392 @@ describe("todoSlice", () => {
                 });
             });
 
-            describe("Filter by description", () => {
-                test("selectTasksInCurrentTaskList with all tasks", () => {
-                    const taskList = [
-                        Task({
-                            name: "My task",
-                            id: "id1",
-                            taskGroupID: "",
-                            description: "First"
-                        }),
+            test("Filter by description", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        description: "First"
+                    }),
 
-                        Task({
-                            name: "Not real",
-                            description: "Why",
-                            id: "id2",
-                            taskGroupID: "id1",
-                            priority: 1
-                        }),
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
 
-                        Task({
-                            name: "My Task 3",
-                            description: "Testing",
-                            id: "id3",
-                            taskGroupID: "id1",
-                            priority: 2
-                        }),
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
 
-                        Task({
-                            name: "Very real",
-                            description: "fIRST",
-                            id: "id4",
-                            taskGroupID: ""
-                        }),
+                    Task({
+                        name: "Very real",
+                        description: "fIRST",
+                        id: "id4",
+                        taskGroupID: ""
+                    }),
 
-                        Task({
-                            name: "My taSK 5",
-                            id: "id5",
-                            taskGroupID: "id3",
-                            priority: -1,
-                            description: "first"
-                        })
-                    ];
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1,
+                        description: "first"
+                    })
+                ];
 
-                    let state: TodoState = {
-                        ...initialState,
-                        tasks: taskList,
-                        taskListType: TaskListType.All
-                    };
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
 
-                    state = reducer(state, setFilterDescription("first"));
+                state = reducer(state, setFilterDescription("first"));
 
-                    expect(selectTasksInCurrentTaskList(state)).toEqual([
-                        taskList[0],
-                        taskList[3],
-                        taskList[4]
-                    ]);
-                });
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[0],
+                    taskList[3],
+                    taskList[4]
+                ]);
+            });
+            test("Filter by priority equals", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0
+                    }),
 
-                test("selectTasksInCurrentTaskList with ungrouped tasks", () => {
-                    const taskList = [
-                        Task({
-                            name: "My task",
-                            id: "id1",
-                            taskGroupID: "",
-                            description: "First"
-                        }),
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
 
-                        Task({
-                            name: "Not real",
-                            description: "Why",
-                            id: "id2",
-                            taskGroupID: "id1",
-                            priority: 1
-                        }),
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
 
-                        Task({
-                            name: "My Task 3",
-                            description: "Testing",
-                            id: "id3",
-                            taskGroupID: "id1",
-                            priority: 2
-                        }),
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1
+                    }),
 
-                        Task({
-                            name: "Very real",
-                            description: "fIRST",
-                            id: "id4",
-                            taskGroupID: ""
-                        }),
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1
+                    })
+                ];
 
-                        Task({
-                            name: "My taSK 5",
-                            id: "id5",
-                            taskGroupID: "id3",
-                            priority: -1,
-                            description: "first"
-                        })
-                    ];
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
 
-                    let state: TodoState = {
-                        ...initialState,
-                        tasks: taskList,
-                        taskListType: TaskListType.Ungrouped
-                    };
+                state = reducer(state, setFilterPriorityThreshold(1));
+                state = reducer(state, setFilterPriorityOperator(Operator.Equals));
 
-                    state = reducer(state, setFilterDescription("first"));
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[1],
+                    taskList[3]
+                ]);
+            });
 
-                    expect(selectTasksInCurrentTaskList(state)).toEqual([
-                        taskList[0],
-                        taskList[3]
-                    ]);
-                });
+            test("Filter by priority not equals", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0
+                    }),
 
-                test("selectTasksInCurrentTaskList with an active task group", () => {
-                    const taskList = [
-                        Task({
-                            name: "My task",
-                            id: "id1",
-                            taskGroupID: "",
-                            description: "First"
-                        }),
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
 
-                        Task({
-                            name: "Not real",
-                            description: "Why",
-                            id: "id2",
-                            taskGroupID: "id1",
-                            priority: 1
-                        }),
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
 
-                        Task({
-                            name: "My Task 3",
-                            description: "Testing",
-                            id: "id3",
-                            taskGroupID: "id1",
-                            priority: 2
-                        }),
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1
+                    }),
 
-                        Task({
-                            name: "Very real",
-                            description: "fIRST",
-                            id: "id4",
-                            taskGroupID: ""
-                        }),
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1
+                    })
+                ];
 
-                        Task({
-                            name: "My taSK 5",
-                            id: "id5",
-                            taskGroupID: "id3",
-                            priority: -1,
-                            description: "first"
-                        })
-                    ];
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
 
-                    let state: TodoState = {
-                        ...initialState,
-                        tasks: taskList,
-                        taskListType: TaskListType.TaskGroup,
-                        activeTaskGroup: "id1"
-                    };
+                state = reducer(state, setFilterPriorityThreshold(1));
+                state = reducer(state, setFilterPriorityOperator(Operator.NotEquals));
 
-                    state = reducer(state, setFilterDescription("first"));
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[0],
+                    taskList[2],
+                    taskList[4]
+                ]);
+            });
 
-                    expect(selectTasksInCurrentTaskList(state)).toEqual([]);
-                });
+            test("Filter by priority less than", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0
+                    }),
+
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
+
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1
+                    })
+                ];
+
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
+
+                state = reducer(state, setFilterPriorityThreshold(1));
+                state = reducer(state, setFilterPriorityOperator(Operator.LessThan));
+
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[0],
+                    taskList[4]
+                ]);
+            });
+
+            test("Filter by priority greater than", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0
+                    }),
+
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
+
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1
+                    })
+                ];
+
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
+
+                state = reducer(state, setFilterPriorityThreshold(1));
+                state = reducer(state, setFilterPriorityOperator(Operator.GreaterThan));
+
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[2]
+                ]);
+            });
+
+            test("Filter by priority less than or equal", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0
+                    }),
+
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
+
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1
+                    })
+                ];
+
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
+
+                state = reducer(state, setFilterPriorityThreshold(1));
+                state = reducer(state, setFilterPriorityOperator(Operator.LessOrEqual));
+
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[0],
+                    taskList[1],
+                    taskList[3],
+                    taskList[4]
+                ]);
+            });
+
+            test("Filter by priority less than or equal", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0
+                    }),
+
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2
+                    }),
+
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1
+                    }),
+
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1
+                    })
+                ];
+
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
+
+                state = reducer(state, setFilterPriorityThreshold(1));
+                state = reducer(state, setFilterPriorityOperator(Operator.GreaterOrEqual));
+
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[1],
+                    taskList[2],
+                    taskList[3]
+                ]);
             });
         });
 
@@ -2346,7 +2571,9 @@ describe("todoSlice", () => {
         describe("resetFilters", () => {
             const filterObject = {
                 name: "my search",
-                description: "my description"
+                description: "my description",
+                priorityThreshold: 5,
+                priorityOperator: Operator.Equals
             };
 
             test("resetFilters resets name", () => {
@@ -2363,6 +2590,22 @@ describe("todoSlice", () => {
                 state = reducer(state, resetFilters());
 
                 expect(state.filterSettings.description).toBe("");
+            });
+
+            test("resetFilters resets priority threshold", () => {
+                let state: TodoState = { ...initialState, filterSettings: filterObject };
+
+                state = reducer(state, resetFilters());
+
+                expect(state.filterSettings.priorityThreshold).toBe(0);
+            });
+
+            test("resetFilters resets priority operator", () => {
+                let state: TodoState = { ...initialState, filterSettings: filterObject };
+
+                state = reducer(state, resetFilters());
+
+                expect(state.filterSettings.priorityOperator).toBe(Operator.None);
             });
         });
 
@@ -2385,6 +2628,25 @@ describe("todoSlice", () => {
                 let state = initialState;
 
                 state = reducer(state, setFilterDescription("desc"));
+
+                expect(selectFiltersAreDefault(state)).toBeFalsy();
+            });
+
+            test("Changed priority threshold", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterPriorityThreshold(5));
+
+                expect(selectFiltersAreDefault(state)).toBeFalsy();
+            });
+
+            test("Changed priority operator", () => {
+                let state = initialState;
+
+                state = reducer(
+                    state,
+                    setFilterPriorityOperator(Operator.GreaterOrEqual)
+                );
 
                 expect(selectFiltersAreDefault(state)).toBeFalsy();
             });
