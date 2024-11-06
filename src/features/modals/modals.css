@@ -151,3 +151,29 @@
     resize: none;
     border: none;
 }
+
+.filter-modal-row-prio-input {
+    background-color: #272c45;
+    color: white;
+    font-size: 14px;
+    padding: 5px;
+    width: 25px;
+
+    resize: none;
+    border: none;
+}
+
+.filter-modal-prio-operator-select {
+    background-color: #272c45;
+    color: white;
+    font-size: 14px;
+    border: none;
+    font-family: "Inter";
+    user-select: none;
+
+    cursor: pointer;
+    width: 50px;
+    
+    text-align: center;
+}
+    

@@ -7,10 +7,13 @@ import {
 import { createStore } from "../redux/store";
 import {
     AppPage,
+    Operator,
     setActiveTaskGroup,
     setCurrentPage,
     setFilterDescription,
     setFilterName,
+    setFilterPriorityOperator,
+    setFilterPriorityThreshold,
     setTaskGroups,
     setTaskOpen,
     setTasks,
@@ -67,7 +70,7 @@ export const loadOpenTaskIDs = (): string[] => {
 export const loadCurrentPage = (): AppPage => {
     const item = sessionStorage.getItem("currentPage");
 
-    return item === null || item === "0" ? AppPage.Main : AppPage.ManageSave;
+    return item === "1" ? AppPage.ManageSave : AppPage.Main;
 };
 
 /**
@@ -76,11 +79,11 @@ export const loadCurrentPage = (): AppPage => {
 export const loadTaskSortParam = (): SortParameter => {
     const item = sessionStorage.getItem("taskSortParam");
 
-    return item === null || item === "0"
-        ? SortParameter.None
-        : item === "1"
+    return item === "1"
         ? SortParameter.Name
-        : SortParameter.Priority;
+        : item === "2"
+        ? SortParameter.Priority
+        : SortParameter.None;
 };
 
 /**
@@ -89,7 +92,7 @@ export const loadTaskSortParam = (): SortParameter => {
 export const loadTaskSortOrder = (): SortOrder => {
     const item = sessionStorage.getItem("taskSortOrder");
 
-    return item === null || item === "0" ? SortOrder.Ascending : SortOrder.Descending;
+    return item === "1" ? SortOrder.Descending : SortOrder.Ascending;
 };
 
 /**
@@ -108,6 +111,42 @@ export const loadFilterDescription = (): string => {
     const item = sessionStorage.getItem("filterDescription");
 
     return item === null ? "" : item;
+};
+
+/**
+ * Gets the filter priority threshold from session storage
+ */
+export const loadFilterPriorityThreshold = (): number => {
+    const item = sessionStorage.getItem("filterPriorityThreshold");
+
+    if (item === null) {
+        return 0;
+    }
+
+    const parsed = parseFloat(item);
+
+    return isNaN(parsed) ? 0 : parsed;
+};
+
+/**
+ * Gets the filter priority operator from session storage
+ */
+export const loadFilterPriorityOperator = (): Operator => {
+    const item = sessionStorage.getItem("filterPriorityOperator");
+
+    return item === "1"
+        ? Operator.Equals
+        : item === "2"
+        ? Operator.NotEquals
+        : item === "3"
+        ? Operator.LessThan
+        : item === "4"
+        ? Operator.GreaterThan
+        : item === "5"
+        ? Operator.LessOrEqual
+        : item === "6"
+        ? Operator.GreaterOrEqual
+        : Operator.None;
 };
 
 /**
@@ -153,6 +192,8 @@ export const setupStore = () => {
     // Gets the filtering info
     store.dispatch(setFilterName(loadFilterName()));
     store.dispatch(setFilterDescription(loadFilterDescription()));
+    store.dispatch(setFilterPriorityThreshold(loadFilterPriorityThreshold()));
+    store.dispatch(setFilterPriorityOperator(loadFilterPriorityOperator()));
 
     return store;
 };
@@ -238,6 +279,20 @@ export const saveFilterName = (name: string) => {
  */
 export const saveFilterDescription = (description: string) => {
     sessionStorage.setItem("filterDescription", description);
+};
+
+/**
+ * Saves the current filter priority threshold
+ */
+export const saveFilterPriorityThreshold = (priority: number) => {
+    sessionStorage.setItem("filterPriorityThreshold", priority.toString());
+};
+
+/**
+ * Saves the current filter priority operator
+ */
+export const saveFilterPriorityOperator = (operator: Operator) => {
+    sessionStorage.setItem("filterPriorityOperator", operator.toString());
 };
 
 /**

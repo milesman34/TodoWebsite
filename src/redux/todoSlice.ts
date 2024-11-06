@@ -673,7 +673,7 @@ export const selectFilterPriorityThreshold = (state: TodoState): number =>
 /**
  * Returns the priority operator to filter with
  */
-export const selectFilterPriorityOperator = (state: TodoState): number =>
+export const selectFilterPriorityOperator = (state: TodoState): Operator =>
     state.filterSettings.priorityOperator;
 
 /**
@@ -686,19 +686,9 @@ export const selectFilterSettings = (state: TodoState): FilterSettings =>
  * Returns if the filters are default or not
  */
 export const selectFiltersAreDefault = createSelector(
-    [
-        selectFilterName,
-        selectFilterDescription,
-        selectFilterPriorityThreshold,
-        selectFilterPriorityOperator
-    ],
-    (name, description, priorityThreshold, priorityOperator) => {
-        return (
-            name === "" &&
-            description === "" &&
-            priorityThreshold === 0 &&
-            priorityOperator === Operator.None
-        );
+    [selectFilterName, selectFilterDescription, selectFilterPriorityOperator],
+    (name, description, priorityOperator) => {
+        return name === "" && description === "" && priorityOperator === Operator.None;
     }
 );
 

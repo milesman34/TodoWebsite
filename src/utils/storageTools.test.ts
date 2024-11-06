@@ -1,11 +1,19 @@
 import { describe, expect, test } from "vitest";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { formatTaskForStorage, Task } from "../features/tasks/Task";
-import { AppPage, SortOrder, SortParameter, TaskListType } from "../redux/todoSlice";
+import {
+    AppPage,
+    Operator,
+    SortOrder,
+    SortParameter,
+    TaskListType
+} from "../redux/todoSlice";
 import {
     loadCurrentPage,
     loadFilterDescription,
     loadFilterName,
+    loadFilterPriorityOperator,
+    loadFilterPriorityThreshold,
     loadFromSaveText,
     loadOpenTaskIDs,
     loadTaskListType,
@@ -160,6 +168,76 @@ describe("storageTools", () => {
                 mockSessionStorage({ filterDescription: "task" });
 
                 expect(loadFilterDescription()).toBe("task");
+            });
+        });
+
+        describe("loadFilterPriorityThreshold", () => {
+            test("load null", () => {
+                mockSessionStorage({});
+
+                expect(loadFilterPriorityThreshold()).toBe(0);
+            });
+
+            test("load invalid", () => {
+                mockSessionStorage({ filterPriorityThreshold: "sfttw" });
+
+                expect(loadFilterPriorityThreshold()).toBe(0);
+            });
+
+            test("load valid", () => {
+                mockSessionStorage({ filterPriorityThreshold: "5" });
+
+                expect(loadFilterPriorityThreshold()).toBe(5);
+            });
+        });
+
+        describe("loadFilterPriorityOperator", () => {
+            test("load null", () => {
+                mockSessionStorage({});
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.None);
+            });
+
+            test("load none", () => {
+                mockSessionStorage({ filterPriorityOperator: "0" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.None);
+            });
+
+            test("load equals", () => {
+                mockSessionStorage({ filterPriorityOperator: "1" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.Equals);
+            });
+
+            test("load not equals", () => {
+                mockSessionStorage({ filterPriorityOperator: "2" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.NotEquals);
+            });
+
+            test("load less", () => {
+                mockSessionStorage({ filterPriorityOperator: "3" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.LessThan);
+            });
+
+            test("load greater", () => {
+                mockSessionStorage({ filterPriorityOperator: "4" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.GreaterThan);
+            });
+
+            test("load less or equal", () => {
+                mockSessionStorage({ filterPriorityOperator: "5" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.LessOrEqual);
+            });
+
+            test("load greater or equal", () => {
+                mockSessionStorage({ filterPriorityOperator: "6" });
+
+                expect(loadFilterPriorityOperator()).toEqual(Operator.GreaterOrEqual);
             });
         });
     });
@@ -395,6 +473,88 @@ describe("storageTools", () => {
             const state = setupStore().getState();
 
             expect(state.filterSettings.description).toBe("task");
+        });
+
+        test("setupStore sets the task filter priority", () => {
+            mockSessionStorage({
+                filterPriorityThreshold: "3"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityThreshold).toBe(3);
+        });
+
+        test("setupStore sets the task filter priority operator to none", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "0"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(Operator.None);
+        });
+
+        test("setupStore sets the task filter priority operator to equals", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "1"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(Operator.Equals);
+        });
+
+        test("setupStore sets the task filter priority operator to not equals", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "2"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(Operator.NotEquals);
+        });
+
+        test("setupStore sets the task filter priority operator to less", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "3"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(Operator.LessThan);
+        });
+
+        test("setupStore sets the task filter priority operator to greater", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "4"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(Operator.GreaterThan);
+        });
+
+        test("setupStore sets the task filter priority operator to less or equal", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "5"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(Operator.LessOrEqual);
+        });
+
+        test("setupStore sets the task filter priority operator to greater or equal", () => {
+            mockSessionStorage({
+                filterPriorityOperator: "6"
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.priorityOperator).toEqual(
+                Operator.GreaterOrEqual
+            );
         });
     });
 

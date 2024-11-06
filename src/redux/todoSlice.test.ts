@@ -2632,12 +2632,12 @@ describe("todoSlice", () => {
                 expect(selectFiltersAreDefault(state)).toBeFalsy();
             });
 
-            test("Changed priority threshold", () => {
+            test("Changed priority threshold is still default", () => {
                 let state = initialState;
 
                 state = reducer(state, setFilterPriorityThreshold(5));
 
-                expect(selectFiltersAreDefault(state)).toBeFalsy();
+                expect(selectFiltersAreDefault(state)).toBeTruthy();
             });
 
             test("Changed priority operator", () => {
