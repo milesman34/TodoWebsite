@@ -43,8 +43,10 @@ export const clickButton = async (testID: string) =>
  * @param text
  * @returns
  */
-export const enterText = async (testID: string, text: string) =>
-    userEvent.type(screen.getByTestId(testID), text);
+export const enterText = async (testID: string, text: string) => {
+    await userEvent.clear(screen.getByTestId(testID));
+    await userEvent.type(screen.getByTestId(testID), text);
+}
 
 /**
  * Gets the text content of the element with the given test ID, or null if the element does not exist
@@ -55,7 +57,7 @@ export const getTextContent = (testID: string): string | null =>
     screen.getByTestId(testID).textContent;
 
 /**
- * Gets the text content of the input with the given test ID, or null if the element does not exist
+ * Gets the text content of the input with the given test ID
  * @param testID
  * @returns
  */
@@ -63,7 +65,18 @@ export const getInputText = (testID: string): string => {
     const element = screen.getByTestId(testID) as HTMLInputElement;
 
     return element.value;
-}
+};
+
+/**
+ * Gets the text content of the selected value of the select element with the given test ID
+ * @param testID
+ * @returns
+ */
+export const getSelectText = (testID: string): string => {
+    const element = screen.getByTestId(testID) as HTMLSelectElement;
+
+    return element.value;
+};
 
 /**
  * Gets the number of children within the given test ID.

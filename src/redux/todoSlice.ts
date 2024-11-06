@@ -49,6 +49,19 @@ export enum SortOrder {
 }
 
 /**
+ * Represents a comparison operator for filtering
+ */
+export enum Operator {
+    None, // No filtering based on priority
+    Equals,
+    NotEquals,
+    LessThan,
+    GreaterThan,
+    LessOrEqual,
+    GreaterOrEqual
+}
+
+/**
  * Represents the filter settings for the app
  */
 export type FilterSettings = {
@@ -57,6 +70,12 @@ export type FilterSettings = {
 
     // What description should be searched for? (empty means don't filter by description)
     description: string;
+
+    // What should be the priority threshold for filtering?
+    priorityThreshold: number;
+
+    // What should be the operator used for priority filtering?
+    priorityOperator: Operator;
 };
 
 /**
@@ -110,7 +129,9 @@ export const initialState: TodoState = {
     taskSortOrder: SortOrder.Ascending,
     filterSettings: {
         name: "",
-        description: ""
+        description: "",
+        priorityThreshold: 0,
+        priorityOperator: Operator.None
     }
 };
 
@@ -540,6 +561,8 @@ const todoSlice = createSlice({
         resetFilters(state: TodoState) {
             state.filterSettings.name = "";
             state.filterSettings.description = "";
+            state.filterSettings.priorityThreshold = 0;
+            state.filterSettings.priorityOperator = Operator.None;
         },
 
         /**
@@ -554,6 +577,20 @@ const todoSlice = createSlice({
          */
         setFilterDescription(state: TodoState, action: PayloadAction<string>) {
             state.filterSettings.description = action.payload;
+        },
+
+        /**
+         * Sets the priority threshold to filter by
+         */
+        setFilterPriorityThreshold(state: TodoState, action: PayloadAction<number>) {
+            state.filterSettings.priorityThreshold = action.payload;
+        },
+
+        /**
+         * Sets the priority operator for filtering
+         */
+        setFilterPriorityOperator(state: TodoState, action: PayloadAction<Operator>) {
+            state.filterSettings.priorityOperator = action.payload;
         }
 
         // #endregion
@@ -582,6 +619,8 @@ export const {
     setCurrentPage,
     setFilterDescription,
     setFilterName,
+    setFilterPriorityOperator,
+    setFilterPriorityThreshold,
     setTaskDescription,
     setTaskGroups,
     setTaskName,
@@ -626,6 +665,18 @@ export const selectFilterDescription = (state: TodoState): string =>
     state.filterSettings.description;
 
 /**
+ * Returns the priority threshold to filter by
+ */
+export const selectFilterPriorityThreshold = (state: TodoState): number =>
+    state.filterSettings.priorityThreshold;
+
+/**
+ * Returns the priority operator to filter with
+ */
+export const selectFilterPriorityOperator = (state: TodoState): Operator =>
+    state.filterSettings.priorityOperator;
+
+/**
  * Returns the full filter settings
  */
 export const selectFilterSettings = (state: TodoState): FilterSettings =>
@@ -635,9 +686,9 @@ export const selectFilterSettings = (state: TodoState): FilterSettings =>
  * Returns if the filters are default or not
  */
 export const selectFiltersAreDefault = createSelector(
-    [selectFilterName, selectFilterDescription],
-    (name, description) => {
-        return name === "" && description === "";
+    [selectFilterName, selectFilterDescription, selectFilterPriorityOperator],
+    (name, description, priorityOperator) => {
+        return name === "" && description === "" && priorityOperator === Operator.None;
     }
 );
 
@@ -724,6 +775,20 @@ export const selectCountTotalTasksInList = createSelector(
         tasksInCurrentTaskList(taskListType, tasks, activeTaskGroupID).length
 );
 
+// Maps an operator to a corresponding test function
+type TestFunction = (a: number, b: number) => boolean;
+
+const operatorMap: Record<Operator, TestFunction> = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    [Operator.None]: (_a, _b) => true,
+    [Operator.Equals]: (a, b) => a === b,
+    [Operator.NotEquals]: (a, b) => a !== b,
+    [Operator.LessThan]: (a, b) => a < b,
+    [Operator.GreaterThan]: (a, b) => a > b,
+    [Operator.LessOrEqual]: (a, b) => a <= b,
+    [Operator.GreaterOrEqual]: (a, b) => a >= b
+};
+
 // Filters the tasks based on the filter settings (as a helper for selectTasksInCurrentTaskList)
 const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[] => {
     const lowerName = settings.name.toLowerCase().trim();
@@ -732,7 +797,11 @@ const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[
     return tasks.filter(
         (task) =>
             task.name.toLowerCase().includes(lowerName) &&
-            task.description.toLowerCase().includes(lowerDesc)
+            task.description.toLowerCase().includes(lowerDesc) &&
+            operatorMap[settings.priorityOperator](
+                task.priority,
+                settings.priorityThreshold
+            )
     );
 };
 

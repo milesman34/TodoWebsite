@@ -6,9 +6,12 @@ import { createStore } from "../../../redux/store";
 import {
     addTask,
     addTaskGroup,
+    Operator,
     setActiveTaskGroup,
     setFilterDescription,
     setFilterName,
+    setFilterPriorityOperator,
+    setFilterPriorityThreshold,
     setTasks,
     switchToAllTasks,
     switchToUngroupedTasks
@@ -739,6 +742,8 @@ describe("TasksContainer", () => {
 
             store.dispatch(setFilterName("task"));
             store.dispatch(setFilterDescription("desc"));
+            store.dispatch(setFilterPriorityThreshold(5));
+            store.dispatch(setFilterPriorityOperator(Operator.Equals));
 
             render(
                 <Provider store={store}>
@@ -748,6 +753,8 @@ describe("TasksContainer", () => {
 
             expect(mockSetItem).toHaveBeenCalledWith("filterName", "task");
             expect(mockSetItem).toHaveBeenCalledWith("filterDescription", "desc");
+            expect(mockSetItem).toHaveBeenCalledWith("filterPriorityThreshold", "5");
+            expect(mockSetItem).toHaveBeenCalledWith("filterPriorityOperator", "1");
         });
 
         test("Reset filters button affects session storage", async () => {
@@ -756,6 +763,8 @@ describe("TasksContainer", () => {
 
             store.dispatch(setFilterName("task"));
             store.dispatch(setFilterDescription("desc"));
+            store.dispatch(setFilterPriorityThreshold(5));
+            store.dispatch(setFilterPriorityOperator(Operator.Equals));
 
             render(
                 <Provider store={store}>
@@ -767,6 +776,8 @@ describe("TasksContainer", () => {
 
             expect(mockSetItem).toHaveBeenCalledWith("filterName", "");
             expect(mockSetItem).toHaveBeenCalledWith("filterDescription", "");
+            expect(mockSetItem).toHaveBeenCalledWith("filterPriorityThreshold", "0");
+            expect(mockSetItem).toHaveBeenCalledWith("filterPriorityOperator", "0");
         });
     });
 
