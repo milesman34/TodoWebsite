@@ -118,6 +118,16 @@ export const tasksSchema: Schema = {
 };
 
 /**
+ * Schema for a list of tags to filter by
+ */
+export const filterTagsSchema: Schema = {
+    type: "array",
+    children: {
+        type: "string"
+    }
+};
+
+/**
  * Validates an object with the schema, returning if it matches the specified type
  */
 export const validateWithSchema = (object: unknown, schema: Schema): boolean => {

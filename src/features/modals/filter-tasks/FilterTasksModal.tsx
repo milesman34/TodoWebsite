@@ -49,6 +49,8 @@ export const FilterTasksModal = () => {
     const filterPriority = useSelector(selectFilterPriorityThreshold);
     const filterPriorityOperator = useSelector(selectFilterPriorityOperator);
 
+    // const filterTags
+
     // Name to filter by
     const [name, setName] = useState(filterName);
 
