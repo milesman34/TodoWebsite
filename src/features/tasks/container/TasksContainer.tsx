@@ -10,6 +10,7 @@ import {
     selectFilterPriorityOperator,
     selectFilterPriorityThreshold,
     selectFiltersAreDefault,
+    selectFilterTags,
     selectOpenTaskIDs,
     selectTaskIDs,
     selectTaskListType,
@@ -21,6 +22,7 @@ import {
     saveFilterName,
     saveFilterPriorityOperator,
     saveFilterPriorityThreshold,
+    saveFilterTags,
     saveOpenTaskIDs,
     saveTaskIDs
 } from "../../../utils/storageTools";
@@ -49,6 +51,7 @@ export const TasksContainer = () => {
     const filterDescription = useSelector(selectFilterDescription);
     const filterPriorityThreshold = useSelector(selectFilterPriorityThreshold);
     const filterPriorityOperator = useSelector(selectFilterPriorityOperator);
+    const filterTags = useSelector(selectFilterTags);
 
     // Are we in a task group?
     const inTaskGroup = activeTaskGroup !== undefined;
@@ -99,6 +102,10 @@ export const TasksContainer = () => {
     useEffect(() => {
         saveFilterPriorityOperator(filterPriorityOperator);
     }, [filterPriorityOperator]);
+
+    useEffect(() => {
+        saveFilterTags(filterTags);
+    }, [filterTags]);
 
     return (
         <div id="tasks-container">

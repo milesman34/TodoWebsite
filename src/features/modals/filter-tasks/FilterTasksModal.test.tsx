@@ -10,14 +10,17 @@ import {
     setFilterDescription,
     setFilterName,
     setFilterPriorityOperator,
-    setFilterPriorityThreshold
+    setFilterPriorityThreshold,
+    setFilterTags
 } from "../../../redux/todoSlice";
 import {
     clickButton,
     enterText,
     getInputText,
-    getSelectText as getSelectValue
+    getSelectText as getSelectValue,
+    mockPrompt
 } from "../../../utils/testUtils";
+import { TasksContainer } from "../../tasks/container/TasksContainer";
 import { ModalManager } from "../ModalManager";
 import { FilterTasksModal } from "./FilterTasksModal";
 
@@ -85,7 +88,7 @@ describe("FilterTasksModal", () => {
     });
 
     describe("Setting filters", () => {
-        test("Set filters button sets filter for name", async () => {
+        test("Update filter for name", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -98,12 +101,10 @@ describe("FilterTasksModal", () => {
 
             await enterText("filter-modal-name", "task");
 
-            await clickButton("set-filters-button");
-
             expect(store.getState().filterSettings.name).toBe("task");
         });
 
-        test("Set filters button sets filter for description", async () => {
+        test("Update filter for description", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -116,12 +117,10 @@ describe("FilterTasksModal", () => {
 
             await enterText("filter-modal-description", "desc");
 
-            await clickButton("set-filters-button");
-
             expect(store.getState().filterSettings.description).toBe("desc");
         });
 
-        test("Set filters button sets filter for priority", async () => {
+        test("Update filter for priority", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -134,12 +133,10 @@ describe("FilterTasksModal", () => {
 
             await enterText("filter-modal-priority", "3");
 
-            await clickButton("set-filters-button");
-
             expect(store.getState().filterSettings.priorityThreshold).toBe(3);
         });
 
-        test("Set filters button sets filter for priority negative number", async () => {
+        test("Update filter for priority w/ negative number", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -152,12 +149,10 @@ describe("FilterTasksModal", () => {
 
             await enterText("filter-modal-priority", "-5");
 
-            await clickButton("set-filters-button");
-
             expect(store.getState().filterSettings.priorityThreshold).toBe(-5);
         });
 
-        test("Set filters button resets filter for priority if it is not a number", async () => {
+        test("Update filter for priority with invalid number resets value to 0", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -170,13 +165,11 @@ describe("FilterTasksModal", () => {
             );
 
             await enterText("filter-modal-priority", "twetw");
-
-            await clickButton("set-filters-button");
 
             expect(store.getState().filterSettings.priorityThreshold).toBe(0);
         });
 
-        test("Set filters button resets the UI element for priority if it is not a number", async () => {
+        test("Update filter for priority with invalid number resets the GUI after exiting it", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -184,18 +177,21 @@ describe("FilterTasksModal", () => {
 
             render(
                 <Provider store={store}>
+                    <TasksContainer />
                     <ModalManager />
                 </Provider>
             );
 
             await enterText("filter-modal-priority", "twetw");
 
-            await clickButton("set-filters-button");
+            await clickButton("exit-modal-button");
+
+            await clickButton("filter-tasks-button");
 
             expect(getInputText("filter-modal-priority")).toBe("0");
         });
 
-        test("Set filters button sets filter priority operator", async () => {
+        test("Update filter for priority operator updates the operator", async () => {
             const store = createStore();
 
             store.dispatch(setActiveModal(Modal.FilterTasks));
@@ -212,8 +208,6 @@ describe("FilterTasksModal", () => {
                 }
             });
 
-            await clickButton("set-filters-button");
-
             expect(store.getState().filterSettings.priorityOperator).toEqual(
                 Operator.LessOrEqual
             );
@@ -229,6 +223,7 @@ describe("FilterTasksModal", () => {
             store.dispatch(setFilterDescription("desc"));
             store.dispatch(setFilterPriorityThreshold(10));
             store.dispatch(setFilterPriorityOperator(Operator.Equals));
+            store.dispatch(setFilterTags(["A", "B"]));
 
             render(
                 <Provider store={store}>
@@ -244,6 +239,7 @@ describe("FilterTasksModal", () => {
             expect(store.getState().filterSettings.priorityOperator).toEqual(
                 Operator.None
             );
+            expect(store.getState().filterSettings.tags).toEqual([]);
         });
 
         test("Reset filters button resets UI elements", async () => {
@@ -267,6 +263,94 @@ describe("FilterTasksModal", () => {
             expect(getInputText("filter-modal-description")).toBe("");
             expect(getInputText("filter-modal-priority")).toBe("0");
             expect(getSelectValue("filter-modal-prio-operator-select")).toBe("");
+        });
+    });
+
+    describe("Update the filter tags", () => {
+        test("Component displays tags", () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+            store.dispatch(setFilterTags(["A", "B", "C"]));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            const children = screen.getByTestId("filter-tags-list").children;
+
+            expect(children.length).toBe(3);
+
+            expect(children[0].textContent).toBe("A");
+            expect(children[1].textContent).toBe("B");
+            expect(children[2].textContent).toBe("C");
+        });
+
+        test("Add a new tag", async () => {
+            mockPrompt("A");
+
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("add-filter-tag-button");
+
+            const children = screen.getByTestId("filter-tags-list").children;
+
+            expect(children.length).toBe(1);
+            expect(children[0].textContent).toBe("A");
+
+            expect(store.getState().filterSettings.tags).toEqual(["A"]);
+        });
+
+        test("Remove a tag", async () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+            store.dispatch(setFilterTags(["A"]));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("filter-tag-button-A");
+
+            const children = screen.getByTestId("filter-tags-list").children;
+
+            expect(children.length).toBe(0);
+
+            expect(store.getState().filterSettings.tags).toEqual([]);
+        });
+
+        test("Reset tags", async () => {
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+            store.dispatch(setFilterTags(["A", "B"]));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("reset-filter-tags-button");
+
+            const children = screen.getByTestId("filter-tags-list").children;
+
+            expect(children.length).toBe(0);
+
+            expect(store.getState().filterSettings.tags).toEqual([]);
         });
     });
 
