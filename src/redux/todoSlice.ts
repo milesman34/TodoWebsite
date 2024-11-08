@@ -76,6 +76,9 @@ export type FilterSettings = {
 
     // What should be the operator used for priority filtering?
     priorityOperator: Operator;
+
+    // Tags to filter by
+    tags: string[];
 };
 
 /**
@@ -131,7 +134,8 @@ export const initialState: TodoState = {
         name: "",
         description: "",
         priorityThreshold: 0,
-        priorityOperator: Operator.None
+        priorityOperator: Operator.None,
+        tags: []
     }
 };
 
@@ -563,6 +567,7 @@ const todoSlice = createSlice({
             state.filterSettings.description = "";
             state.filterSettings.priorityThreshold = 0;
             state.filterSettings.priorityOperator = Operator.None;
+            state.filterSettings.tags = [];
         },
 
         /**
@@ -591,6 +596,30 @@ const todoSlice = createSlice({
          */
         setFilterPriorityOperator(state: TodoState, action: PayloadAction<Operator>) {
             state.filterSettings.priorityOperator = action.payload;
+        },
+
+        /**
+         * Sets the tags for filtering
+         */
+        setFilterTags(state: TodoState, action: PayloadAction<string[]>) {
+            state.filterSettings.tags = action.payload;
+        },
+
+        /**
+         * Adds a tag to the filter
+         */
+        addFilterTag(state: TodoState, action: PayloadAction<string>) {
+            if (!state.filterSettings.tags.includes(action.payload))
+                state.filterSettings.tags.push(action.payload);
+        },
+
+        /**
+         * Removes a tag from the filter
+         */
+        removeFilterTag(state: TodoState, action: PayloadAction<string>) {
+            state.filterSettings.tags = state.filterSettings.tags.filter(
+                (tag) => tag !== action.payload
+            );
         }
 
         // #endregion
@@ -599,6 +628,7 @@ const todoSlice = createSlice({
 
 // Export the actions
 export const {
+    addFilterTag,
     addTask,
     addTaskGroup,
     addTaskPriority,
@@ -608,6 +638,7 @@ export const {
     moveTaskToGroup,
     moveTaskToUngrouped,
     pushNotification,
+    removeFilterTag,
     removeNotificationByID,
     removeTasksInGroup,
     removeTaskTag,
@@ -621,6 +652,7 @@ export const {
     setFilterName,
     setFilterPriorityOperator,
     setFilterPriorityThreshold,
+    setFilterTags,
     setTaskDescription,
     setTaskGroups,
     setTaskName,
@@ -677,6 +709,11 @@ export const selectFilterPriorityOperator = (state: TodoState): Operator =>
     state.filterSettings.priorityOperator;
 
 /**
+ * Returns the tags to filter with
+ */
+export const selectFilterTags = (state: TodoState): string[] => state.filterSettings.tags;
+
+/**
  * Returns the full filter settings
  */
 export const selectFilterSettings = (state: TodoState): FilterSettings =>
@@ -686,9 +723,19 @@ export const selectFilterSettings = (state: TodoState): FilterSettings =>
  * Returns if the filters are default or not
  */
 export const selectFiltersAreDefault = createSelector(
-    [selectFilterName, selectFilterDescription, selectFilterPriorityOperator],
-    (name, description, priorityOperator) => {
-        return name === "" && description === "" && priorityOperator === Operator.None;
+    [
+        selectFilterName,
+        selectFilterDescription,
+        selectFilterPriorityOperator,
+        selectFilterTags
+    ],
+    (name, description, priorityOperator, tags) => {
+        return (
+            name === "" &&
+            description === "" &&
+            priorityOperator === Operator.None &&
+            tags.length === 0
+        );
     }
 );
 
@@ -801,7 +848,9 @@ const filterTasksWithSettings = (tasks: Task[], settings: FilterSettings): Task[
             operatorMap[settings.priorityOperator](
                 task.priority,
                 settings.priorityThreshold
-            )
+            ) &&
+            // Check to make sure all tags in the settings appear in the task's tags
+            settings.tags.filter((tag) => !task.tags.includes(tag)).length === 0
     );
 };
 
@@ -884,6 +933,23 @@ export const selectTaskIDs = createSelector([selectAllTasks], (tasks) =>
 export const selectOpenTaskIDs = createSelector([selectAllTasks], (tasks) =>
     tasks.filter((task) => task.isOpen).map((task) => task.id)
 );
+
+/**
+ * Selects the alphabetically sorted list of all tags
+ */
+export const selectAllTags = createSelector([selectAllTasks], (tasks) => {
+    const all = new Set<string>();
+
+    tasks.forEach((task) => {
+        task.tags.forEach((tag) => all.add(tag));
+    });
+
+    const values = Array.from(all);
+
+    values.sort();
+
+    return values;
+});
 
 // #endregion
 

@@ -14,6 +14,7 @@ import {
     setFilterName,
     setFilterPriorityOperator,
     setFilterPriorityThreshold,
+    setFilterTags,
     setTaskGroups,
     setTaskOpen,
     setTasks,
@@ -26,6 +27,7 @@ import {
     TaskListType
 } from "../redux/todoSlice";
 import {
+    filterTagsSchema,
     taskGroupSchema,
     taskIDsSchema,
     taskSchema,
@@ -150,6 +152,25 @@ export const loadFilterPriorityOperator = (): Operator => {
 };
 
 /**
+ * Gets the list of tags to filter by
+ */
+export const loadFilterTags = (): string[] => {
+    const item = sessionStorage.getItem("filterTags");
+
+    if (item === null) {
+        return [];
+    }
+
+    try {
+        const tags = JSON.parse(item);
+
+        return validateWithSchema(tags, filterTagsSchema) ? tags : [];
+    } catch {
+        return [];
+    }
+};
+
+/**
  * Sets up a store for the app with important data from localStorage and sessionStorage
  */
 export const setupStore = () => {
@@ -194,6 +215,8 @@ export const setupStore = () => {
     store.dispatch(setFilterDescription(loadFilterDescription()));
     store.dispatch(setFilterPriorityThreshold(loadFilterPriorityThreshold()));
     store.dispatch(setFilterPriorityOperator(loadFilterPriorityOperator()));
+
+    store.dispatch(setFilterTags(loadFilterTags()));
 
     return store;
 };
@@ -293,6 +316,13 @@ export const saveFilterPriorityThreshold = (priority: number) => {
  */
 export const saveFilterPriorityOperator = (operator: Operator) => {
     sessionStorage.setItem("filterPriorityOperator", operator.toString());
+};
+
+/**
+ * Saves the current filter tags
+ */
+export const saveFilterTags = (tags: string[]) => {
+    sessionStorage.setItem("filterTags", JSON.stringify(tags));
 };
 
 /**

@@ -2,6 +2,7 @@ import { AppNotification } from "../features/notifications/AppNotification";
 import { TaskGroup } from "../features/taskGroups/TaskGroup";
 import { Task } from "../features/tasks/Task";
 import reducer, {
+    addFilterTag,
     addTask,
     addTaskGroup,
     addTaskPriority,
@@ -14,11 +15,13 @@ import reducer, {
     moveTaskToUngrouped,
     Operator,
     pushNotification,
+    removeFilterTag,
     removeNotificationByID,
     removeTasksInGroup,
     removeTaskTag,
     resetFilters,
     selectActiveTaskGroup,
+    selectAllTags,
     selectAllTasks,
     selectFiltersAreDefault,
     selectSaveData,
@@ -32,6 +35,7 @@ import reducer, {
     setFilterName,
     setFilterPriorityOperator,
     setFilterPriorityThreshold,
+    setFilterTags,
     setTaskDescription,
     setTaskName,
     setTaskOpen,
@@ -1713,9 +1717,7 @@ describe("todoSlice", () => {
                 state = reducer(state, setFilterPriorityThreshold(1));
                 state = reducer(state, setFilterPriorityOperator(Operator.GreaterThan));
 
-                expect(selectTasksInCurrentTaskList(state)).toEqual([
-                    taskList[2]
-                ]);
+                expect(selectTasksInCurrentTaskList(state)).toEqual([taskList[2]]);
             });
 
             test("Filter by priority less than or equal", () => {
@@ -1822,11 +1824,73 @@ describe("todoSlice", () => {
                 };
 
                 state = reducer(state, setFilterPriorityThreshold(1));
-                state = reducer(state, setFilterPriorityOperator(Operator.GreaterOrEqual));
+                state = reducer(
+                    state,
+                    setFilterPriorityOperator(Operator.GreaterOrEqual)
+                );
 
                 expect(selectTasksInCurrentTaskList(state)).toEqual([
                     taskList[1],
                     taskList[2],
+                    taskList[3]
+                ]);
+            });
+
+            test("Filter by tags", () => {
+                const taskList = [
+                    Task({
+                        name: "My task",
+                        id: "id1",
+                        taskGroupID: "",
+                        priority: 0,
+                        tags: ["A"]
+                    }),
+
+                    Task({
+                        name: "Not real",
+                        description: "Why",
+                        id: "id2",
+                        taskGroupID: "id1",
+                        priority: 1,
+                        tags: ["A", "B"]
+                    }),
+
+                    Task({
+                        name: "My Task 3",
+                        description: "Testing",
+                        id: "id3",
+                        taskGroupID: "id1",
+                        priority: 2,
+                        tags: ["C"]
+                    }),
+
+                    Task({
+                        name: "Very real",
+                        id: "id4",
+                        taskGroupID: "",
+                        priority: 1,
+                        tags: ["A", "B", "C"]
+                    }),
+
+                    Task({
+                        name: "My taSK 5",
+                        id: "id5",
+                        taskGroupID: "id3",
+                        priority: -1,
+                        tags: ["B"]
+                    })
+                ];
+
+                let state: TodoState = {
+                    ...initialState,
+                    tasks: taskList,
+                    taskListType: TaskListType.All
+                };
+
+                state = reducer(state, setFilterTags(["A", "B"]));
+
+                expect(selectTasksInCurrentTaskList(state)).toEqual([
+                    taskList[1],
                     taskList[3]
                 ]);
             });
@@ -2463,6 +2527,49 @@ describe("todoSlice", () => {
                 expect(selectTaskIDs(state)).toEqual(["id1", "id2"]);
             });
         });
+
+        describe("selectAllTags", () => {
+            test("No tags", () => {
+                const state: TodoState = {
+                    ...initialState,
+                    tasks: [
+                        Task({
+                            id: "id0",
+                            name: "My task"
+                        })
+                    ]
+                };
+
+                expect(selectAllTags(state)).toEqual([]);
+            });
+
+            test("Has tags", () => {
+                const state: TodoState = {
+                    ...initialState,
+                    tasks: [
+                        Task({
+                            id: "id0",
+                            name: "My task",
+                            tags: ["Mine"]
+                        }),
+
+                        Task({
+                            id: "id1",
+                            name: "Another task",
+                            tags: ["Ok"]
+                        }),
+
+                        Task({
+                            id: "id2",
+                            name: "3",
+                            tags: ["Great", "Mine"]
+                        })
+                    ]
+                };
+
+                expect(selectAllTags(state)).toEqual(["Great", "Mine", "Ok"]);
+            });
+        });
     });
 
     describe("notifications", () => {
@@ -2573,7 +2680,8 @@ describe("todoSlice", () => {
                 name: "my search",
                 description: "my description",
                 priorityThreshold: 5,
-                priorityOperator: Operator.Equals
+                priorityOperator: Operator.Equals,
+                tags: ["A tag"]
             };
 
             test("resetFilters resets name", () => {
@@ -2606,6 +2714,14 @@ describe("todoSlice", () => {
                 state = reducer(state, resetFilters());
 
                 expect(state.filterSettings.priorityOperator).toBe(Operator.None);
+            });
+
+            test("resetFilters resets priority tags", () => {
+                let state: TodoState = { ...initialState, filterSettings: filterObject };
+
+                state = reducer(state, resetFilters());
+
+                expect(state.filterSettings.tags).toEqual([]);
             });
         });
 
@@ -2649,6 +2765,48 @@ describe("todoSlice", () => {
                 );
 
                 expect(selectFiltersAreDefault(state)).toBeFalsy();
+            });
+
+            test("Changed priority tags", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterTags(["This"]));
+
+                expect(selectFiltersAreDefault(state)).toBeFalsy();
+            });
+        });
+
+        describe("addFilterTag", () => {
+            test("Add filter tag when not present", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterTags(["A", "B"]));
+
+                state = reducer(state, addFilterTag("C"));
+
+                expect(state.filterSettings.tags).toEqual(["A", "B", "C"]);
+            });
+
+            test("Add filter tag when present", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterTags(["A", "B"]));
+
+                state = reducer(state, addFilterTag("A"));
+
+                expect(state.filterSettings.tags).toEqual(["A", "B"]);
+            });
+        });
+
+        describe("removeFilterTag", () => {
+            test("Remove filter tag", () => {
+                let state = initialState;
+
+                state = reducer(state, setFilterTags(["A", "B"]));
+
+                state = reducer(state, removeFilterTag("A"));
+
+                expect(state.filterSettings.tags).toEqual(["B"]);
             });
         });
     });

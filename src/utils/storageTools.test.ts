@@ -14,6 +14,7 @@ import {
     loadFilterName,
     loadFilterPriorityOperator,
     loadFilterPriorityThreshold,
+    loadFilterTags,
     loadFromSaveText,
     loadOpenTaskIDs,
     loadTaskListType,
@@ -51,6 +52,7 @@ describe("storageTools", () => {
                 expect(loadTaskListType()).toEqual(TaskListType.TaskGroup);
             });
         });
+
         describe("loadOpenTaskIDs", () => {
             test("load null", () => {
                 mockSessionStorage({});
@@ -238,6 +240,32 @@ describe("storageTools", () => {
                 mockSessionStorage({ filterPriorityOperator: "6" });
 
                 expect(loadFilterPriorityOperator()).toEqual(Operator.GreaterOrEqual);
+            });
+        });
+
+        describe("loadFilterTags", () => {
+            test("load null", () => {
+                mockSessionStorage({});
+
+                expect(loadFilterTags()).toEqual([]);
+            });
+
+            test("load invalid", () => {
+                mockSessionStorage({ filterTags: "[[[" });
+
+                expect(loadFilterTags()).toEqual([]);
+            });
+
+            test("load invalid with schema", () => {
+                mockSessionStorage({ filterTags: "[3, 5]" });
+
+                expect(loadFilterTags()).toEqual([]);
+            });
+
+            test("load valid", () => {
+                mockSessionStorage({ filterTags: JSON.stringify(["id1", "id2", "id3"]) });
+
+                expect(loadFilterTags()).toEqual(["id1", "id2", "id3"]);
             });
         });
     });
@@ -556,6 +584,32 @@ describe("storageTools", () => {
                 Operator.GreaterOrEqual
             );
         });
+
+        test("setupStore sets the task filter tags", () => {
+            mockLocalStorage({
+                tasks: JSON.stringify([
+                    Task({
+                        id: "id0",
+                        name: "A",
+                        tags: ["A"]
+                    }),
+
+                    Task({
+                        id: "id1",
+                        name: "B",
+                        tags: ["B"]
+                    })
+                ])
+            });
+
+            mockSessionStorage({
+                filterTags: JSON.stringify(["A", "B"])
+            });
+
+            const state = setupStore().getState();
+
+            expect(state.filterSettings.tags).toEqual(["A", "B"]);
+        });
     });
 
     describe("resetSaveData", () => {
@@ -614,7 +668,7 @@ describe("storageTools", () => {
 
         test("Resets open tasks in sessionStorage", () => {
             const mockSetItem = mockSessionStorage({
-                taskListType: JSON.stringify(["id1", "id2"])
+                openTasks: JSON.stringify(["id1", "id2"])
             });
 
             resetSaveData([]);

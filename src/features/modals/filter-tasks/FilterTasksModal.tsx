@@ -2,20 +2,24 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 import {
+    addFilterTag,
     Modal,
     Operator,
+    resetFilters,
     selectFilterDescription,
     selectFilterName,
     selectFilterPriorityOperator,
     selectFilterPriorityThreshold,
+    selectFilterTags,
     setActiveModal,
     setFilterDescription,
     setFilterName,
     setFilterPriorityOperator,
-    setFilterPriorityThreshold
+    setFilterPriorityThreshold,
+    setFilterTags
 } from "../../../redux/todoSlice";
 import { ExitModalButton } from "../components/ExitModalButton";
-import { ResetFiltersButton } from "./components/ResetFiltersButton";
+import { FilterTag } from "./components/FilterTag";
 
 // Map priority operators to text and vice versa
 const operatorToText: Record<Operator, string> = {
@@ -44,50 +48,26 @@ const textToOperator: Record<string, Operator> = {
 export const FilterTasksModal = () => {
     const dispatch = useDispatch();
 
-    const filterName = useSelector(selectFilterName);
-    const filterDescription = useSelector(selectFilterDescription);
-    const filterPriority = useSelector(selectFilterPriorityThreshold);
-    const filterPriorityOperator = useSelector(selectFilterPriorityOperator);
-
-    // Name to filter by
-    const [name, setName] = useState(filterName);
-
-    // Description to filter by
-    const [description, setDescription] = useState(filterDescription);
+    const name = useSelector(selectFilterName);
+    const description = useSelector(selectFilterDescription);
+    const priority = useSelector(selectFilterPriorityThreshold);
+    const priorityOperator = useSelector(selectFilterPriorityOperator);
+    const filterTags = useSelector(selectFilterTags);
 
     // Priority to filter by
-    const [priority, setPriority] = useState(filterPriority.toString());
-
-    // Priority operator to use
-    const [priorityOperator, setPriorityOperator] = useState(
-        operatorToText[filterPriorityOperator]
-    );
+    const [priorityText, setPriorityText] = useState(priority.toString());
 
     useDetectKeydown("Escape", () => dispatch(setActiveModal(Modal.None)));
 
-    // Extra function to call when the ResetFiltersButton is clicked to clear out the textboxes and reset other UI elements
-    const resetUIElements = () => {
-        setName("");
-        setDescription("");
-        setPriority("0");
-        setPriorityOperator("");
-    };
+    // Adds a tag to the filter
+    const onAddTagClicked = () => {
+        const tagString = prompt("Enter tag name")?.trim();
 
-    // Button that sets the filters
-    const onSetFiltersClicked = () => {
-        dispatch(setFilterName(name));
-        dispatch(setFilterDescription(description));
-
-        const prioThreshold = parseFloat(priority);
-
-        if (isNaN(prioThreshold)) {
-            dispatch(setFilterPriorityThreshold(0));
-            setPriority("0");
-        } else {
-            dispatch(setFilterPriorityThreshold(prioThreshold));
+        if (tagString === "" || tagString === undefined) {
+            return;
         }
 
-        dispatch(setFilterPriorityOperator(textToOperator[priorityOperator]));
+        dispatch(addFilterTag(tagString));
     };
 
     return (
@@ -102,7 +82,7 @@ export const FilterTasksModal = () => {
                         className="filter-modal-row-input"
                         data-testid="filter-modal-name"
                         value={name}
-                        onChange={(event) => setName(event.target.value)}
+                        onChange={(event) => dispatch(setFilterName(event.target.value))}
                     />
                 </div>
 
@@ -115,7 +95,9 @@ export const FilterTasksModal = () => {
                         className="filter-modal-row-input"
                         data-testid="filter-modal-description"
                         value={description}
-                        onChange={(event) => setDescription(event.target.value)}
+                        onChange={(event) =>
+                            dispatch(setFilterDescription(event.target.value))
+                        }
                     />
                 </div>
 
@@ -125,9 +107,13 @@ export const FilterTasksModal = () => {
                     <select
                         className="filter-modal-prio-operator-select"
                         data-testid="filter-modal-prio-operator-select"
-                        value={priorityOperator}
+                        value={operatorToText[priorityOperator]}
                         onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                            setPriorityOperator(event.target.value)
+                            dispatch(
+                                setFilterPriorityOperator(
+                                    textToOperator[event.target.value]
+                                )
+                            )
                         }
                     >
                         <option value=""></option>
@@ -142,24 +128,61 @@ export const FilterTasksModal = () => {
                     <input
                         className="filter-modal-row-prio-input"
                         data-testid="filter-modal-priority"
-                        value={priority}
-                        onChange={(event) => setPriority(event.target.value)}
+                        value={priorityText}
+                        onChange={(event) => {
+                            setPriorityText(event.target.value);
+
+                            const prioThreshold = parseFloat(event.target.value);
+
+                            if (isNaN(prioThreshold)) {
+                                dispatch(setFilterPriorityThreshold(0));
+                            } else {
+                                dispatch(setFilterPriorityThreshold(prioThreshold));
+                            }
+                        }}
                     />
+                </div>
+
+                <label className="filter-modal-row-label">Filter by Tags:</label>
+
+                <div className="task-tags-list filter-tags-list" data-testid="filter-tags-list">
+                    {filterTags.map((tag) => (
+                        <FilterTag key={tag} tag={tag} />
+                    ))}
+                </div>
+
+                <div className="flex-row">
+                    <button
+                        className="task-button"
+                        data-testid="add-filter-tag-button"
+                        onClick={onAddTagClicked}
+                    >
+                        Add Tag
+                    </button>
+
+                    <button
+                        className="task-button"
+                        data-testid="reset-filter-tags-button"
+                        onClick={() => dispatch(setFilterTags([]))}
+                    >
+                        Reset Tags
+                    </button>
                 </div>
             </div>
 
-            <div className="modal-end-row">
+            <div className="filter-modal-end-row">
                 <ExitModalButton />
 
                 <button
-                    className="header-button"
-                    data-testid="set-filters-button"
-                    onClick={onSetFiltersClicked}
+                    className="header-button exit-modal-button"
+                    data-testid="reset-filters-button"
+                    onClick={() => {
+                        dispatch(resetFilters());
+                        setPriorityText("0");
+                    }}
                 >
-                    Set Filters
+                    Reset Filters
                 </button>
-
-                <ResetFiltersButton extraFn={resetUIElements} className="header-button" />
             </div>
         </div>
     );

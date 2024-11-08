@@ -177,3 +177,15 @@
     text-align: center;
 }
     
+.filter-tags-list {
+    min-width: 20vw;
+    max-width: 20vw;
+}
+
+.filter-modal-end-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-end;
+    width: 100%;
+}
