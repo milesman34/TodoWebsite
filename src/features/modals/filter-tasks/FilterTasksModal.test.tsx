@@ -311,6 +311,50 @@ describe("FilterTasksModal", () => {
             expect(store.getState().filterSettings.tags).toEqual(["A"]);
         });
 
+        test("Add a new tag with empty string", async () => {
+            mockPrompt("");
+
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("add-filter-tag-button");
+
+            const children = screen.getByTestId("filter-tags-list").children;
+
+            expect(children.length).toBe(0);
+
+            expect(store.getState().filterSettings.tags).toEqual([]);
+        });
+
+        test("Add a new tag with null prompt", async () => {
+            mockPrompt(null);
+
+            const store = createStore();
+
+            store.dispatch(setActiveModal(Modal.FilterTasks));
+
+            render(
+                <Provider store={store}>
+                    <ModalManager />
+                </Provider>
+            );
+
+            await clickButton("add-filter-tag-button");
+
+            const children = screen.getByTestId("filter-tags-list").children;
+
+            expect(children.length).toBe(0);
+
+            expect(store.getState().filterSettings.tags).toEqual([]);
+        });
+
         test("Remove a tag", async () => {
             const store = createStore();
 
