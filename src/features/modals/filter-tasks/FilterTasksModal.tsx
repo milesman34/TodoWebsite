@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDetectKeydown } from "../../../hooks/useDetectKeydown";
 import {
+    addFilterTag,
     Modal,
     Operator,
     selectFilterDescription,
     selectFilterName,
     selectFilterPriorityOperator,
     selectFilterPriorityThreshold,
+    selectFilterTags,
     setActiveModal,
     setFilterDescription,
     setFilterName,
@@ -16,6 +18,7 @@ import {
 } from "../../../redux/todoSlice";
 import { ExitModalButton } from "../components/ExitModalButton";
 import { ResetFiltersButton } from "./components/ResetFiltersButton";
+import { FilterTag } from "./components/FilterTag";
 
 // Map priority operators to text and vice versa
 const operatorToText: Record<Operator, string> = {
@@ -48,8 +51,7 @@ export const FilterTasksModal = () => {
     const filterDescription = useSelector(selectFilterDescription);
     const filterPriority = useSelector(selectFilterPriorityThreshold);
     const filterPriorityOperator = useSelector(selectFilterPriorityOperator);
-
-    // const filterTags
+    const filterTags = useSelector(selectFilterTags);
 
     // Name to filter by
     const [name, setName] = useState(filterName);
@@ -90,6 +92,17 @@ export const FilterTasksModal = () => {
         }
 
         dispatch(setFilterPriorityOperator(textToOperator[priorityOperator]));
+    };
+
+    // Adds a tag to the filter
+    const onAddTagClicked = () => {
+        const tagString = prompt("Enter tag name")?.trim();
+
+        if (tagString === "" || tagString === undefined) {
+            return;
+        }
+
+        dispatch(addFilterTag(tagString));
     };
 
     return (
@@ -148,6 +161,22 @@ export const FilterTasksModal = () => {
                         onChange={(event) => setPriority(event.target.value)}
                     />
                 </div>
+
+                <label className="filter-modal-row-label">Filter by Tags:</label>
+
+                <div className="task-tags-list filter-tags-list">
+                    {filterTags.map((tag) => (
+                        <FilterTag key={tag} tag={tag} />
+                    ))}
+                </div>
+
+                <button
+                    className="task-button"
+                    data-testid="add-filter-tag-button"
+                    onClick={onAddTagClicked}
+                >
+                    Add Tag
+                </button>
             </div>
 
             <div className="modal-end-row">
